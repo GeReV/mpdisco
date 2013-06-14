@@ -3,8 +3,16 @@ var port = process.env.PORT || 3000,
     io = require('socket.io'),
     express = require('express'),
     UUID = require('node-uuid'),
+    komponist = require('komponist'),
     app = express(),
-    server = http.createServer(app);
+    server = http.createServer(app),
+    modes = {
+      master: require('./server/master_mode.js')
+    },
+    sio,
+    clients = {},
+    mode,
+    mpd;
 
 app.use(express.logger());
 app.use(express.compress());
@@ -17,8 +25,7 @@ server.listen(port);
 
 console.log('\t :: Express :: Listening on port ' + port);
 
-var sio = io.listen(server),
-    clients = {};
+sio = io.listen(server);
 
 //Configure the socket.io connection settings.
 //See http://socket.io/
@@ -44,15 +51,13 @@ sio.sockets.on('connection', function(client) {
   client.broadcast.emit('clientconnected', client.userid);
 
   //tell the player they connected, giving them their id and id's of other clients.
-  client.emit('onconnected', {
-    id: client.userid,
-    clients: Object.keys(clients)
-  });
   
   clients[client.userid] = client;
+  
+  mode.setMaster(client);
 
   //Useful to know when someone connects
-  console.log('\t socket.io:: player ' + client.userid + ' connected');
+  console.log('\t socket.io:: client ' + client.userid + ' connected');
 
   //When this client disconnects
   client.on('disconnect', function() {
@@ -67,12 +72,31 @@ sio.sockets.on('connection', function(client) {
   });
   //client.on disconnect
   
-  client.on('update', function(msg) {
+  client.on('command', function(msg) {
     
-    msg.userid = client.userid;
+    mode.command(msg.command, msg.args, client);
     
-    client.broadcast.emit('update', msg);
+  });
+  
+  mpd.on('changed', function(system) {
+    client.emit('update', system);
+  });
+  
+  // Let the client know connection was achieved and send status.
+  mpd.command('status', null, function(err, status) {
+    client.emit('connected', {
+      id: client.userid,
+      clients: Object.keys(clients),
+      mode: mode.type,
+      status: status
+    });
   });
 
 });
 //sio.sockets.on connection
+
+mpd = komponist.createConnection(function() {
+  console.log('\t :: MPD :: connection established')
+});
+
+mode = new modes.master(mpd, clients);

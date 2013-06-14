@@ -42,6 +42,10 @@ define(['mpdisco'], function(MPDisco) {
     console.log('Connected.', data);
   });
   
+  MPDisco.vent.on('update', function(data) {
+    console.log('Update: ', data);
+  });
+  
   MPDisco.start();
   
 });

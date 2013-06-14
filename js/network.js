@@ -8,16 +8,12 @@ define(['class'], function() {
       this.socket = io.connect(this.url);
       
       this.socket.on('connect', this.createPublish('connect'));
-      this.socket.on('onconnected', this.createPublish('connected'));
+      this.socket.on('connected', this.createPublish('connected'));
       this.socket.on('disconnect', this.createPublish('disconnected'));
       this.socket.on('clientconnected', this.createPublish('clientconnected'));
       this.socket.on('clientdisconnected', this.createPublish('clientdisconnected'));
       this.socket.on('update', this.createPublish('update'));
     },
-    onConnect: function() {},
-    onDisconnect: function() {},
-    onClientConnected: function(userId) {},
-    onClientDisconnected: function(userId) {},
     send: function(data) {
       this.socket.emit('update', data);
     },
