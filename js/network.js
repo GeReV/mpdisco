@@ -3,8 +3,7 @@ define(['class'], function() {
     init: function(host, port) {
       this.url = "ws://"+ host +":"+ port +"/",
       this.callbacks = [];
-    },
-    connect: function() {
+      
       this.socket = io.connect(this.url);
       
       this.socket.on('connect', this.createPublish('connect'));
@@ -15,7 +14,13 @@ define(['class'], function() {
       this.socket.on('update', this.createPublish('update'));
     },
     send: function(data) {
-      this.socket.emit('update', data);
+      this.socket.emit('command', data);
+    },
+    command: function(command, args) {
+      this.send({
+        command: command,
+        args: args || []
+      });
     },
     publish: function(name, data) {
       for (var i=0, l=this.callbacks.length; i < l; i++) {
@@ -31,6 +36,9 @@ define(['class'], function() {
           this.callbacks.splice(i, 1);
         }
       }
+    },
+    on: function(name, callback) {
+      this.socket.on(name, callback);
     },
     createPublish: function(name) {
       return function(data) {

@@ -10,8 +10,12 @@
   };
   
   MasterMode.prototype.command = function(command, args, client) {
-    if (this.isMaster(client)) {
-      this.mpd.command(command, args);
+    if (this.isMaster(client) || true) {
+      console.log('Received command', command, 'from', client.userid);
+      
+      this.mpd.command(command, args, function(err, result) {
+        client.emit(command, result);
+      });
       
       return;
     }
