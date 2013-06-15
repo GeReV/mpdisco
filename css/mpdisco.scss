@@ -1,0 +1,23 @@
+@import 'normalize.css';
+
+#container {
+  width: 960px;
+  margin: 15px auto;
+}
+
+#controls {
+  
+  .info {
+    overflow: hidden;
+    
+    img {
+      border-radius: 5px;
+      float: left;
+      margin-right: 15px;
+    }
+  }
+  
+  menu {
+    padding: 0;
+  }
+}

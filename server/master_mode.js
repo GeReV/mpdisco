@@ -20,7 +20,7 @@
       return;
     }
     
-    client.emit('update', {
+    client.emit(command, {
       type: 'nopermission'
     });
   };
