@@ -1,4 +1,4 @@
-define(['marionette', 'network', 'handlebars'], function(Marionette, Network, Handlebars) {
+define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionette, Network, Handlebars, _) {
   
   Marionette.TemplateCache.prototype.loadTemplate = function(template) {
   // use Handlebars.js to compile the template
@@ -10,63 +10,48 @@ define(['marionette', 'network', 'handlebars'], function(Marionette, Network, Ha
     return Handlebars.compile(template);
   };
   
+  var buildSocketEventsMixinFor = function(type) {
+    
+    return {
+      constructor: function () {
+        if (this.socketEvents && _.size(this.socketEvents) > 0) {
+            this.delegateSocketEvents(this.socketEvents);
+        }
+        
+        var args = Array.prototype.slice.apply(arguments);
+        
+        type.prototype.constructor.apply(this, args);
+      },
+      delegateSocketEvents: function (events) {
+        for (var key in events) {
+            var method = events[key];
+            if (!_.isFunction(method)) {
+                method = this[events[key]];
+            }
+ 
+            if (!method) {
+                throw new Error('Method "' + events[key] + '" does not exist');
+            }
+ 
+            method = _.bind(method, this);
+            MPDisco.network.on(key, method);
+        };
+      }
+    };
+    
+  };
+  
   var MPDisco = new Marionette.Application;
   
-  MPDisco.Collection = Backbone.Collection.extend({
- 
-    constructor: function () {
-        if (this.socket_events && _.size(this.socket_events) > 0) {
-            this.delegateSocketEvents(this.socket_events);
-        }
-        
-        var args = Array.prototype.slice.apply(arguments);
-        Backbone.Collection.prototype.constructor.apply(this, args);
-    },
- 
-    delegateSocketEvents: function (events) {
-        for (var key in events) {
-            var method = events[key];
-            if (!_.isFunction(method)) {
-                method = this[events[key]];
-            }
- 
-            if (!method) {
-                throw new Error('Method "' + events[key] + '" does not exist');
-            }
- 
-            method = _.bind(method, this);
-            MPDisco.network.on(key, method);
-        };
-    }
-  });
+  // TODO: Nicer way to do this?
+  Marionette.View = Marionette.View.extend(buildSocketEventsMixinFor(Marionette.View));
+  Marionette.ItemView = Marionette.ItemView.extend(buildSocketEventsMixinFor(Marionette.ItemView));
+  Marionette.CollectionView = Marionette.CollectionView.extend(buildSocketEventsMixinFor(Marionette.CollectionView));
+  Marionette.CompositeView = Marionette.CompositeView.extend(buildSocketEventsMixinFor(Marionette.CompositeView));
   
-  MPDisco.Model = Backbone.Model.extend({
- 
-    constructor: function () {
-        if (this.socket_events && _.size(this.socket_events) > 0) {
-            this.delegateSocketEvents(this.socket_events);
-        }
-        
-        var args = Array.prototype.slice.apply(arguments);
-        Backbone.Model.prototype.constructor.apply(this, args);
-    },
- 
-    delegateSocketEvents: function (events) {
-        for (var key in events) {
-            var method = events[key];
-            if (!_.isFunction(method)) {
-                method = this[events[key]];
-            }
- 
-            if (!method) {
-                throw new Error('Method "' + events[key] + '" does not exist');
-            }
- 
-            method = _.bind(method, this);
-            MPDisco.network.on(key, method);
-        };
-    }
-  });
+  MPDisco.Collection = Backbone.Collection.extend(buildSocketEventsMixinFor(Backbone.Collection));
+  
+  MPDisco.Model = Backbone.Model.extend(buildSocketEventsMixinFor(Backbone.Model));
   
   MPDisco.network = new Network('localhost', 3000);
   
@@ -101,6 +86,8 @@ define(['marionette', 'network', 'handlebars'], function(Marionette, Network, Ha
     this.layout.controls.show(new MPDisco.Controls.ControlsView);
     
     this.layout.playlist.show(new MPDisco.Playlist.PlaylistView);
+    
+    this.network.command('status');
   });
   
   return MPDisco;

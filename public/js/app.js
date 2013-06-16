@@ -44,7 +44,7 @@ require.config({
   }
 });
 
-define(['mpdisco', 'controls', 'playlist', ], function(MPDisco) {
+define(['mpdisco', 'syncer', 'controls', 'playlist', ], function(MPDisco) {
   
   MPDisco.vent.on('connected', function(data) {
     console.log('Connected.', data);

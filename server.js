@@ -8,7 +8,9 @@ var port = process.env.PORT || 3000,
     komponist = require('komponist'),
     app = express(),
     server = http.createServer(app),
+    commandProcessors = require('./server/command_processors.js'),
     modes = {
+      basic:  require('./server/basic_mode.js'),
       master: require('./server/master_mode.js')
     },
     sio,
@@ -72,7 +74,7 @@ sio.sockets.on('connection', function(client) {
   
   clients[client.userid] = client;
   
-  mode.setMaster(client);
+  //mode.setMaster(client);
 
   //Useful to know when someone connects
   console.log('\t socket.io:: client ' + client.userid + ' connected');
@@ -105,8 +107,7 @@ sio.sockets.on('connection', function(client) {
     client.emit('connected', {
       id: client.userid,
       clients: Object.keys(clients),
-      mode: mode.type,
-      status: status
+      mode: mode.type
     });
   });
 
@@ -117,4 +118,4 @@ mpd = komponist.createConnection(function() {
   console.log('\t :: MPD :: connection established')
 });
 
-mode = new modes.master(mpd, clients);
+mode = new modes.basic(mpd, clients, commandProcessors);

@@ -1,43 +1,33 @@
 (function() {
+  var BasicMode = require('./basic_mode.js');
   
-  var MasterMode = function(mpd, clients) {
-    this.type = 'master';
-    
-    this.mpd = mpd;
-    this.clients = clients;
-    
-    this.master = null;
-  };
-  
-  MasterMode.prototype.command = function(command, args, client) {
-    if (this.isMaster(client) || true) {
-      console.log('Received command', command, 'from', client.userid);
+  var MasterMode = BasicMode.extend({
+    init: function(mpd, clients, cmdProcessors) {
+      this._super(mpd, clients, cmdProcessors);
       
-      this.mpd.command(command, args, function(err, result) {
-        client.emit(command, result);
+      this.type = 'master';
+      
+      this.master = null;
+    },
+    
+    canExecute: function(command, client) {
+      return this.isMaster(client) || true;
+    },
+    
+    isMaster: function(client) {
+    return this.master === client;
+    },
+    setMaster: function(client) {
+    
+      this.master = client;
+      
+      this.master.broadcast.emit('update', {
+        type: 'master',
+        who: this.master.userid
       });
-      
-      return;
     }
     
-    client.emit(command, {
-      type: 'nopermission'
-    });
-  };
-  
-  MasterMode.prototype.isMaster = function(client) {
-    return this.master === client;
-  };
-  
-  MasterMode.prototype.setMaster = function(client) {
-    
-    this.master = client;
-    
-    this.master.broadcast.emit('update', {
-      type: 'master',
-      who: this.master.userid
-    });
-  };
+  });
   
   if (this.define && define.amd) {
     // Publish as AMD module

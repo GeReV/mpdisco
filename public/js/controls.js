@@ -1,19 +1,12 @@
 define(['mpdisco'], function(MPDisco) {
   var Controls = MPDisco.module('Controls', function(Controls, MPDisco, Backbone, Marionette) {
     Controls.Song = MPDisco.Model.extend({
-      initialize: function() {
-        this.listenTo(MPDisco.vent, 'update', function(system) {
-          if (system === 'player') {
-            MPDisco.network.command('currentsong');
-          }
-        });
-      },
       defaults: {
         name: 'Name',
         artist: 'Artist',
         album: 'Album'
       },
-      socket_events: {
+      socketEvents: {
         currentsong: 'set'
       }
     });

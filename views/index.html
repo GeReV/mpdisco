@@ -24,13 +24,16 @@
       <section id="playlist"></section>
     </script>
     <script type="text/template" id="playlist_template">
-      <ul>
+      <ul class="playlist">
         {{#each items}}
           {{#if this.file}}
-            <li data-songid="{{id}}">{{file}}</li>
+            <li data-songid="{{Id}}">
+              {{file}}
+            </li>
           {{/if}}
         {{/each}}
       </ul>
+      <input type="text" id="url" name="url" /><button id="add-button">Add</button>
     </script>
     <script type="text/template" id="controls_template">
       <div class="info">

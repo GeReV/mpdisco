@@ -21,3 +21,20 @@
     padding: 0;
   }
 }
+
+.playlist {
+  list-style-type: none;
+  padding: 0;
+  
+  li {
+    background: #fff;
+    
+    &:nth-child(even) {
+      background: #ddd;
+    }
+  }
+  
+  .current {
+    color: #3a87ad;
+  }
+}

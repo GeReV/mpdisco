@@ -1,4 +1,4 @@
-define(['class'], function() {
+define(['class'], function(Class) {
   var Network = Class.extend({
     init: function(host, port) {
       this.url = "ws://"+ host +":"+ port +"/",
