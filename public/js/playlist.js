@@ -31,7 +31,8 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       events: {
-        'click #add-button': 'addUrl'
+        'click #add-button': 'addUrl',
+        'dblclick li': 'play'
       },
       
       initialize: function() {
@@ -52,6 +53,10 @@ define(['mpdisco'], function(MPDisco) {
       
       addUrl: function() {
         MPDisco.network.command('add', this.ui.url.val());
+      },
+      
+      play: function(e) {
+        MPDisco.network.command('playid', $(e.target).data('songid'));
       }
     });
   
