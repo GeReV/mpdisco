@@ -45,15 +45,17 @@ require.config({
 });
 
 define(['mpdisco', 'syncer', 'controls', 'playlist', ], function(MPDisco) {
-  
+
   MPDisco.vent.on('connected', function(data) {
     console.log('Connected.', data);
   });
-  
+
   MPDisco.vent.on('update', function(data) {
     console.log('Update: ', data);
   });
-  
-  MPDisco.start();
-  
+
+  $(function() {
+    MPDisco.start();
+  });
+
 });

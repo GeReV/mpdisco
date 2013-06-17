@@ -5,7 +5,11 @@ var port = process.env.PORT || 3000,
     engines = require('consolidate'),
     scss = require('node-sass'),
     UUID = require('node-uuid'),
-    komponist = require('komponist'),
+    mpd = require('mpd'),
+    mpdClient = mpd.connect({
+        port: 6600,
+        host: 'localhost'
+    }),
     app = express(),
     server = http.createServer(app),
     commandProcessors = require('./server/command_processors.js'),
@@ -15,8 +19,7 @@ var port = process.env.PORT || 3000,
     },
     sio,
     clients = {},
-    mode,
-    mpd;
+    mode;
 
 /*app.engine('html', engines.handlebars);
 
@@ -67,13 +70,13 @@ sio.sockets.on('connection', function(client) {
   //5b2ca132-64bd-4513-99da-90e838ca47d1
   //and store this on their socket/connection
   client.userid = UUID();
-  
+
   client.broadcast.emit('clientconnected', client.userid);
 
   //tell the player they connected, giving them their id and id's of other clients.
-  
+
   clients[client.userid] = client;
-  
+
   //mode.setMaster(client);
 
   //Useful to know when someone connects
@@ -84,38 +87,36 @@ sio.sockets.on('connection', function(client) {
 
     //Useful to know when someone disconnects
     console.log('\t socket.io:: client disconnected ' + client.userid);
-    
+
     client.broadcast.emit('clientdisconnected', client.userid);
-    
+
     delete clients[client.userid];
 
   });
   //client.on disconnect
-  
+
   client.on('command', function(msg) {
-    
+
     mode.command(msg.command, msg.args, client);
-    
+
   });
-  
-  mpd.on('changed', function(system) {
+
+  mpdClient.on('system', function(system) {
     client.emit('update', system);
   });
-  
+
   // Let the client know connection was achieved and send status.
-  mpd.command('status', null, function(err, status) {
-    client.emit('connected', {
-      id: client.userid,
-      clients: Object.keys(clients),
-      mode: mode.type
-    });
+  client.emit('connected', {
+    id: client.userid,
+    clients: Object.keys(clients),
+    mode: mode.type
   });
 
 });
 //sio.sockets.on connection
 
-mpd = komponist.createConnection(function() {
+mpdClient.on('ready', function() {
   console.log('\t :: MPD :: connection established')
 });
 
-mode = new modes.basic(mpd, clients, commandProcessors);
+mode = new modes.basic(mpdClient, clients, commandProcessors);
