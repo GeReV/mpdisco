@@ -2,7 +2,7 @@ define(['mpdisco'], function(MPDisco) {
   var Controls = MPDisco.module('Controls', function(Controls, MPDisco, Backbone, Marionette) {
     Controls.Song = MPDisco.Model.extend({
       defaults: {
-        name: 'Name',
+        title: 'Title',
         artist: 'Artist',
         album: 'Album'
       },
@@ -40,6 +40,8 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       initialize: function() {
+        MPDisco.network.command('currentsong');
+        
         this.listenTo(MPDisco.state, 'change', this.updateControls);
       },
       
@@ -60,18 +62,12 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       prevSong: function() {
-        this.ui.prev.prop('disabled', true);
-        
         MPDisco.network.command('previous');
       },
       nextSong: function() {
-        this.ui.next.prop('disabled', true);
-        
         MPDisco.network.command('next');
       },
       stopSong: function() {
-        this.ui.stop.prop('disabled', true);
-        
         MPDisco.network.command('stop');
       },
       playSong: function() {
@@ -90,6 +86,8 @@ define(['mpdisco'], function(MPDisco) {
       handleKeyboard: function(e) {
         if (e.which === 0x20) {
           (MPDisco.state.get('state') !== 'play') ? this.playSong() : this.pauseSong();
+          
+          return false;
         }
       }
       

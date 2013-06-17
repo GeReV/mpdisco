@@ -55,15 +55,19 @@ section {
   padding: 5px;
   
   ul {
+    background: #f9f9f9;
     border: 1px solid #dedede;
     border-radius: 2px;
     list-style-type: none;
     margin: 0;
+    overflow: auto;
     padding: 0;
+    height: 480px;
   }
   
   li {
     background: #f4f4f4;
+    font-size: 12px;
     padding: 2px 5px;
     
     &:nth-child(even) {
@@ -78,11 +82,17 @@ section {
       background: #fcf8e3;
     }
     
-    .url {
-      display: block;
+    span {
+      display: inline-block;
+      max-width: 100%;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+    
+    .title, .url {
+      display: block;
+      font-size: 16px;
     }
   }
   

@@ -61,7 +61,7 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       updatePlaylist: function(status) {
-        var songid = status.songid || status.Id;
+        var songid = status.songid || status.id;
         
         if (songid) {
           this.ui.playlist

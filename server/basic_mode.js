@@ -12,13 +12,17 @@
   }
 
   function parseResponse(s) {
+    if (!s) {
+      return s;
+    }
+    
     var lines = s.split('\n'),
         obj = {},
         json = [];
 
     _(lines).chain().compact().each(function(l) {
       var i = l.indexOf(':'),
-          key = l.slice(0, i),
+          key = l.slice(0, i).toLowerCase(),
           value = l.slice(i + 1);
           
       // If we ran into an existing key, it means it's a new record.

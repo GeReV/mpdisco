@@ -27,8 +27,14 @@
       <ul>
         {{#each items}}
           {{#if this.file}}
-            <li data-songid="{{Id}}">
-              <span class="url">{{file}}</span>
+            <li data-songid="{{id}}">
+              {{#if title}}
+                <span class="title">{{title}}</span>
+                {{#if artist}}<span class="artist">{{artist}}</span>{{/if}}
+                {{#if album}}(<span class="album">{{album}}</span>{{#if date}}, <span class="year">{{date}}</span>{{/if}}){{/if}}
+              {{else}}
+                <span class="url">{{file}}</span>
+              {{/if}}
             </li>
           {{/if}}
         {{/each}}
@@ -42,7 +48,7 @@
     <script type="text/template" id="controls_template">
       <div class="info">
         <img src="http://placehold.it/100x100" alt="placeholder" />
-        <h2>{{name}}</h2>
+        <h2>{{title}}</h2>
         <p>{{artist}} - {{album}}</p>
       </div>
       <menu class="controls">
