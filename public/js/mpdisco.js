@@ -52,8 +52,10 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   MPDisco.Collection = Backbone.Collection.extend(buildSocketEventsMixinFor(Backbone.Collection));
   
   MPDisco.Model = Backbone.Model.extend(buildSocketEventsMixinFor(Backbone.Model));
+
+  var host = 'localhost';
   
-  MPDisco.network = new Network('localhost', 3000);
+  MPDisco.network = new Network(host, 3000);
   
   MPDisco.Layout = Marionette.Layout.extend({
     template: '#layout_template',
