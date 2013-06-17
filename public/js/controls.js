@@ -40,7 +40,15 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       initialize: function() {
-        this.listenTo(MPDisco.state, 'change:state', this.updateControls);
+        this.listenTo(MPDisco.state, 'change', this.updateControls);
+      },
+      
+      onShow: function() {
+        $(document).on('keyup.player', this.handleKeyboard.bind(this));
+      },
+      
+      onClose: function() {
+        $(document).off('keyup.player');
       },
       
       updateControls: function() {
@@ -77,6 +85,12 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.play.prop('disabled', true);
         
         MPDisco.network.command('pause', 1);
+      },
+      
+      handleKeyboard: function(e) {
+        if (e.which === 0x20) {
+          (MPDisco.state.get('state') !== 'play') ? this.playSong() : this.pauseSong();
+        }
       }
       
     });

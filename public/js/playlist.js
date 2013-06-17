@@ -18,7 +18,8 @@ define(['mpdisco'], function(MPDisco) {
       
       ui: {
         playlist: 'ul',
-        url: '#url'
+        url: '#url',
+        remove: '.remove'
       },
       
       collection: new Playlist.Collection,
@@ -33,7 +34,8 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       events: {
-        'click #add-button': 'addUrl',
+        'click .add': 'add',
+        'click .remove': 'remove',
         'dblclick li': 'play',
         'click li': 'select'
       },
@@ -70,7 +72,7 @@ define(['mpdisco'], function(MPDisco) {
         }
       },
       
-      addUrl: function() {
+      add: function() {
         MPDisco.network.command('add', this.ui.url.val());
       },
       
@@ -92,6 +94,8 @@ define(['mpdisco'], function(MPDisco) {
         if (e.currentTarget) {
           this.selectedItem = $(e.currentTarget);
         }
+        
+        this.ui.remove.prop('disabled', false)
         
         this.selectedItem.addClass('selected')
           .siblings().removeClass('selected');
