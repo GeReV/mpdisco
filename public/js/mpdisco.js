@@ -53,7 +53,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   
   MPDisco.Model = Backbone.Model.extend(buildSocketEventsMixinFor(Backbone.Model));
 
-  var host = window.hostname;
+  var host = window.location.hostname;
   
   MPDisco.network = new Network(host, 3000);
   
