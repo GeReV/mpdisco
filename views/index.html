@@ -24,16 +24,19 @@
       <section id="playlist"></section>
     </script>
     <script type="text/template" id="playlist_template">
-      <ul class="playlist">
+      <ul>
         {{#each items}}
           {{#if this.file}}
             <li data-songid="{{Id}}">
-              {{file}}
+              <span class="url">{{file}}</span>
             </li>
           {{/if}}
         {{/each}}
       </ul>
-      <input type="text" id="url" name="url" /><button id="add-button">Add</button>
+      <menu>
+        <input type="text" id="url" name="url" />
+        <button id="add-button" class="btn">Add</button>
+      </menu>
     </script>
     <script type="text/template" id="controls_template">
       <div class="info">
@@ -42,10 +45,10 @@
         <p>{{artist}} - {{album}}</p>
       </div>
       <menu class="controls">
-        <button class="prev">Prev</button>
-        <button class="play">Play/Pause</button>
-        <button class="stop">Stop</button>
-        <button class="next">Next</button>
+        <button class="prev btn"><i class="icon-step-backward"></i></button>
+        <button class="play btn"><i class="icon-play"></i></button>
+        <button class="stop btn"><i class="icon-stop"></i></button>
+        <button class="next btn"><i class="icon-step-forward"></i></button>
       </menu>
     </script>
     <script src="js/vendor/jquery-min.js"></script>

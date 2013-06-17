@@ -1,5 +1,5 @@
 define(['mpdisco'], function(MPDisco) {  
-  var Playlist = MPDisco.module('Playlist', function(Playlist, MPDisco) {
+  var Playlist = MPDisco.module('Playlist', function(Playlist, MPDisco, Backbone, Marionette, $, _) {
     
     Playlist.Collection = MPDisco.Collection.extend({
       socketEvents: {
@@ -13,6 +13,8 @@ define(['mpdisco'], function(MPDisco) {
     
     Playlist.PlaylistView = Marionette.ItemView.extend({
       template: '#playlist_template',
+      
+      className: 'playlist',
       
       ui: {
         playlist: 'ul',
@@ -32,11 +34,28 @@ define(['mpdisco'], function(MPDisco) {
       
       events: {
         'click #add-button': 'addUrl',
-        'dblclick li': 'play'
+        'dblclick li': 'play',
+        'click li': 'select'
       },
+      
+      selectedItem: null,
       
       initialize: function() {
         MPDisco.network.command('playlistinfo');
+        
+        this.listenTo(MPDisco.state, 'change:songid', this.updatePlaylist);
+      },
+      
+      onDomRefresh: function() {
+        this.updatePlaylist(MPDisco.state.toJSON());
+      },
+      
+      onShow: function() {
+        $(document).on('keyup.playlist', this.handleKeyboard.bind(this));
+      },
+      
+      onClose: function() {
+        $(document).off('keyup.playlist');
       },
       
       updatePlaylist: function(status) {
@@ -56,7 +75,78 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       play: function(e) {
-        MPDisco.network.command('playid', $(e.target).data('songid'));
+        var item = (e && e.currentTarget) ? $(e.currentTarget) : this.selectedItem;
+        
+        MPDisco.network.command('playid', item.data('songid'));
+      },
+      
+      remove: function() {
+        if (this.selectedItem && this.selectedItem.size()) {
+          MPDisco.network.command('deleteid', this.selectedItem.data('songid'));
+        }
+      },
+      
+      select: function(e) {
+        this.selectedItem = e;
+        
+        if (e.currentTarget) {
+          this.selectedItem = $(e.currentTarget);
+        }
+        
+        this.selectedItem.addClass('selected')
+          .siblings().removeClass('selected');
+      },
+      
+      selectPrev: function() {
+        var item;
+        
+        if (this.selectedItem) {
+          item = this.selectedItem.prev();
+        }
+        
+        if (!item) {
+          item = this.ui.playlist.children().first();
+        }
+        
+        if (!item.size()) {
+          item = this.ui.playlist.children().first();
+        }
+        
+        this.select(item);
+        
+        //this.ui.playlist.scrollTo(item)
+      },
+      
+      selectNext: function() {
+        var item;
+        
+        if (this.selectedItem) {
+          item = this.selectedItem.next();
+        }
+        
+        if (!item) {
+          item = this.ui.playlist.children().first();
+        }
+        
+        if (!item.size()) {
+          item = this.ui.playlist.children().last();
+        }
+        
+        this.select(item);
+        
+        //this.ui.playlist.scrollTo(item)
+      },
+      
+      handleKeyboard: function(e) {
+        var funcs = {
+          0x0d: this.play,
+          0x26: this.selectPrev,
+          0x28: this.selectNext,
+          0x2e: this.remove
+        },
+        fn = funcs[e.which];
+        
+        fn && fn.call(this);
       }
     });
   

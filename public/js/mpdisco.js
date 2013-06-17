@@ -57,6 +57,14 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   
   MPDisco.network = new Network(host, 3000);
   
+  MPDisco.State = MPDisco.Model.extend({
+    socketEvents: {
+      status: 'set'
+    }
+  });
+  
+  MPDisco.state = new MPDisco.State;
+  
   MPDisco.Layout = Marionette.Layout.extend({
     template: '#layout_template',
     regions: {

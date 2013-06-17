@@ -1,11 +1,34 @@
-@import 'normalize.css';
+@import 'bootstrap.css';
+@import 'font-awesome.css';
 
 #container {
   width: 960px;
   margin: 15px auto;
 }
 
-#controls {
+menu {
+  margin: 0;
+  padding: 0;
+}
+
+input[type="text"] {
+  margin-bottom: 0;
+}
+
+section {
+  margin: 5px 0;
+}
+
+.frame {
+  background: #eee;
+  border: 1px solid #dedede;
+  border-radius: 3px;
+}
+
+.player {
+  @extend .frame;
+  
+  padding: 5px;
   
   .info {
     overflow: hidden;
@@ -18,23 +41,52 @@
   }
   
   menu {
-    padding: 0;
+    margin: 10px 0;
+  }
+  
+  button {
+    width: 38px;
   }
 }
 
 .playlist {
-  list-style-type: none;
-  padding: 0;
+  @extend .frame;
+  
+  padding: 5px;
+  
+  ul {
+    border: 1px solid #dedede;
+    border-radius: 2px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
   
   li {
-    background: #fff;
+    background: #f4f4f4;
+    padding: 2px 5px;
     
     &:nth-child(even) {
-      background: #ddd;
+      background: #fdfdfd;
+    }
+    
+    &.current {
+      color: #3a87ad;
+    }
+    
+    &.selected {
+      background: #fcf8e3;
+    }
+    
+    .url {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   
-  .current {
-    color: #3a87ad;
+  menu {
+    margin-top: 10px;
   }
 }

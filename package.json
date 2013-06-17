@@ -1,0 +1,34 @@
+{
+  "name": "mpdisco",
+  "version": "0.0.1",
+  "author": "Amir Grozki",
+  "description": "A team-controlled music server based on mpd.",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GeReV/mpdisco.git"
+  },
+  "keywords": {
+    "mpd",
+    "music",
+    "server"
+  },
+  "dependencies": {
+    "clah": "1.2.x",
+    "express": "3.x",
+    "socket.io": "0.9.x",
+    "consolidate": "0.9.x",
+    "handlebars": "1.x",
+    "node-sass": "0.5.x",
+    "node-uuid": "1.4.x",
+    "underscore": "1.4.x",
+    "mpd": "1.0.x"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=0.10"
+  }
+}

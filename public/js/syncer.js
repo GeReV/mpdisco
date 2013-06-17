@@ -1,7 +1,7 @@
 define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
   var Syncer = Class.extend({
     init: function() {
-      MPDisco.vent.on('update', this.update, this);
+      MPDisco.vent.on('update connected', this.update, this);
     },
     update: function(system) {
       var command = this.commands[system];
@@ -37,9 +37,12 @@ define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
     },
     commands: {
       playlist: 'playlistinfo',
-      player: 'currentsong'
+      player: ['currentsong', 'status'],
+      connected: ['currentsong', 'status', 'playlistinfo']
     }
   });
+  
+  MPDisco.Syncer = Syncer;
   
   MPDisco.syncer = new Syncer;
   

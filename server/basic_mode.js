@@ -13,17 +13,27 @@
 
   function parseResponse(s) {
     var lines = s.split('\n'),
-        json = {};
+        obj = {},
+        json = [];
 
     _(lines).chain().compact().each(function(l) {
       var i = l.indexOf(':'),
           key = l.slice(0, i),
           value = l.slice(i + 1);
+          
+      // If we ran into an existing key, it means it's a new record.
+      if (obj.hasOwnProperty(key)) {
+        json.push(obj);
+        
+        obj = {};
+      }
 
-      json[key] = trim(value);
+      obj[key] = trim(value);
     });
+    
+    json.push(obj);
 
-    return json;
+    return (json.length == 1 ? json[0] : json);
   }
 
   var BasicMode = Class.extend({
@@ -81,7 +91,7 @@
       cmd = mpd.cmd(command, args);
 
       this.mpd.sendCommand(cmd, function(err, result) {
-        console.log('Result for command', command, ': ', parseResponse(result));
+        console.log('Result for command', command, ': ', result);
 
         client.emit(command, parseResponse(result));
       });
