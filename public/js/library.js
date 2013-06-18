@@ -1,5 +1,5 @@
 define(['mpdisco'], function(MPDisco) {
-  var Library = MPDisco.module('Library', function(Library, MPDisco, Backbone, Marionette) {
+  var Library = MPDisco.module('Library', function(Library, MPDisco, Backbone, Marionette, $) {
     
     Library.Artist = MPDisco.Model.extend({
       defaults: {
@@ -78,24 +78,39 @@ define(['mpdisco'], function(MPDisco) {
       template: '#song_template',
       
       events: {
-        'click .name': 'select',
-        'dblclick .name': 'add'
+        'mousedown > .name': 'select',
+        'dblclick > .name': 'add',
+        'dragstart': 'dragstart'
       },
       
       ui: {
         name: '.name'
       },
       
+      onDomRefresh: function() {
+        this.$el.attr('data-id', this.model.get('title'));
+        
+        this.$el.draggable({
+          distance: 2,
+          helper: 'clone',
+          scope: 'media'
+        });
+      },
+      
       select: function(e) {
         MPDisco.vent.trigger('select:library', this);
-        
-        return false;
       },
       
       add: function(e) {
         MPDisco.command('add', this.model.get('file'));
         
         return false;
+      },
+      
+      dragstart: function(e, ui) {
+        ui.helper.data('model', this.model.toJSON());
+        
+        e.stopPropagation();
       }
     });
     
@@ -107,8 +122,10 @@ define(['mpdisco'], function(MPDisco) {
       template: '#album_template',
       
       events: {
-        'click .name': 'select',
-        'dblclick .name': 'add'
+        'click > .name': 'toggleSongs',
+        'mousedown > .name': 'select',
+        'dblclick > .name': 'add',
+        'dragstart': 'dragstart'
       },
       
       ui: {
@@ -116,18 +133,28 @@ define(['mpdisco'], function(MPDisco) {
         name: '.name'
       },
       
+      itemView: Library.LibrarySongView,
+      itemViewContainer: '.tree',
+      
       initialize: function() {
         this.collection = new Library.SongCollection; 
       },
       
-      itemView: Library.LibrarySongView,
-      itemViewContainer: '.tree',
+      onDomRefresh: function() {
+        this.$el.attr('data-id', this.model.get('album'));
+        
+        this.$el.draggable({
+          distance: 2,
+          helper: 'clone',
+          scope: 'media'
+        });
+      },
       
       loaded: false,
       
       toggleSongs: function(e) {
         var albumEl = $(e.currentTarget).toggleClass('open'),
-            artistEl = albumEl.closest('.artist').find('a'),
+            artistEl = albumEl.closest('.artist').find('.name'),
             album = albumEl.data('id'),
             artist = artistEl.data('id');
         
@@ -141,24 +168,34 @@ define(['mpdisco'], function(MPDisco) {
           
           this.loaded = true;
         }
-      },
-      
-      select: function(e) {
-        this.toggleSongs(e);
-        
-        MPDisco.vent.trigger('select:library', this);
         
         return false;
       },
+      
+      select: function(e) {
+        MPDisco.vent.trigger('select:library', this);
+      },
       add: function(e) {
-        var albumEl = $(e.currentTarget).toggleClass('open'),
-            artistEl = albumEl.closest('.artist').find('a'),
+        var albumEl = $(e.currentTarget),
+            artistEl = albumEl.closest('.artist').find('.name'),
             album = albumEl.data('id'),
             artist = artistEl.data('id');
             
         MPDisco.command('findadd', ['artist', artist, 'album', album]);
         
         return false;
+      },
+      
+      dragstart: function(e, ui) {
+        var album = this.model.get('album'),
+            artist = this.$el.closest('.artist').data('id');
+            
+        $(ui.helper).data('model', {
+          album: album,
+          artist: artist
+        });
+        
+        e.stopPropagation();
       }
     });
     
@@ -170,8 +207,10 @@ define(['mpdisco'], function(MPDisco) {
       template: '#artist_template',
       
       events: {
-        'click .name': 'select',
-        'dblclick .name': 'add'
+        'click > .name': 'toggleAlbums',
+        'mousedown > .name': 'select',
+        'dblclick > .name': 'add',
+        'dragstart': 'dragstart'
       },
       
       ui: {
@@ -179,12 +218,22 @@ define(['mpdisco'], function(MPDisco) {
         name: '.name'
       },
       
+      itemView: Library.LibraryAlbumView,
+      itemViewContainer: '.tree',
+      
       initialize: function() {
         this.collection = new Library.AlbumCollection; 
       },
       
-      itemView: Library.LibraryAlbumView,
-      itemViewContainer: '.tree',
+      onDomRefresh: function() {
+        this.$el.attr('data-id', this.model.get('artist'));
+        
+        this.$el.draggable({
+          distance: 2,
+          helper: 'clone',
+          scope: 'media'
+        });
+      },
       
       loaded: false,
       
@@ -202,22 +251,31 @@ define(['mpdisco'], function(MPDisco) {
           
           this.loaded = true;
         }
-      },
-      
-      select: function(e) {
-        this.toggleAlbums(e);
-        
-        MPDisco.vent.trigger('select:library', this);
         
         return false;
       },
+      
+      select: function(e) {
+        MPDisco.vent.trigger('select:library', this);
+      },
+      
       add: function(e) {
-        var artistEl = $(e.currentTarget).toggleClass('open'),
+        var artistEl = $(e.currentTarget),
             artist = artistEl.data('id');
             
         MPDisco.command('findadd', ['artist', artist]);
         
         return false;
+      },
+      
+      dragstart: function(e, ui) {
+        var artist = this.model.get('artist');
+        
+        $(ui.helper).data('model', {
+          artist: artist
+        });
+        
+        e.stopPropagation();
       }
     });
     

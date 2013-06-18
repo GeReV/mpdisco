@@ -1,6 +1,7 @@
 @import '960.css';
 @import 'bootstrap.css';
 @import 'font-awesome.css';
+@import 'jquery-ui.css';
 
 #container {
   width: 960px;
@@ -83,6 +84,7 @@ section {
   }
   
   > * {
+    background: #f9f9f9;
     font-size: 14px;
     
     &.selected {
@@ -92,6 +94,10 @@ section {
   
   .tree {
     border: 0;
+  }
+  
+  .ui-draggable-dragging {
+    width: 300px;
   }
 }
 .artists > * {
@@ -149,6 +155,21 @@ section {
   
   padding: 5px;
   
+  &.playlist-drop > .list:after {
+    background: rgba(255, 255, 255, 0.6);
+    content: "Drop";
+    color: #333;
+    font-size: 26px;
+    line-height: 480px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
   menu {
     height: 30px;
     margin-top: 10px;
@@ -156,6 +177,7 @@ section {
   
   > .list {
     height: 480px;
+    position: relative;
   }
 }
 

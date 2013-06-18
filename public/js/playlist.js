@@ -46,7 +46,8 @@ define(['mpdisco'], function(MPDisco) {
         'click .add': 'add',
         'click .remove': 'remove',
         'dblclick li': 'play',
-        'click li': 'select'
+        'click li': 'select',
+        'drop': 'drop'
       },
       
       selectedItem: null,
@@ -59,6 +60,11 @@ define(['mpdisco'], function(MPDisco) {
       
       onDomRefresh: function() {
         this.updatePlaylist(MPDisco.state.toJSON());
+        
+        this.$el.droppable({
+          hoverClass: 'playlist-drop',
+          scope: 'media'
+        });
       },
       
       onShow: function() {
@@ -82,7 +88,24 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       add: function() {
-        MPDisco.network.command('add', this.ui.url.val());
+        MPDisco.command('add', this.ui.url.val());
+      },
+      
+      drop: function(e, ui) {
+        var model = ui.helper.data('model'),
+            args = [];
+            
+        _.each(['artist', 'album', 'title'], function(key) {
+          var value;
+          if (value = model[key]) {
+            args.push(key);
+            args.push(value);
+          }
+        });
+        
+        if (args.length) {
+          MPDisco.command('findadd', args);
+        }
       },
       
       play: function(e) {

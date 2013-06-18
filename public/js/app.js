@@ -4,13 +4,18 @@ require.config({
     jquery: {
       exports: '$'
     },
+    jqueryui: {
+      deps: ['jquery'],
+      exports: '$'
+    },
     underscore: {
       exports: '_'
     },
     backbone: {
       deps: [
         'underscore',
-        'jquery'
+        'jquery',
+        'jqueryui'
       ],
       exports: 'Backbone'
     },
@@ -29,16 +34,14 @@ require.config({
       exports: 'Class'
     }
   },
-  hbs: {
-    disableI18n: true
-  },
   paths: {
     json:  'vendor/requirejs-plugins/json',
     text: 'vendor/requirejs-plugins/text',
-    backbone : 'vendor/backbone-min',
-    underscore : 'vendor/underscore-min',
-    jquery : 'vendor/jquery-min',
-    marionette : 'vendor/backbone-marionette-min',
+    backbone: 'vendor/backbone-min',
+    underscore: 'vendor/underscore-min',
+    jquery: 'vendor/jquery-min',
+    jqueryui: 'vendor/jquery-ui-min',
+    marionette: 'vendor/backbone-marionette-min',
     handlebars: 'vendor/handlebars',
     'class': 'vendor/class'
   }
