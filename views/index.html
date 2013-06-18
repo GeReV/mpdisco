@@ -14,38 +14,34 @@
     <script src="js/vendor/modernizr-2.6.2.min.js"></script>
   </head>
   <body>
-    <div id="container" role="main"></div>
+    <div id="container" role="main" class="container_12"></div>
     
     <!--[if lt IE 7]>
         <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> or <a href="http://www.google.com/chromeframe/?redirect=true">activate Google Chrome Frame</a> to improve your experience.</p>
     <![endif]-->
     <script type="text/template" id="layout_template">
-      <section id="controls"></section>
-      <section id="playlist"></section>
+      <section id="player" class="grid_12"></section>
+      <section id="library" class="grid_6"></section>
+      <section id="playlist" class="grid_6"></section>
+    </script>
+    <script type="text/template" id="playlist_item_template">        
+      {{#if title}}
+        <span class="title">{{title}}</span>
+        {{#if artist}}<span class="artist">{{artist}}</span>{{/if}}
+        {{#if album}}(<span class="album">{{album}}</span>{{#if date}}, <span class="year">{{date}}</span>{{/if}}){{/if}}
+      {{else}}
+        <span class="url">{{file}}</span>
+      {{/if}}
     </script>
     <script type="text/template" id="playlist_template">
-      <ul>
-        {{#each items}}
-          {{#if this.file}}
-            <li data-songid="{{id}}">
-              {{#if title}}
-                <span class="title">{{title}}</span>
-                {{#if artist}}<span class="artist">{{artist}}</span>{{/if}}
-                {{#if album}}(<span class="album">{{album}}</span>{{#if date}}, <span class="year">{{date}}</span>{{/if}}){{/if}}
-              {{else}}
-                <span class="url">{{file}}</span>
-              {{/if}}
-            </li>
-          {{/if}}
-        {{/each}}
-      </ul>
+      <ul class="list"></ul>
       <menu>
         <input type="text" id="url" name="url" />
         <button class="add btn">Add</button>
         <button class="remove btn pull-right" disabled="disabled">Remove</button>
       </menu>
     </script>
-    <script type="text/template" id="controls_template">
+    <script type="text/template" id="player_template">
       <div class="info">
         <img src="http://placehold.it/100x100" alt="placeholder" />
         <h2>{{title}}</h2>
@@ -57,6 +53,21 @@
         <button class="stop btn"><i class="icon-stop"></i></button>
         <button class="next btn"><i class="icon-step-forward"></i></button>
       </menu>
+    </script>
+    <script type="text/template" id="song_template">
+      <a class="name" href="#" data-id="{{title}}">{{title}}</a>
+    </script>
+    <script type="text/template" id="album_template">
+      <a class="name" href="#" data-id="{{album}}">{{album}}</a>
+      <ol class="songs tree collapsed"></ol>
+    </script>
+    <script type="text/template" id="artist_template">
+      <a class="name" href="#" data-id="{{artist}}">{{artist}}</a>
+      <ul class="albums tree collapsed"></ul>
+    </script>
+    <script type="text/template" id="library_template">
+      <ul class="artists tree"></ul>
+      <menu></menu>
     </script>
     <script src="js/vendor/jquery-min.js"></script>
     <script src="js/vendor/socket.io.js"></script>

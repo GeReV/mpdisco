@@ -1,3 +1,4 @@
+@import '960.css';
 @import 'bootstrap.css';
 @import 'font-awesome.css';
 
@@ -17,6 +18,100 @@ input[type="text"] {
 
 section {
   margin: 5px 0;
+  
+  ul {
+    list-style-type: none;
+    margin: 0;
+  }
+}
+
+.list {
+  background: #f9f9f9;
+  border: 1px solid #dedede;
+  border-radius: 2px;
+  list-style-type: none;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+
+  > * {
+    background: #f4f4f4;
+    font-size: 12px;
+    padding: 2px 5px;
+    
+    &:nth-child(even) {
+      background: #fdfdfd;
+    }
+    
+    &.current {
+      color: #3a87ad;
+    }
+    
+    &.selected {
+      background: #fcf8e3;
+    }
+    
+    span {
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .title, .url {
+      display: block;
+      font-size: 16px;
+    }
+  }
+}
+
+.tree {
+  background: #f9f9f9;
+  border: 1px solid #dedede;
+  border-radius: 2px;
+  list-style-type: none;
+  margin: 0;
+  overflow: auto;
+  padding: 0;
+  
+  .name {
+    border-top: 1px solid #fefefe;
+    border-bottom: 1px solid #dedede;
+    color: #333;
+    text-decoration: none;
+  }
+  
+  > * {
+    font-size: 14px;
+    
+    &.selected {
+      background: #fcf8e3;
+    }
+  }
+  
+  .tree {
+    border: 0;
+  }
+}
+.artists > * {
+  text-indent: 5px;
+}
+.albums > * {
+  text-indent: 20px;  
+  counter-reset: album;
+}
+.songs > * {
+  text-indent: 35px;
+}
+.songs .name:before {
+  counter-increment: album;
+  content: counter(album) ". ";
+}
+
+.collapsed {
+  height: 0;
+  visibility: hidden;
 }
 
 .frame {
@@ -54,49 +149,31 @@ section {
   
   padding: 5px;
   
-  ul {
-    background: #f9f9f9;
-    border: 1px solid #dedede;
-    border-radius: 2px;
-    list-style-type: none;
-    margin: 0;
-    overflow: auto;
-    padding: 0;
+  menu {
+    height: 30px;
+    margin-top: 10px;
+  }
+  
+  > .list {
+    height: 480px;
+  }
+}
+
+.library {
+  @extend .frame;
+  
+  padding: 5px;
+  
+  > .tree {
     height: 480px;
   }
   
-  li {
-    background: #f4f4f4;
-    font-size: 12px;
-    padding: 2px 5px;
-    
-    &:nth-child(even) {
-      background: #fdfdfd;
-    }
-    
-    &.current {
-      color: #3a87ad;
-    }
-    
-    &.selected {
-      background: #fcf8e3;
-    }
-    
-    span {
-      display: inline-block;
-      max-width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    .title, .url {
-      display: block;
-      font-size: 16px;
-    }
+  menu {
+    height: 30px;
+    margin-top: 10px;
   }
   
-  menu {
-    margin-top: 10px;
+  a {
+    display: block;
   }
 }

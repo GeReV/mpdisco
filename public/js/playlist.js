@@ -8,10 +8,16 @@ define(['mpdisco'], function(MPDisco) {
     });
       
     Playlist.PlaylistItemView = Marionette.ItemView.extend({
-      template: '#playlist_item'
+      tagName: 'li',
+      
+      template: '#playlist_item_template',
+      
+      onDomRefresh: function() {
+        this.$el.attr('data-songid', this.model.id);
+      }
     });
     
-    Playlist.PlaylistView = Marionette.ItemView.extend({
+    Playlist.PlaylistView = Marionette.CompositeView.extend({
       template: '#playlist_template',
       
       className: 'playlist',
@@ -23,6 +29,9 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       collection: new Playlist.Collection,
+      
+      itemView: Playlist.PlaylistItemView,
+      itemViewContainer: '.list',
       
       socketEvents: {
         status: 'updatePlaylist',
@@ -53,11 +62,11 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       onShow: function() {
-        $(document).on('keyup.playlist', this.handleKeyboard.bind(this));
+        $(document).on('keydown.playlist', this.handleKeyboard.bind(this));
       },
       
       onClose: function() {
-        $(document).off('keyup.playlist');
+        $(document).off('keydown.playlist');
       },
       
       updatePlaylist: function(status) {
@@ -84,7 +93,7 @@ define(['mpdisco'], function(MPDisco) {
       
       remove: function() {
         if (this.selectedItem && this.selectedItem.size()) {
-          MPDisco.network.command('deleteid', this.selectedItem.data('songid'));
+          MPDisco.network.command('deleteid', this.selectedItem.attr('data-songid'));
         }
       },
       
@@ -150,7 +159,11 @@ define(['mpdisco'], function(MPDisco) {
         },
         fn = funcs[e.which];
         
-        fn && fn.call(this);
+        if (fn) {
+          fn.call(this);
+          
+          return false;
+        }
       }
     });
   

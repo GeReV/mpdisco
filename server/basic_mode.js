@@ -1,7 +1,36 @@
 (function() {
   var Class = require('clah'),
       mpd = require('mpd'),
-      _ = require('underscore');
+      _ = require('underscore'),
+      specialCommands;
+      
+      
+  specialCommands = {
+    list: function emitSpecializedEvent(command, args, response, client) {
+      if (args.length) {
+        console.log('Emitting:', command);
+        
+        client.emit(command, response);
+        
+        console.log('Emitting:', command + ':' + args[0].toLowerCase());
+        
+        client.emit(command + ':' + args[0].toLowerCase(), {
+          args: args.slice(1),
+          data: response
+        });
+      }
+    },
+    find: function emitCommandWithEverySecondArg(command, args, response, client) {
+      if (args.length) {
+        console.log('Emitting:', command);
+        
+        client.emit(command, {
+          args: _.filter(args, function(v, i) { return (i % 2 == 1); }),
+          data: response
+        });
+      }
+    }
+  };
 
   function trim(s) {
     if (!s) {
@@ -51,14 +80,16 @@
     },
     command: function(command, args, client) {
       var processor;
+      
+      command = command.toLowerCase();
 
       if (this.canExecute(command, client)) {
-
-        console.log('Received command', command, 'from', client.userid);
 
         if (!_.isArray(args)) {
           args = [args];
         }
+        
+        console.log('Received command [', command, args.join(' '), '] from', client.userid);
 
         processor = this.commandProcessors[command];
 
@@ -90,14 +121,23 @@
         args = [args]; // Ensure array.
       }
 
-      console.log(args);
-
       cmd = mpd.cmd(command, args);
 
       this.mpd.sendCommand(cmd, function(err, result) {
+        var response = parseResponse(result),
+            special = specialCommands[command];
+        
         console.log('Result for command', command, ': ', result);
-
-        client.emit(command, parseResponse(result));
+        
+        if (special) {
+          
+          special(command, args, response, client);
+          
+        } else {
+          console.log('Emitting:', command);
+          
+          client.emit(command, response);
+        }
       });
     }
   });

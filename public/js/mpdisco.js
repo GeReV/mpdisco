@@ -16,6 +16,21 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
       constructor: function () {
         if (this.socketEvents && _.size(this.socketEvents) > 0) {
             this.delegateSocketEvents(this.socketEvents);
+            
+            // Gives a way to remove these callbacks.
+            this.socketOff = function(key) {
+              var method = this.socketEvents[key];
+              
+              if (!_.isFunction(method)) {
+                method = this[this.socketEvents[key]];
+              }
+              
+              if (!method) {
+                throw new Error('Method "' + this.socketEvents[key] + '" does not exist');
+              }
+              
+              MPDisco.network.off(key, method);
+            }.bind(this);
         }
         
         var args = Array.prototype.slice.apply(arguments);
@@ -26,16 +41,21 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
         for (var key in events) {
             var method = events[key];
             if (!_.isFunction(method)) {
-                method = this[events[key]];
+              method = this[events[key]];
             }
  
             if (!method) {
-                throw new Error('Method "' + events[key] + '" does not exist');
+              throw new Error('Method "' + events[key] + '" does not exist');
             }
  
             method = _.bind(method, this);
             MPDisco.network.on(key, method);
         };
+      },
+      reset: function(data) {
+        console.log(data);
+        
+        type.prototype.reset.call(this, data);
       }
     };
     
@@ -57,6 +77,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   
   MPDisco.network = new Network(host, 3000);
   
+  MPDisco.command = MPDisco.network.command.bind(MPDisco.network);
+  
   MPDisco.State = MPDisco.Model.extend({
     socketEvents: {
       status: 'set'
@@ -68,8 +90,9 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   MPDisco.Layout = Marionette.Layout.extend({
     template: '#layout_template',
     regions: {
-      controls: '#controls',
-      playlist: '#playlist'
+      player: '#player',
+      playlist: '#playlist',
+      library: '#library'
     }
   });
   
@@ -93,9 +116,11 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     
     this.container.show(this.layout);
     
-    this.layout.controls.show(new MPDisco.Controls.ControlsView);
+    this.layout.player.show(new MPDisco.Player.PlayerView);
     
     this.layout.playlist.show(new MPDisco.Playlist.PlaylistView);
+    
+    this.layout.library.show(new MPDisco.Library.LibraryView);
     
     this.network.command('status');
   });

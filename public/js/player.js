@@ -1,6 +1,6 @@
 define(['mpdisco'], function(MPDisco) {
-  var Controls = MPDisco.module('Controls', function(Controls, MPDisco, Backbone, Marionette) {
-    Controls.Song = MPDisco.Model.extend({
+  var Player = MPDisco.module('Player', function(Player, MPDisco, Backbone, Marionette) {
+    Player.Song = MPDisco.Model.extend({
       defaults: {
         title: 'Title',
         artist: 'Artist',
@@ -11,12 +11,12 @@ define(['mpdisco'], function(MPDisco) {
       }
     });
     
-    Controls.ControlsView = Marionette.ItemView.extend({
-      template: '#controls_template',
+    Player.PlayerView = Marionette.ItemView.extend({
+      template: '#player_template',
       
       className: 'player',
       
-      model: new Controls.Song,
+      model: new Player.Song,
       
       modelEvents: {
         change: 'render'
@@ -42,7 +42,7 @@ define(['mpdisco'], function(MPDisco) {
       initialize: function() {
         MPDisco.network.command('currentsong');
         
-        this.listenTo(MPDisco.state, 'change', this.updateControls);
+        this.listenTo(MPDisco.state, 'change', this.updatePlayer);
       },
       
       onShow: function() {
@@ -53,7 +53,7 @@ define(['mpdisco'], function(MPDisco) {
         $(document).off('keyup.player');
       },
       
-      updateControls: function() {
+      updatePlayer: function() {
         this.ui.buttons.prop('disabled', false);
         
         this.ui.play.toggleClass('pause', (MPDisco.state.get('state') === 'play'));
@@ -94,5 +94,5 @@ define(['mpdisco'], function(MPDisco) {
     });
   });
   
-  return Controls;
+  return Player;
 });

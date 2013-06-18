@@ -40,6 +40,9 @@ define(['class'], function(Class) {
     on: function(name, callback) {
       this.socket.on(name, callback);
     },
+    off: function(name, callback) {
+      this.socket.of(name, callback);
+    },
     createPublish: function(name) {
       return function(data) {
         this.publish(name, data);
