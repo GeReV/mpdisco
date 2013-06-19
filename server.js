@@ -95,9 +95,15 @@ sio.sockets.on('connection', function(client) {
   });
   //client.on disconnect
 
-  client.on('command', function(msg) {
+  client.on('command', function(cmd) {
 
-    mode.command(msg.command, msg.args, client);
+    mode.command(cmd.command, cmd.args, client);
+
+  });
+  
+  client.on('commands', function(cmds) {
+
+    mode.commands(cmds, client);
 
   });
 

@@ -17,10 +17,13 @@ define(['class'], function(Class) {
       this.socket.emit('command', data);
     },
     command: function(command, args) {
-      this.send({
+      this.socket.emit('command', {
         command: command,
         args: args || []
       });
+    },
+    commands: function(commands) {
+      this.socket.emit('commands', commands);
     },
     publish: function(name, data) {
       for (var i=0, l=this.callbacks.length; i < l; i++) {

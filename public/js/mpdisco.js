@@ -79,6 +79,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   
   MPDisco.command = MPDisco.network.command.bind(MPDisco.network);
   
+  MPDisco.commands = MPDisco.network.commands.bind(MPDisco.network);
+  
   MPDisco.State = MPDisco.Model.extend({
     socketEvents: {
       status: 'set'

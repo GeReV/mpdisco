@@ -82,12 +82,12 @@
       var processor;
       
       command = command.toLowerCase();
+      
+      if (!_.isArray(args)) {
+        args = [args];
+      }
 
       if (this.canExecute(command, client)) {
-
-        if (!_.isArray(args)) {
-          args = [args];
-        }
         
         console.log('Received command [', command, args.join(' '), '] from', client.userid);
 
@@ -110,6 +110,40 @@
       client.emit(command, {
         type: 'nopermission'
       });
+    },
+    // TODO: Review this.
+    commands: function(cmds, client) {
+      
+      cmds = cmds || [];
+      
+      cmds = _.map(cmds, function(cmd) {
+        if (!_.isArray(cmd.args)) {
+          cmd.args = [cmd.args];
+        }
+        
+        return cmd;
+      });
+      
+      if (_.all(cmds, function(cmd) { return this.canExecute(cmd, client); }, this)) {
+        
+        // TODO: Processing each command asynchronously is a bit of a problem. Skipping for now.
+        
+        cmds = _.map(cmds, function(cmd) {
+          return mpd.cmd(cmd.command, cmd.args);
+        });
+        
+        console.log(cmds);
+        
+        this.mpd.sendCommands(cmds, function(err, result) {
+          
+          console.log('Result for command list');
+          console.log(cmds);
+          console.log('===');
+          console.log(result);
+          
+        });
+        
+      }
     },
     canExecute: function() {
       return true;

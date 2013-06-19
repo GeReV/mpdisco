@@ -40,7 +40,7 @@ require.config({
     backbone: 'vendor/backbone-min',
     underscore: 'vendor/underscore-min',
     jquery: 'vendor/jquery-min',
-    jqueryui: 'vendor/jquery-ui-min',
+    jqueryui: 'vendor/jquery-ui',
     marionette: 'vendor/backbone-marionette-min',
     handlebars: 'vendor/handlebars',
     'class': 'vendor/class'

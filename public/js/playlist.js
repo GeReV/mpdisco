@@ -10,6 +10,8 @@ define(['mpdisco'], function(MPDisco) {
     Playlist.PlaylistItemView = Marionette.ItemView.extend({
       tagName: 'li',
       
+      className: 'playlist-item',
+      
       template: '#playlist_item_template',
       
       onDomRefresh: function() {
@@ -35,7 +37,7 @@ define(['mpdisco'], function(MPDisco) {
       
       socketEvents: {
         status: 'updatePlaylist',
-        currentsong: 'updatePlaylist'
+        currentsong: 'updatePlaylist',
       },
       
       collectionEvents: {
@@ -50,7 +52,7 @@ define(['mpdisco'], function(MPDisco) {
         'drop': 'drop'
       },
       
-      selectedItem: null,
+      selectedSongs: [],
       
       initialize: function() {
         MPDisco.network.command('playlistinfo');
@@ -58,12 +60,70 @@ define(['mpdisco'], function(MPDisco) {
         this.listenTo(MPDisco.state, 'change:songid', this.updatePlaylist);
       },
       
-      onDomRefresh: function() {
-        this.updatePlaylist(MPDisco.state.toJSON());
+      onCompositeCollectionRendered: function() {
+        var that = this;
         
         this.$el.droppable({
           hoverClass: 'playlist-drop',
           scope: 'media'
+        });
+        
+        this.ui.playlist.sortable({
+          appendTo: this.$el,
+          helper: function() {
+            return document.createElement('ul');
+          },
+          opacity: 0.8,
+          start: function(e, ui) {
+            ui.placeholder.removeAttr('style');
+            
+            if (!ui.item.hasClass('selected')) {
+              that.select(ui.item);
+            }
+            
+            var elements = ui.item.parent().children('.selected').not('.ui-sortable-placeholder');
+            
+            if (!elements.size()) {
+              elements = ui.item;
+            }
+            
+            ui.helper.append(elements.clone(true).show());
+            
+            elements.hide();
+            
+            ui.item.data('multidrag', elements);
+          },
+          stop: function(e, ui) {
+            var elements = ui.item.data('multidrag'),
+                i = elements.index(ui.item),
+                playlist = this.ui.playlist;
+            
+            ui.item.before(elements.slice(0, i))
+            ui.item.after(elements.slice(i + 1));
+            
+            elements.show();
+            
+            commands = playlist.children().map(function(i, v) {
+              var el = $(v),
+                  songid = el.data('songid');
+              
+              return {
+                command: 'moveid',
+                args: [ songid, playlist.find('[data-songid="' + songid + '"]').index() ]
+              };
+            }).toArray();
+            
+            MPDisco.commands(commands);
+            
+          }.bind(this)
+        });
+        
+        this.ui.playlist.disableSelection();
+        
+        this.updatePlaylist(MPDisco.state.toJSON());
+        
+        $.each(this.selectedSongs, function(i, v) {
+          that.ui.playlist.find('[data-songid="' + v + '"]').addClass('selected');
         });
       },
       
@@ -109,28 +169,73 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       play: function(e) {
-        var item = (e && e.currentTarget) ? $(e.currentTarget) : this.selectedItem;
+        var item = (e && e.currentTarget) ? $(e.currentTarget) : this.selectedItems.first();
         
         MPDisco.network.command('playid', item.data('songid'));
       },
       
       remove: function() {
-        if (this.selectedItem && this.selectedItem.size()) {
-          MPDisco.network.command('deleteid', this.selectedItem.attr('data-songid'));
-        }
+        var commands = this.ui.playlist.find('.selected').map(function(i, v) {
+          return {
+            command: 'deleteid',
+            args: [ $(v).data('songid') ]
+          };
+        }).toArray();
+          
+        MPDisco.commands(commands);
       },
       
       select: function(e) {
-        this.selectedItem = e;
+        var item = e;
         
         if (e.currentTarget) {
-          this.selectedItem = $(e.currentTarget);
+          item = $(e.currentTarget);
         }
         
-        this.ui.remove.prop('disabled', false)
+        if (!item.size()) {
+          return;
+        }
         
-        this.selectedItem.addClass('selected')
+        this.ui.remove.prop('disabled', false);
+        
+        if (e.ctrlKey || e.metaKey) {
+          this.selectToggle(item);
+        } else if (e.shiftKey) {
+          this.selectRange(this.$('.selected').last(), item);
+        } else if (!item.hasClass('selected')) {
+          this.selectOne(item);
+        }
+        
+        this.selectedSongs = this.$('.selected').map(function(i, v) {
+          return $(v).data('songid');
+        }).toArray();
+      },
+      
+      selectOne: function(item) {
+        item.addClass('selected')
           .siblings().removeClass('selected');
+      },
+      
+      selectToggle: function(item) {
+        item.toggleClass('selected');
+      },
+      
+      selectRange: function(from, to) {
+        if (!from && !to) {
+          return;
+        }
+        
+        if (!from.size()) {
+          this.selectOne(to);
+          
+          return;
+        }
+        
+        var selectedItems = (from.index() >= to.index()) ? from.prevUntil(to) : from.nextUntil(to);
+        
+        this.ui.playlist.children().removeClass('selected');
+        
+        selectedItems.addBack().add(to).addClass('selected');
       },
       
       selectPrev: function() {
