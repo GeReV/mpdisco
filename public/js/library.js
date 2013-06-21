@@ -1,4 +1,5 @@
-define(['mpdisco'], function(MPDisco) {
+define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload', 'vendor/jquery.fileupload-validate'], function(MPDisco) {
+  
   var Library = MPDisco.module('Library', function(Library, MPDisco, Backbone, Marionette, $) {
     
     Library.Artist = MPDisco.Model.extend({
@@ -289,6 +290,18 @@ define(['mpdisco'], function(MPDisco) {
       itemView: Library.LibraryArtistView,
       itemViewContainer: '.tree',
       
+      ui: {
+        files: '#fileupload',
+        library: '.tree',
+        overlay: '#overlay'
+      },
+      
+      events: {
+        'drop #overlay': 'drop',
+        'dragleave #overlay': 'clearDrop',
+        'dragend #overlay': 'clearDrop'
+      },
+      
       initialize: function() {
         MPDisco.command('list', 'artist');
         
@@ -299,7 +312,49 @@ define(['mpdisco'], function(MPDisco) {
         this.$('li').removeClass('selected');
         
         view.$el.addClass('selected');
-      }
+      },
+      
+      onShow: function() {
+        var that = this;
+        
+        $(document).on('dragenter.library', function() {
+          that.$el.addClass('library-drop');
+          that.ui.overlay.addClass('show');
+        });
+      },
+      onClose: function() {
+        $(document).off('dragover.library');
+      },
+      
+      onRender: function() {
+        var that = this;
+        
+        this.ui.files.fileupload({
+          add: function(e, data) {
+            if (data.files.length) {
+              that.upload(data);
+            }
+          },
+          progress: function(e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            
+            console.log(progress);
+          }
+        });
+      },
+      
+      drop: function() {
+        this.clearDrop();
+      },
+      
+      clearDrop: function() {
+        this.$el.removeClass('library-drop');
+        this.ui.overlay.removeClass('show');
+      },
+      
+      upload: function(data) {
+        data.submit();
+      },
     });
   });
   

@@ -7,6 +7,20 @@
   margin: 15px auto;
 }
 
+#overlay {
+  background-color: transparent;
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  &.show {
+    display: block;
+  }
+}
+
 menu {
   margin: 0;
   padding: 0;
@@ -109,6 +123,21 @@ section {
   border-radius: 3px;
 }
 
+.dropzone {
+  background: rgba(255, 255, 255, 0.6);
+  content: "Drop";
+  color: #333;
+  font-size: 26px;
+  line-height: 480px;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .player {
   @extend .frame;
   
@@ -163,7 +192,7 @@ section {
     position: relative;
   }
   
-  .ui-sortable-placeholder {
+  .playlist-item-placeholder {
     /* This makes sure all elements stay in place while displaying the placeholder. I honestly have no idea why this works. */
     border: 2px solid #333;
     height: 0;
@@ -210,8 +239,24 @@ section {
   
   padding: 5px;
   
+  &.library-drop > .tree:after {
+    background: rgba(255, 255, 255, 0.6);
+    content: "Drop";
+    color: #333;
+    font-size: 26px;
+    line-height: 480px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
   > .tree {
     height: 480px;
+    position: relative;
   }
   
   menu {
@@ -221,6 +266,10 @@ section {
   
   a {
     display: block;
+  }
+  
+  input[type="file"] {
+    display: none;
   }
 }
 

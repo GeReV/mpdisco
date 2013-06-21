@@ -17,6 +17,7 @@ var port = process.env.PORT || 3000,
       basic:  require('./server/basic_mode.js'),
       master: require('./server/master_mode.js')
     },
+    upload = require('./server/file_upload.js'),
     sio,
     clients = {},
     mode;
@@ -29,7 +30,7 @@ app.set('views', __dirname + '/views');*/
 app.use(express.logger());
 app.use(express.compress());
 app.use(express.methodOverride());
-app.use(express.bodyParser());
+//app.use(express.bodyParser());
 
 app.use(scss.middleware({
   src: __dirname + '/css',
@@ -43,6 +44,8 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function (req, res) {
   res.sendfile('views/index.html');
 });
+
+app.all('/upload', upload);
 
 server.listen(port);
 

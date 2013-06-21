@@ -8,6 +8,10 @@ require.config({
       deps: ['jquery'],
       exports: '$'
     },
+    jquerysortable: {
+      deps: ['jquery'],
+      exports: '$'
+    },
     underscore: {
       exports: '_'
     },
@@ -39,8 +43,10 @@ require.config({
     text: 'vendor/requirejs-plugins/text',
     backbone: 'vendor/backbone-min',
     underscore: 'vendor/underscore-min',
-    jquery: 'vendor/jquery-min',
+    jquery: 'vendor/jquery',
     jqueryui: 'vendor/jquery-ui',
+    'jquery.ui.widget': 'vendor/jquery.ui.widget',
+    jquerysortable: 'vendor/jquery-sortable',
     marionette: 'vendor/backbone-marionette-min',
     handlebars: 'vendor/handlebars',
     'class': 'vendor/class'

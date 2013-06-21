@@ -63,7 +63,7 @@ define(['mpdisco'], function(MPDisco) {
       onCompositeCollectionRendered: function() {
         var that = this;
         
-        this.$el.droppable({
+        this.ui.playlist.droppable({
           hoverClass: 'playlist-drop',
           scope: 'media'
         });
@@ -73,10 +73,9 @@ define(['mpdisco'], function(MPDisco) {
           helper: function() {
             return document.createElement('ul');
           },
+          placeholder: 'playlist-item-placeholder',
           opacity: 0.8,
           start: function(e, ui) {
-            ui.placeholder.removeAttr('style');
-            
             if (!ui.item.hasClass('selected')) {
               that.select(ui.item);
             }
