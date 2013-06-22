@@ -17,9 +17,14 @@ define(['class'], function(Class) {
       this.socket.emit('command', data);
     },
     command: function(command, args) {
+      
+      if (args === undefined || args === null) {
+        args = [];
+      }
+      
       this.socket.emit('command', {
         command: command,
-        args: args || []
+        args: args
       });
     },
     commands: function(commands) {

@@ -160,6 +160,27 @@ section {
   button {
     width: 38px;
   }
+  
+  .repeat {
+    position: relative;
+    
+    &.active.single:after {
+      background: #333;
+      border-radius: 50%;
+      color: #fff;
+      content: "1";
+      display: block;
+      font-size: 7px;
+      font-weight: bold;
+      line-height: 10px;
+      text-align: center;
+      position: absolute;
+      bottom: 4px;
+      right: 8px;
+      width: 9px;
+      height: 9px;
+    }
+  }
 }
 
 .playlist {
