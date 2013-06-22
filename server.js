@@ -23,7 +23,6 @@ var port = process.env.PORT || 3000,
     upload = require('./server/file_upload.js'),
     metadata = require('./server/meta_data.js'),
     sio,
-    clients = {},
     mode;
 
 /*app.engine('html', engines.handlebars);
@@ -80,12 +79,6 @@ sio.sockets.on('connection', function(client) {
 
   client.broadcast.emit('clientconnected', client.userid);
 
-  //tell the player they connected, giving them their id and id's of other clients.
-
-  clients[client.userid] = client;
-
-  //mode.setMaster(client);
-
   //Useful to know when someone connects
   console.log('\t socket.io:: client ' + client.userid + ' connected');
 
@@ -97,7 +90,7 @@ sio.sockets.on('connection', function(client) {
 
     client.broadcast.emit('clientdisconnected', client.userid);
 
-    delete clients[client.userid];
+    mode.disconnected(client);
 
   });
   //client.on disconnect
@@ -119,11 +112,7 @@ sio.sockets.on('connection', function(client) {
   });
 
   // Let the client know connection was achieved and send status.
-  client.emit('connected', {
-    id: client.userid,
-    clients: Object.keys(clients),
-    mode: mode.type
-  });
+  mode.connected(client);
 
 });
 //sio.sockets.on connection
@@ -132,7 +121,7 @@ mpdClient.on('ready', function() {
   console.log('\t :: MPD :: connection established')
 });
 
-mode = new modes.basic(mpdClient, clients, commandProcessors);
+mode = new modes.master(mpdClient, commandProcessors);
 
 upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
 upload.uploadPath = function(file, callback) {

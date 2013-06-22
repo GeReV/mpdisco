@@ -46,7 +46,9 @@ define(['mpdisco'], function(MPDisco) {
       initialize: function() {
         MPDisco.network.command('currentsong');
         
-        this.listenTo(MPDisco.state, 'change', this.updatePlayer);
+        this.listenTo(MPDisco.state, 'change', function() {
+          this.updatePlayer();
+        });
       },
       
       onShow: function() {
@@ -58,8 +60,6 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       updatePlayer: function() {
-        this.ui.buttons.prop('disabled', false);
-        
         this.ui.play.toggleClass('pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-play', (MPDisco.state.get('state') !== 'play'));
@@ -86,8 +86,6 @@ define(['mpdisco'], function(MPDisco) {
         }
       },
       pauseSong: function() {
-        this.ui.play.prop('disabled', true);
-        
         MPDisco.command('pause', 1);
       },
       toggleShuffle: function() {

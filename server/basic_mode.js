@@ -8,11 +8,11 @@
   specialCommands = {
     list: function emitSpecializedEvent(command, args, response, client) {
       if (args.length) {
-        console.log('Emitting:', command);
+        //console.log('Emitting:', command);
         
         client.emit(command, response);
         
-        console.log('Emitting:', command + ':' + args[0].toLowerCase());
+        //console.log('Emitting:', command + ':' + args[0].toLowerCase());
         
         client.emit(command + ':' + args[0].toLowerCase(), {
           args: args.slice(1),
@@ -22,7 +22,7 @@
     },
     find: function emitCommandWithEverySecondArg(command, args, response, client) {
       if (args.length) {
-        console.log('Emitting:', command);
+        //console.log('Emitting:', command);
         
         client.emit(command, {
           args: _.filter(args, function(v, i) { return (i % 2 == 1); }),
@@ -70,13 +70,25 @@
   }
 
   var BasicMode = Class.extend({
-    init: function(mpd, clients, cmdProcessors) {
+    init: function(mpd, cmdProcessors) {
       this.type = 'freeforall';
 
       this.mpd = mpd;
-      this.clients = clients;
+      this.clients = [];
 
       this.commandProcessors = cmdProcessors;
+    },
+    connected: function(client) {
+      this.clients.push(client);
+      
+      client.emit('connected', {
+        id: client.userid,
+        clients: _.map(this.clients, function(v) { return v.userid; }),
+        mode: this.type
+      });
+    },
+    disconnected: function(client) {
+      this.clients.splice(this.clients.indexOf(client), 1);
     },
     command: function(command, args, client) {
       var processor;
@@ -89,7 +101,7 @@
 
       if (this.canExecute(command, client)) {
         
-        console.log('Received command [', command, args.join(' '), '] from', client.userid);
+        //console.log('Received command [', command, args.join(' '), '] from', client.userid);
 
         processor = this.commandProcessors[command];
 
@@ -161,14 +173,14 @@
         var response = parseResponse(result),
             special = specialCommands[command];
         
-        console.log('Result for command', command, ': ', result);
+        //console.log('Result for command', command, ': ', result);
         
         if (special) {
           
           special(command, args, response, client);
           
         } else {
-          console.log('Emitting:', command);
+          //console.log('Emitting:', command);
           
           client.emit(command, response);
         }

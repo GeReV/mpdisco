@@ -114,15 +114,17 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   });
   
   MPDisco.addInitializer(function() {
+    var mode = MPDisco.module('MasterMode').Mode;
+    
     this.layout = new MPDisco.Layout;
     
     this.container.show(this.layout);
     
-    this.layout.player.show(new MPDisco.Player.PlayerView);
+    this.layout.player.show(new mode.player);
     
-    this.layout.playlist.show(new MPDisco.Playlist.PlaylistView);
+    this.layout.playlist.show(new mode.playlist);
     
-    this.layout.library.show(new MPDisco.Library.LibraryView);
+    this.layout.library.show(new mode.library);
     
     this.network.command('status');
   });

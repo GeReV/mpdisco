@@ -53,9 +53,11 @@ require.config({
   }
 });
 
-require(['mpdisco', 'syncer', 'player', 'playlist', 'library'], function(MPDisco) {
+require(['mpdisco', 'syncer', 'basic_mode', 'master_mode'], function(MPDisco) {
 
   MPDisco.vent.on('connected', function(data) {
+    MPDisco.client = data.id;
+    
     console.log('Connected.', data);
   });
 
