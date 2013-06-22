@@ -30,13 +30,16 @@ define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
       if (_.isObject(cmd) && cmd.command) {
         command = cmd.command;
         args = cmd.args;
-        return;
       }
       
-      MPDisco.network.command(command, args);
+      MPDisco.command(command, args);
     },
     commands: {
-      playlist: 'playlistinfo',
+      //playlist: 'playlistinfo',
+      database: {
+        command: 'list',
+        args: 'artist'
+      },
       player: ['currentsong', 'status'],
       connected: ['currentsong', 'status', 'playlistinfo']
     }

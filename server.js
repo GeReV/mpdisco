@@ -1,4 +1,6 @@
 var port = process.env.PORT || 3000,
+    path = require('path'),
+    _ = require('underscore'),
     http = require('http'),
     io = require('socket.io'),
     express = require('express'),
@@ -12,12 +14,14 @@ var port = process.env.PORT || 3000,
     }),
     app = express(),
     server = http.createServer(app),
+    config = require('./config.json'),
     commandProcessors = require('./server/command_processors.js'),
     modes = {
       basic:  require('./server/basic_mode.js'),
       master: require('./server/master_mode.js')
     },
     upload = require('./server/file_upload.js'),
+    metadata = require('./server/meta_data.js'),
     sio,
     clients = {},
     mode;
@@ -45,7 +49,7 @@ app.get('/', function (req, res) {
   res.sendfile('views/index.html');
 });
 
-app.all('/upload', upload);
+app.all('/upload', upload.action);
 
 server.listen(port);
 
@@ -129,3 +133,19 @@ mpdClient.on('ready', function() {
 });
 
 mode = new modes.basic(mpdClient, clients, commandProcessors);
+
+upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
+upload.uploadPath = function(file, callback) {
+  metadata.forFile(file, function(data) {
+    
+    var parts = _.compact([
+      config.music_directory.replace(/^~/, process.env.HOME),
+  
+      metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
+  
+      metadata.safeName(data.album)
+    ]);
+    
+    callback(path.join.apply(this, parts));
+  });
+};

@@ -26,6 +26,8 @@
     "node-uuid": "1.4.x",
     "underscore": "1.4.x",
     "mpd": "1.0.x",
+    "musicmetadata": "0.2.x",
+    "mkdirp": "0.3.x",
     "formidable": "1.0.x" 
   },
   "license": "MIT",

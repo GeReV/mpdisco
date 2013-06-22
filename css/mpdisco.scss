@@ -121,6 +121,8 @@ section {
   background: #eee;
   border: 1px solid #dedede;
   border-radius: 3px;
+  padding: 5px;
+  position: relative;
 }
 
 .dropzone {
@@ -140,8 +142,6 @@ section {
 
 .player {
   @extend .frame;
-  
-  padding: 5px;
   
   .info {
     overflow: hidden;
@@ -164,8 +164,6 @@ section {
 
 .playlist {
   @extend .frame;
-  
-  padding: 5px;
   
   &.playlist-drop > .list:after {
     background: rgba(255, 255, 255, 0.6);
@@ -237,8 +235,6 @@ section {
 .library {
   @extend .frame;
   
-  padding: 5px;
-  
   &.library-drop > .tree:after {
     background: rgba(255, 255, 255, 0.6);
     content: "Drop";
@@ -247,11 +243,11 @@ section {
     line-height: 480px;
     text-align: center;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
   }
   
   > .tree {
@@ -270,6 +266,71 @@ section {
   
   input[type="file"] {
     display: none;
+  }
+  
+  &.uploading > .upload {
+    background: #f9f9f9;
+    box-sizing: border-box;
+    overflow: hidden;
+    padding: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .upload > * {
+    
+    line-height: 20px;
+    padding: 2px 5px;
+    margin-bottom: 5px;
+    
+    &.failed {
+      color: #be7c80;
+      
+      .progress {
+        background-image: -moz-linear-gradient(top, #e3c6c8, #be7c80);
+        background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e3c6c8), to(#be7c80));
+        background-image: -webkit-linear-gradient(top, #e3c6c8, #be7c80);
+        background-image: -o-linear-gradient(top, #e3c6c8, #be7c80);
+        background-image: linear-gradient(to bottom, #e3c6c8, #be7c80);
+      }
+    }
+    
+    span {
+      display: inline-block;
+    }
+    
+    .filename {
+      max-width: 310px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .progress-bar {
+      border: 1px solid #cdcdcd;
+      border-radius: 3px;
+      float: right;
+      margin: 1px 0;
+      padding: 2px;
+      width: 110px;
+      height: 12px;
+      vertical-align: baseline;
+    }
+    
+    .progress {
+      background-image: -moz-linear-gradient(top, #c6d2e3, #7c96be);
+      background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#c6d2e3), to(#7c96be));
+      background-image: -webkit-linear-gradient(top, #c6d2e3, #7c96be);
+      background-image: -o-linear-gradient(top, #c6d2e3, #7c96be);
+      background-image: linear-gradient(to bottom, #c6d2e3, #7c96be);
+      display: inline-block;
+      vertical-align: top;
+      width: 0;
+      height: 100%;
+    }
   }
 }
 

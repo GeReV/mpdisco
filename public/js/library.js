@@ -291,15 +291,21 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       itemViewContainer: '.tree',
       
       ui: {
+        overlay: '#overlay',
         files: '#fileupload',
         library: '.tree',
-        overlay: '#overlay'
+        upload: '.upload'
       },
       
       events: {
         'drop #overlay': 'drop',
         'dragleave #overlay': 'clearDrop',
-        'dragend #overlay': 'clearDrop'
+        'dragend #overlay': 'clearDrop',
+        'fileuploadadd': 'createProgress',
+        'fileuploadprocessstart': 'startProgress',
+        'fileuploadprogress': 'showProgress',
+        'fileuploaddone': 'finishProgress',
+        'fileuploadfail': 'failProgress'
       },
       
       initialize: function() {
@@ -330,16 +336,8 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         var that = this;
         
         this.ui.files.fileupload({
-          add: function(e, data) {
-            if (data.files.length) {
-              that.upload(data);
-            }
-          },
-          progress: function(e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            
-            console.log(progress);
-          }
+          autoUpload: true,
+          sequentialUploads: true
         });
       },
       
@@ -352,9 +350,35 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         this.ui.overlay.removeClass('show');
       },
       
-      upload: function(data) {
-        data.submit();
+      startProgress: function() {
+        this.$el.addClass('uploading');
       },
+      finishProgress: function(e, data) {
+        data.context.addClass('finished');
+        
+        if (!this.ui.upload.children().not('.finished').length) {
+          // Finished upload batch.
+          
+          this.ui.upload.empty();
+          
+          this.$el.removeClass('uploading');
+          
+          MPDisco.command('update');
+        }
+      },
+      createProgress: function(e, data) {
+        if (data.files.length) {
+          data.context = $('<li><span class="filename">' + data.files[0].name + '</span><span class="progress-bar"><span class="progress"></span></span></li>').appendTo(this.ui.upload);
+        }
+      },
+      showProgress: function(e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        
+        data.context.find('.progress').css('width', progress + '%');
+      },
+      failProgress: function(e, data) {
+        data.context.addClass('failed');
+      }
     });
   });
   
