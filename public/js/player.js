@@ -27,7 +27,9 @@ define(['mpdisco'], function(MPDisco) {
         'click .next': 'nextSong',
         'click .stop': 'stopSong',
         'click .play': 'playSong',
-        'click .pause': 'pauseSong'
+        'click .pause': 'pauseSong',
+        'click .shuffle': 'toggleShuffle',
+        'click .repeat': 'toggleRepeat'
       },
       
       ui: {
@@ -36,6 +38,8 @@ define(['mpdisco'], function(MPDisco) {
         next: '.next',
         stop: '.stop',
         play: '.play',
+        shuffle: '.shuffle',
+        repeat: '.repeat',
         playIcon: '.play i'
       },
       
@@ -59,6 +63,10 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.play.toggleClass('pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-play', (MPDisco.state.get('state') !== 'play'));
+        
+        this.ui.shuffle.toggleClass('active', (MPDisco.state.get('random') === '1'));
+        this.ui.repeat.toggleClass('active', (MPDisco.state.get('repeat') === '1'));
+        this.ui.repeat.toggleClass('single', (MPDisco.state.get('single') === '1'));
       },
       
       prevSong: function() {
@@ -72,15 +80,43 @@ define(['mpdisco'], function(MPDisco) {
       },
       playSong: function() {
         if (MPDisco.state.get('state') === 'pause') {
-          MPDisco.network.command('pause', 0);
+          MPDisco.command('pause', 0);
         } else {
-          MPDisco.network.command('play');
+          MPDisco.command('play');
         }
       },
       pauseSong: function() {
         this.ui.play.prop('disabled', true);
         
-        MPDisco.network.command('pause', 1);
+        MPDisco.command('pause', 1);
+      },
+      toggleShuffle: function() {
+        var state = (~MPDisco.state.get('random') & 1);
+        
+        this.ui.shuffle.toggleClass('active', state);
+        
+        MPDisco.command('random', state);
+      },
+      toggleRepeat: function() {
+        var repeat = +MPDisco.state.get('repeat'),
+            single = +MPDisco.state.get('single');
+            
+        if (repeat && single) {
+          this.ui.repeat.removeClass('active single');
+          
+          MPDisco.commands([
+            { command: 'repeat', args: 0 },
+            { command: 'single', args: 0 }
+          ]);
+        } else if (repeat) {
+          this.ui.repeat.addClass('single');
+          
+          MPDisco.command('single', 1);
+        }else {
+          this.ui.repeat.addClass('active');
+          
+          MPDisco.command('repeat', 1);
+        }
       },
       
       handleKeyboard: function(e) {

@@ -35,13 +35,14 @@ define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
       MPDisco.command(command, args);
     },
     commands: {
-      //playlist: 'playlistinfo',
+      connected: ['currentsong', 'status', 'playlistinfo'],
+      playlist: 'playlistinfo',
       database: {
         command: 'list',
         args: 'artist'
       },
       player: ['currentsong', 'status'],
-      connected: ['currentsong', 'status', 'playlistinfo']
+      options: ['status']
     }
   });
   
