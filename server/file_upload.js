@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 /*
  * jQuery File Upload Plugin Node.js Example 2.0.3
  * https://github.com/blueimp/jQuery-File-Upload
@@ -17,6 +16,8 @@
     'use strict';
     var path = require('path'),
         fs = require('fs'),
+        mkdirp = require('mkdirp'),
+        _ = require('underscore'),
         // Since Node 0.8, .existsSync() moved from path to fs:
         _existsSync = fs.existsSync || path.existsSync,
         formidable = require('formidable'),
@@ -32,13 +33,6 @@
             // Files not matched by this regular expression force a download dialog,
             // to prevent executing any scripts in the context of the service domain:
             safeFileTypes: /\.(gif|jpe?g|png)$/i,
-            imageTypes: /\.(gif|jpe?g|png)$/i,
-            imageVersions: {
-                'thumbnail': {
-                    width: 80,
-                    height: 80
-                }
-            },
             accessControl: {
                 allowOrigin: '*',
                 allowMethods: 'OPTIONS, HEAD, GET, POST, PUT, DELETE',
@@ -50,9 +44,6 @@
                 cert: fs.readFileSync('/Applications/XAMPP/etc/ssl.crt/server.crt')
             },
             */
-            nodeStatic: {
-                cache: 3600 // seconds to cache served files
-            }
         },
         utf8encode = function (str) {
             return unescape(encodeURIComponent(str));
@@ -137,6 +128,13 @@
                 res.statusCode = 405;
                 res.end();
             }
+        },
+        fileUpload = {
+          action: serve,
+          options: options,
+          uploadPath: function(filePath, callback) {
+            callback(options.uploadDir);
+          }
         };
     /*fileServer.respond = function (pathname, status, _headers, files, stat, req, res, finish) {
         if (!options.safeFileTypes.test(files[0])) {
@@ -176,14 +174,6 @@
                 baseUrl = (options.ssl ? 'https:' : 'http:') +
                     '//' + req.headers.host + options.uploadUrl;
             this.url = this.delete_url = baseUrl + encodeURIComponent(this.name);
-            Object.keys(options.imageVersions).forEach(function (version) {
-                if (_existsSync(
-                        options.uploadDir + '/' + version + '/' + that.name
-                    )) {
-                    that[version + '_url'] = baseUrl + version + '/' +
-                        encodeURIComponent(that.name);
-                }
-            });
         }
     };
     UploadHandler.prototype.get = function () {
@@ -235,25 +225,19 @@
             }
         }).on('file', function (name, file) {
             var fileInfo = map[path.basename(file.path)];
+                
             fileInfo.size = file.size;
             if (!fileInfo.validate()) {
                 fs.unlink(file.path);
                 return;
             }
-            fs.renameSync(file.path, options.uploadDir + '/' + fileInfo.name);
-            if (options.imageTypes.test(fileInfo.name)) {
-                Object.keys(options.imageVersions).forEach(function (version) {
-                    counter += 1;
-                    var opts = options.imageVersions[version];
-                    imageMagick.resize({
-                        width: opts.width,
-                        height: opts.height,
-                        srcPath: options.uploadDir + '/' + fileInfo.name,
-                        dstPath: options.uploadDir + '/' + version + '/' +
-                            fileInfo.name
-                    }, finish);
-                });
-            }
+            
+            fileUpload.uploadPath(file.path, function(uploadPath) {
+              
+              mkdirp.sync(uploadPath);
+              
+              fs.renameSync(file.path, path.join(uploadPath, fileInfo.name));
+            });
         }).on('aborted', function () {
             tmpFiles.forEach(function (file) {
                 fs.unlink(file);
@@ -273,9 +257,6 @@
             fileName = path.basename(decodeURIComponent(handler.req.url));
             if (fileName[0] !== '.') {
                 fs.unlink(options.uploadDir + '/' + fileName, function (ex) {
-                    Object.keys(options.imageVersions).forEach(function (version) {
-                        fs.unlink(options.uploadDir + '/' + version + '/' + fileName);
-                    });
                     handler.callback({success: !ex});
                 });
                 return;
@@ -284,5 +265,5 @@
         handler.callback({success: false});
     };
 
-    module.exports = serve;
+    module.exports = fileUpload;
 }());

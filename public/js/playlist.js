@@ -55,7 +55,7 @@ define(['mpdisco'], function(MPDisco) {
       selectedSongs: [],
       
       initialize: function() {
-        MPDisco.network.command('playlistinfo');
+        MPDisco.command('playlistinfo');
         
         this.listenTo(MPDisco.state, 'change:songid', this.updatePlaylist);
       },
