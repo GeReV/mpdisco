@@ -30,16 +30,14 @@
       this.clients = this.clients.splice(this.clients.indexOf(client), 1);
       
       if (!this.clients.length) {
-        console.log('hit 1');
         this.setMaster(null);
       } else if (this.clients[0] !== this.master) {
-        console.log('hit 2');
         this.setMaster(this.clients[0]);
       }
     },
     
     canExecute: function(command, client) {
-      return this.isMaster(client) || true;
+      return this.isMaster(client) || isWhitelistCommand(command);
     },
     
     isMaster: function(client) {
@@ -56,7 +54,13 @@
         this.master.emit('master', this.master.userid);
         this.master.broadcast.emit('master', this.master.userid);
       }
-    }
+    },
+    
+    isWhitelistCommand: function(cmd) {
+      return (this.commandWhitelist.indexOf(cmd.command) !== -1);
+    },
+    
+    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list']
     
   });
   
