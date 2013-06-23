@@ -66,10 +66,12 @@
       <ul class="albums tree collapsed"></ul>
     </script>
     <script type="text/template" id="library_template">
-      <ul class="artists tree"></ul>
-      <menu></menu>
-      <input type="file" id="fileupload" name="files[]" data-url="upload" multiple="multiple" />
-      <ul class="upload"></ul>
+      <div class="content">
+        <ul class="artists tree"></ul>
+        <ul class="upload"></ul>
+        <menu></menu>
+        <input type="file" id="fileupload" name="files[]" data-url="upload" multiple="multiple" />
+      </div>
       <div id="overlay"></div>
     </script>
     <script src="js/vendor/jquery-min.js"></script>

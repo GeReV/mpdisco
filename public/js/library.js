@@ -74,7 +74,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
     Library.LibrarySongView = Marionette.ItemView.extend({
       tagName: 'li',
       
-      className: 'song',
+      className: 'library-item song',
       
       template: '#song_template',
       
@@ -92,9 +92,16 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         this.$el.attr('data-id', this.model.get('title'));
         
         this.$el.draggable({
+          appendTo: '.library',
           distance: 2,
-          helper: 'clone',
-          scope: 'media'
+          scope: 'media',
+          helper: function(e) {
+            var item = $(e.currentTarget);
+            
+            return $('<div/>', {
+              'class': item.attr('class')
+            }).html(item.html()).eq(0);
+          }
         });
       },
       
@@ -118,7 +125,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
     Library.LibraryAlbumView = Marionette.CompositeView.extend({
       tagName: 'li',
       
-      className: 'album',
+      className: 'library-item album',
       
       template: '#album_template',
       
@@ -145,9 +152,16 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         this.$el.attr('data-id', this.model.get('album'));
         
         this.$el.draggable({
+          appendTo: '.library',
           distance: 2,
-          helper: 'clone',
-          scope: 'media'
+          scope: 'media',
+          helper: function(e) {
+            var item = $(e.currentTarget);
+            
+            return $('<div/>', {
+              'class': item.attr('class')
+            }).html(item.html()).eq(0);
+          }
         });
       },
       
@@ -203,7 +217,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
     Library.LibraryArtistView = Marionette.CompositeView.extend({
       tagName: 'li',
       
-      className: 'artist',
+      className: 'library-item artist',
       
       template: '#artist_template',
       
@@ -230,9 +244,16 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         this.$el.attr('data-id', this.model.get('artist'));
         
         this.$el.draggable({
+          appendTo: '.library',
           distance: 2,
-          helper: 'clone',
-          scope: 'media'
+          scope: 'media',
+          helper: function(e) {
+            var item = $(e.currentTarget);
+            
+            return $('<div/>', {
+              'class': item.attr('class')
+            }).html(item.html()).eq(0);
+          }
         });
       },
       
@@ -325,7 +346,6 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         
         $(document).on('dragenter.library', function() {
           that.$el.addClass('library-drop');
-          that.ui.overlay.addClass('show');
         });
       },
       onClose: function() {
@@ -347,7 +367,6 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       
       clearDrop: function() {
         this.$el.removeClass('library-drop');
-        this.ui.overlay.removeClass('show');
       },
       
       startProgress: function() {
@@ -361,7 +380,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
           
           this.ui.upload.empty();
           
-          this.$el.removeClass('uploading');
+          this.$el.removeClass('library-drop uploading');
           
           MPDisco.command('update');
         }
@@ -372,7 +391,14 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         }
       },
       showProgress: function(e, data) {
-        var progress = parseInt(data.loaded / data.total * 100, 10);
+        var progress = parseInt(data.loaded / data.total * 100, 10),
+            itemTop = data.context.position().top,
+            itemHeight = data.context.height(),
+            height = this.ui.upload.height();
+        
+        if (itemTop > height) {
+          this.ui.upload.prop('scrollTop', itemTop + itemHeight - height);
+        }
         
         data.context.find('.progress').css('width', progress + '%');
       },
