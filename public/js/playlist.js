@@ -185,7 +185,7 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       select: function(e) {
-        var item = e;
+        var item = e, itemTop, height, scrollTop;
         
         if (e.currentTarget) {
           item = $(e.currentTarget);
@@ -205,21 +205,41 @@ define(['mpdisco'], function(MPDisco) {
           this.selectOne(item);
         }
         
+        scrollTop = this.ui.playlist.prop('scrollTop');
+        
+        height = this.ui.playlist.height();
+        
+        itemTop = item.position().top;
+        
+        // itemTop is relative to scrollTop.
+        if (itemTop < 0) {
+          this.ui.playlist.prop('scrollTop', scrollTop + itemTop);
+        }else if (itemTop > height) {
+          this.ui.playlist.prop('scrollTop', scrollTop + itemTop - height + item.height());
+        }
+        
         this.selectedSongs = this.$('.selected').map(function(i, v) {
           return $(v).data('songid');
         }).toArray();
       },
-      
+      selectAll: function() {
+        var items = this.$('.playlist-item');
+        
+        this.selectRange(items.first(), items.last());
+      },
+      selectNone: function() {
+        this.$('.selected').removeClass('selected');
+      },
       selectOne: function(item) {
         item.addClass('selected')
           .siblings().removeClass('selected');
       },
-      
       selectToggle: function(item) {
         item.toggleClass('selected');
       },
-      
       selectRange: function(from, to) {
+        var itemTop, height, scrollTop;
+        
         if (!from && !to) {
           return;
         }
@@ -235,13 +255,25 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.playlist.children().removeClass('selected');
         
         selectedItems.addBack().add(to).addClass('selected');
-      },
-      
-      selectPrev: function() {
-        var item;
         
-        if (this.selectedItem) {
-          item = this.selectedItem.prev();
+        scrollTop = this.ui.playlist.prop('scrollTop');
+        
+        height = this.ui.playlist.height();
+        
+        itemTop = to.position().top;
+        
+        // itemTop is relative to scrollTop.
+        if (itemTop < 0) {
+          this.ui.playlist.prop('scrollTop', scrollTop + itemTop);
+        }else if (itemTop > height) {
+          this.ui.playlist.prop('scrollTop', scrollTop + itemTop - height + to.height());
+        }
+      },
+      selectPrev: function() {
+        var item, itemTop;
+        
+        if (this.selectedSongs) {
+          item = this.$('.selected').last().prev();
         }
         
         if (!item) {
@@ -253,15 +285,12 @@ define(['mpdisco'], function(MPDisco) {
         }
         
         this.select(item);
-        
-        //this.ui.playlist.scrollTo(item)
       },
-      
       selectNext: function() {
-        var item;
+        var item, itemTop, height;
         
-        if (this.selectedItem) {
-          item = this.selectedItem.next();
+        if (this.selectedSongs) {
+          item = this.$('.selected').last().next();
         }
         
         if (!item) {
@@ -273,21 +302,43 @@ define(['mpdisco'], function(MPDisco) {
         }
         
         this.select(item);
-        
-        //this.ui.playlist.scrollTo(item)
       },
       
       handleKeyboard: function(e) {
         var funcs = {
           0x0d: this.play,
+          0x23: function(e) {
+            if (e.shiftKey) {
+              this.selectRange(this.$('.selected').last(), this.$('.playlist-item').last());
+            }else{
+              this.select(this.$('.playlist-item').last());
+            }
+          },
+          0x24: function(e) {
+            if (e.shiftKey) {
+              this.selectRange(this.$('.selected').last(), this.$('.playlist-item').first());
+            }else{
+              this.select(this.$('.playlist-item').first());
+            }
+          },
           0x26: this.selectPrev,
           0x28: this.selectNext,
-          0x2e: this.remove
+          0x2e: this.remove,
+          0x41: function(e) {
+            if (e.ctrlKey) {
+              this.selectAll();
+            }
+          },
+          0x44: function(e) {
+            if (e.ctrlKey) {
+              this.selectNone();
+            }
+          }
         },
         fn = funcs[e.which];
         
         if (fn) {
-          fn.call(this);
+          fn.call(this, e);
           
           return false;
         }
