@@ -10,20 +10,21 @@ var port = process.env.PORT || 3000,
     scss = require('node-sass'),
     UUID = require('node-uuid'),
     mpd = require('mpd'),
+    config = require('./config.json'),
+    commandProcessors = require('./server/command_processors.js'),
+    upload = require('./server/file_upload.js'),
+    metadata = require('./server/meta_data.js'),
+    ClientsManager = require('./server/clients_manager.js')(),
+    modes = {
+      basic:  require('./server/basic_mode.js'),
+      master: require('./server/master_mode.js')
+    },
     mpdClient = mpd.connect({
         port: 6600,
         host: 'localhost'
     }),
     app = express(),
     server = http.createServer(app),
-    config = require('./config.json'),
-    commandProcessors = require('./server/command_processors.js'),
-    modes = {
-      basic:  require('./server/basic_mode.js'),
-      master: require('./server/master_mode.js')
-    },
-    upload = require('./server/file_upload.js'),
-    metadata = require('./server/meta_data.js'),
     sio,
     mode;
 
@@ -32,11 +33,11 @@ var port = process.env.PORT || 3000,
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');*/
 
-app.use(express.logger());
+//app.use(express.logger());
 app.use(express.compress());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
-app.use(express.cookieSession({
+app.use(express.session({
   secret: config.secret,
   key: config.sessionKey
 }));
@@ -96,26 +97,12 @@ sio.configure(function() {
 //So we can send that client a unique ID we use so we can
 //maintain the list of players.
 sio.sockets.on('connection', function(client) {
-
+  
   client.userid = client.handshake.sessionID;
 
   client.broadcast.emit('clientconnected', client.userid);
-
-  //Useful to know when someone connects
-  console.log('\t socket.io:: client ' + client.userid + ' connected');
-
-  //When this client disconnects
-  client.on('disconnect', function() {
-
-    //Useful to know when someone disconnects
-    console.log('\t socket.io:: client disconnected ' + client.userid);
-
-    client.broadcast.emit('clientdisconnected', client.userid);
-
-    mode.disconnected(client);
-
-  });
-  //client.on disconnect
+  
+  ClientsManager.connected(client);
 
   client.on('command', function(cmd) {
 
@@ -132,9 +119,6 @@ sio.sockets.on('connection', function(client) {
   mpdClient.on('system', function(system) {
     client.emit('update', system);
   });
-
-  // Let the client know connection was achieved and send status.
-  mode.connected(client);
 
 });
 //sio.sockets.on connection

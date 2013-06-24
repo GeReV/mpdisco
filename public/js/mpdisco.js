@@ -102,29 +102,24 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     container: '#container'
   });
   
-  MPDisco.addInitializer(function(options) {
-    
-    this.network.subscribe(function(name, data) {
-      MPDisco.vent.trigger(name, data);
-    });
-    
+  MPDisco.addInitializer(function() {
     if (Backbone.history) {
       Backbone.history.start();
     }
   });
   
   MPDisco.addInitializer(function() {
-    var mode = MPDisco.module('MasterMode').Mode;
+    MPDisco.mode = MPDisco.module('MasterMode').Mode;
     
     this.layout = new MPDisco.Layout;
     
     this.container.show(this.layout);
     
-    this.layout.player.show(new mode.player);
+    this.layout.player.show(new MPDisco.mode.player);
     
-    this.layout.playlist.show(new mode.playlist);
+    this.layout.playlist.show(new MPDisco.mode.playlist);
     
-    this.layout.library.show(new mode.library);
+    this.layout.library.show(new MPDisco.mode.library);
     
     this.network.command('status');
   });

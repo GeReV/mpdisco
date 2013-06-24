@@ -205,18 +205,9 @@ define(['mpdisco'], function(MPDisco) {
           this.selectOne(item);
         }
         
-        scrollTop = this.ui.playlist.prop('scrollTop');
+        this.scrollIntoView(item);
         
-        height = this.ui.playlist.height();
-        
-        itemTop = item.position().top;
-        
-        // itemTop is relative to scrollTop.
-        if (itemTop < 0) {
-          this.ui.playlist.prop('scrollTop', scrollTop + itemTop);
-        }else if (itemTop > height) {
-          this.ui.playlist.prop('scrollTop', scrollTop + itemTop - height + item.height());
-        }
+        this.setRemoveButton();
         
         this.selectedSongs = this.$('.selected').map(function(i, v) {
           return $(v).data('songid');
@@ -226,16 +217,24 @@ define(['mpdisco'], function(MPDisco) {
         var items = this.$('.playlist-item');
         
         this.selectRange(items.first(), items.last());
+        
+        this.setRemoveButton();
       },
       selectNone: function() {
         this.$('.selected').removeClass('selected');
+        
+        this.ui.remove.prop('disabled', true);
       },
       selectOne: function(item) {
         item.addClass('selected')
           .siblings().removeClass('selected');
+          
+        this.setRemoveButton();
       },
       selectToggle: function(item) {
         item.toggleClass('selected');
+        
+        this.setRemoveButton();
       },
       selectRange: function(from, to) {
         var itemTop, height, scrollTop;
@@ -256,18 +255,9 @@ define(['mpdisco'], function(MPDisco) {
         
         selectedItems.addBack().add(to).addClass('selected');
         
-        scrollTop = this.ui.playlist.prop('scrollTop');
+        this.scrollIntoView(to);
         
-        height = this.ui.playlist.height();
-        
-        itemTop = to.position().top;
-        
-        // itemTop is relative to scrollTop.
-        if (itemTop < 0) {
-          this.ui.playlist.prop('scrollTop', scrollTop + itemTop);
-        }else if (itemTop > height) {
-          this.ui.playlist.prop('scrollTop', scrollTop + itemTop - height + to.height());
-        }
+        this.setRemoveButton();
       },
       selectPrev: function() {
         var item, itemTop;
@@ -302,6 +292,22 @@ define(['mpdisco'], function(MPDisco) {
         }
         
         this.select(item);
+      },
+      scrollIntoView: function(item) {
+        var scrollTop = this.ui.playlist.prop('scrollTop'),
+            height = this.ui.playlist.height(),
+            itemTop = item.position().top;
+            
+        if (itemTop < 0) {
+          scrollTop += itemTop;
+        } else if (itemTop > height) {
+          scrollTop -= height + item.height();
+        }
+        
+        this.ui.playlist.prop('scrollTop', scrollTop);
+      },
+      setRemoveButton: function() {
+        this.ui.remove.prop('disabled', (this.$('.selected').length <= 0));
       },
       
       handleKeyboard: function(e) {

@@ -1,5 +1,6 @@
 (function() {
   var BasicMode = require('./basic_mode.js'),
+      ClientsManager = require('./clients_manager.js')();
       _ = require('underscore');
   
   var MasterMode = BasicMode.extend({
@@ -9,45 +10,49 @@
       this.type = 'master';
       
       this.master = null;
+      
+      ClientsManager.on('disconnected', this.disconnected.bind(this));
+      
+      ClientsManager.on('connected', this.connected.bind(this));
     },
     
     connected: function(client) {
-      this.clientsManager.connected(client);
-            
-      if (!this.master && !this.clientsManager.isEmpty()) {
-        this.setMaster(this.clientsManager.first());
+      if (!this.master && !ClientsManager.isEmpty()) {
+        this.setMaster(ClientsManager.first());
       }
       
       client.emit('connected', {
         id: client.userid,
-        clients: this.clientsManager.clientIds(),
+        clients: ClientsManager.clientIds(),
         mode: this.type,
         master: this.master
       });
     },
     
     disconnected: function(client) {
-      this._super(client);
+      console.log('MASTER_MODE :: DISCONNECTED');
       
-      if (this.clientsManager.isEmpty()) {
+      console.log(ClientsManager.clientIds());
+      
+      if (ClientsManager.isEmpty()) {
         this.clearMaster();
-      } else if (!this.isMaster(this.clientsManager.first())) {
-        this.setMaster(this.clientsMaster.first());
+      } else if (!this.isMaster(ClientsManager.first())) {
+        this.setMaster(ClientsManager.first());
       }
     },
     
     rotate: function() {
-      if (this.clients.isEmpty()) {
+      if (Clients.isEmpty()) {
         return;
       }
       
-      this.clientsManager.rotate();
+      ClientsManager.rotate();
       
-      this.setMaster(this.clientsManager.first());
+      this.setMaster(ClientsManager.first());
     },
     
     canExecute: function(command, client) {
-      return this.isMaster(client) || isWhitelistCommand(command);
+      return this.isMaster(client) || this.isWhitelistCommand(command);
     },
     
     isMaster: function(client) {
@@ -64,18 +69,18 @@
       
       this.master = client.userid;
 
-      client.emit('master', this.master.userid);
-      client.broadcast.emit('master', this.master.userid);
+      client.emit('master', this.master);
+      client.broadcast.emit('master', this.master);
     },
     clearMaster: function() {
       this.setMaster(null);
     },
     
     isWhitelistCommand: function(cmd) {
-      return (this.commandWhitelist.indexOf(cmd.command) !== -1);
+      return (this.commandWhitelist.indexOf(cmd) !== -1);
     },
     
-    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list']
+    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find']
     
   });
   

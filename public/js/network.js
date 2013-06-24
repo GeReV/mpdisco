@@ -5,13 +5,6 @@ define(['class'], function(Class) {
       this.callbacks = [];
       
       this.socket = io.connect(this.url);
-      
-      this.socket.on('connect', this.createPublish('connect'));
-      this.socket.on('connected', this.createPublish('connected'));
-      this.socket.on('disconnect', this.createPublish('disconnected'));
-      this.socket.on('clientconnected', this.createPublish('clientconnected'));
-      this.socket.on('clientdisconnected', this.createPublish('clientdisconnected'));
-      this.socket.on('update', this.createPublish('update'));
     },
     send: function(data) {
       this.socket.emit('command', data);

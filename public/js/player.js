@@ -22,10 +22,6 @@ define(['mpdisco'], function(MPDisco) {
         change: 'render'
       },
       
-      socketEvents: {
-        master: 'updateMaster'
-      },
-      
       events: {
         'click .prev': 'prevSong',
         'click .next': 'nextSong',

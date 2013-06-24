@@ -55,18 +55,17 @@ require.config({
 
 require(['mpdisco', 'syncer', 'basic_mode', 'master_mode'], function(MPDisco) {
 
-  MPDisco.vent.on('connected', function(data) {
-    MPDisco.client = data.id;
-    
-    console.log('Connected.', data);
-  });
-
-  MPDisco.vent.on('update', function(data) {
-    console.log('Update: ', data);
-  });
-
   $(function() {
-    MPDisco.start();
+    MPDisco.network.on('connected', function(data) {
+      MPDisco.meta = data;
+      
+      MPDisco.start();
+      
+      MPDisco.vent.trigger('networkready', data);
+      
+      console.log('Connected.', data);
+    });
+    
   });
 
 });
