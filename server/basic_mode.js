@@ -2,6 +2,7 @@
   var Class = require('clah'),
       mpd = require('mpd'),
       _ = require('underscore'),
+      ClientsManager = require('./clients_manager.js'),
       specialCommands;
       
       
@@ -74,21 +75,22 @@
       this.type = 'freeforall';
 
       this.mpd = mpd;
-      this.clients = [];
+      this.clientsManager = new ClientsManager();
 
       this.commandProcessors = cmdProcessors;
     },
     connected: function(client) {
-      this.clients.push(client);
+      
+      this.clientsManager.connected(client);
       
       client.emit('connected', {
         id: client.userid,
-        clients: _.map(this.clients, function(v) { return v.userid; }),
+        clients: this.clientsManager.clientIds(),
         mode: this.type
       });
     },
     disconnected: function(client) {
-      this.clients.splice(this.clients.indexOf(client), 1);
+      this.clientsManager.disconnected(client);
     },
     command: function(command, args, client) {
       var processor;

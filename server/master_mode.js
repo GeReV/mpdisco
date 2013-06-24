@@ -3,8 +3,8 @@
       _ = require('underscore');
   
   var MasterMode = BasicMode.extend({
-    init: function(mpd, clients, cmdProcessors) {
-      this._super(mpd, clients, cmdProcessors);
+    init: function(mpd, cmdProcessors) {
+      this._super(mpd, cmdProcessors);
       
       this.type = 'master';
       
@@ -12,28 +12,38 @@
     },
     
     connected: function(client) {
-      this.clients.push(client);
-      
-      if (!this.master && this.clients.length) {
-        this.setMaster(this.clients[0]);
+      this.clientsManager.connected(client);
+            
+      if (!this.master && !this.clientsManager.isEmpty()) {
+        this.setMaster(this.clientsManager.first());
       }
       
       client.emit('connected', {
         id: client.userid,
-        clients: _.map(this.clients, function(v) { return v.userid; }),
+        clients: this.clientsManager.clientIds(),
         mode: this.type,
-        master: this.master && this.master.userid
+        master: this.master
       });
     },
     
     disconnected: function(client) {
-      this.clients = this.clients.splice(this.clients.indexOf(client), 1);
+      this._super(client);
       
-      if (!this.clients.length) {
-        this.setMaster(null);
-      } else if (this.clients[0] !== this.master) {
-        this.setMaster(this.clients[0]);
+      if (this.clientsManager.isEmpty()) {
+        this.clearMaster();
+      } else if (!this.isMaster(this.clientsManager.first())) {
+        this.setMaster(this.clientsMaster.first());
       }
+    },
+    
+    rotate: function() {
+      if (this.clients.isEmpty()) {
+        return;
+      }
+      
+      this.clientsManager.rotate();
+      
+      this.setMaster(this.clientsManager.first());
     },
     
     canExecute: function(command, client) {
@@ -41,19 +51,24 @@
     },
     
     isMaster: function(client) {
-      return this.master === client;
+      return this.master === client.userid;
     },
     
     setMaster: function(client) {
-      
       console.log('master changed');
-    
-      this.master = client;
       
-      if (this.master) {
-        this.master.emit('master', this.master.userid);
-        this.master.broadcast.emit('master', this.master.userid);
+      if (!client) {
+        this.master = null;
+        return;
       }
+      
+      this.master = client.userid;
+
+      client.emit('master', this.master.userid);
+      client.broadcast.emit('master', this.master.userid);
+    },
+    clearMaster: function() {
+      this.setMaster(null);
     },
     
     isWhitelistCommand: function(cmd) {

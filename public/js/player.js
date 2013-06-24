@@ -22,6 +22,10 @@ define(['mpdisco'], function(MPDisco) {
         change: 'render'
       },
       
+      socketEvents: {
+        master: 'updateMaster'
+      },
+      
       events: {
         'click .prev': 'prevSong',
         'click .next': 'nextSong',
@@ -67,6 +71,10 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.shuffle.toggleClass('active', (MPDisco.state.get('random') === '1'));
         this.ui.repeat.toggleClass('active', (MPDisco.state.get('repeat') === '1'));
         this.ui.repeat.toggleClass('single', (MPDisco.state.get('single') === '1'));
+      },
+      
+      updateMaster: function(master) {
+        this.$('.master').html(master);
       },
       
       prevSong: function() {

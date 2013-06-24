@@ -1,3 +1,5 @@
 {
-  "music_directory": "~/Music"
+  "music_directory": "~/Music",
+  "secret": "secret",
+  "sessionKey": "mpdisco.sid"
 }

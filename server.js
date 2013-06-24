@@ -2,6 +2,8 @@ var port = process.env.PORT || 3000,
     path = require('path'),
     _ = require('underscore'),
     http = require('http'),
+    connect = require('connect'),
+    cookie = require('cookie'),
     io = require('socket.io'),
     express = require('express'),
     engines = require('consolidate'),
@@ -33,6 +35,11 @@ app.set('views', __dirname + '/views');*/
 app.use(express.logger());
 app.use(express.compress());
 app.use(express.methodOverride());
+app.use(express.cookieParser());
+app.use(express.cookieSession({
+  secret: config.secret,
+  key: config.sessionKey
+}));
 //app.use(express.bodyParser());
 
 app.use(scss.middleware({
@@ -66,16 +73,31 @@ sio.configure(function() {
     callback(null, true);
     // error first callback style
   });
+  
+  sio.set('authorization', function (data, accept) {
+    // check if there's a cookie header
+    if (data.headers.cookie) {
+        // if there is, parse the cookie
+        data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
+        // note that you will need to use the same key to grad the
+        // session id, as you specified in the Express setup.
+        data.sessionID = data.cookie[config.sessionKey];
+    } else {
+       // if there isn't, turn down the connection with a message
+       // and leave the function.
+       return accept('No cookie transmitted.', false);
+    }
+    // accept the incoming connection
+    accept(null, true);
+  });
 });
+
 //Socket.io will call this function when a client connects,
 //So we can send that client a unique ID we use so we can
 //maintain the list of players.
 sio.sockets.on('connection', function(client) {
 
-  //Generate a new UUID, looks something like
-  //5b2ca132-64bd-4513-99da-90e838ca47d1
-  //and store this on their socket/connection
-  client.userid = UUID();
+  client.userid = client.handshake.sessionID;
 
   client.broadcast.emit('clientconnected', client.userid);
 
