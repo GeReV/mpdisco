@@ -171,6 +171,8 @@ define(['mpdisco'], function(MPDisco) {
         var item = (e && e.currentTarget) ? $(e.currentTarget) : this.selectedItems.first();
         
         MPDisco.network.command('playid', item.data('songid'));
+        
+        return false;
       },
       
       remove: function() {
@@ -182,6 +184,8 @@ define(['mpdisco'], function(MPDisco) {
         }).toArray();
           
         MPDisco.commands(commands);
+        
+        return false;
       },
       
       select: function(e) {
@@ -275,6 +279,8 @@ define(['mpdisco'], function(MPDisco) {
         }
         
         this.select(item);
+        
+        return false;
       },
       selectNext: function() {
         var item, itemTop, height;
@@ -292,6 +298,8 @@ define(['mpdisco'], function(MPDisco) {
         }
         
         this.select(item);
+        
+        return false;
       },
       scrollIntoView: function(item) {
         var scrollTop = this.ui.playlist.prop('scrollTop'),
@@ -319,6 +327,8 @@ define(['mpdisco'], function(MPDisco) {
             }else{
               this.select(this.$('.playlist-item').last());
             }
+            
+            return false;
           },
           0x24: function(e) {
             if (e.shiftKey) {
@@ -326,6 +336,8 @@ define(['mpdisco'], function(MPDisco) {
             }else{
               this.select(this.$('.playlist-item').first());
             }
+            
+            return false;
           },
           0x26: this.selectPrev,
           0x28: this.selectNext,
@@ -333,20 +345,22 @@ define(['mpdisco'], function(MPDisco) {
           0x41: function(e) {
             if (e.ctrlKey) {
               this.selectAll();
+              
+              return false;
             }
           },
           0x44: function(e) {
             if (e.ctrlKey) {
               this.selectNone();
+              
+              return false;
             }
           }
         },
         fn = funcs[e.which];
         
         if (fn) {
-          fn.call(this, e);
-          
-          return false;
+          return fn.call(this, e);
         }
       }
     });

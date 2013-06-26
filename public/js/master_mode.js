@@ -1,4 +1,4 @@
-define(['mpdisco', 'player', 'playlist', 'library'], function(MPDisco, Player, Playlist, Library) {
+define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, Player, User, Playlist, Library) {
   
   var MasterMode = MPDisco.module('MasterMode', function(MasterMode, MPDisco) {
     var buildLockableMixinFor = function(type) {
@@ -102,6 +102,7 @@ define(['mpdisco', 'player', 'playlist', 'library'], function(MPDisco, Player, P
     
     MasterMode.Mode = {
       player: MasterMode.PlayerView,
+      user: User.UserView,
       playlist: MasterMode.PlaylistView,
       library: MasterMode.LibraryView
     };

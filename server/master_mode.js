@@ -21,8 +21,11 @@
         this.setMaster(ClientsManager.first());
       }
       
+      console.log(client);
+      
       client.emit('connected', {
         id: client.userid,
+        info: client.info,
         clients: ClientsManager.clientIds(),
         mode: this.type,
         master: this.master

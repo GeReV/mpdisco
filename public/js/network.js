@@ -6,8 +6,8 @@ define(['class'], function(Class) {
       
       this.socket = io.connect(this.url);
     },
-    send: function(data) {
-      this.socket.emit('command', data);
+    send: function(name, data) {
+      this.socket.emit(name, data);
     },
     command: function(command, args) {
       

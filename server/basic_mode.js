@@ -33,14 +33,6 @@
     }
   };
 
-  function trim(s) {
-    if (!s) {
-        return s;
-    }
-
-    return s.replace(/^\s+|\s+$/g, '');
-  }
-
   function parseResponse(s) {
     if (!s) {
       return s;
@@ -62,7 +54,7 @@
         obj = {};
       }
 
-      obj[key] = trim(value);
+      obj[key] = (value || '').trim();
     });
     
     json.push(obj);
@@ -81,6 +73,7 @@
     connected: function(client) {
       client.emit('connected', {
         id: client.userid,
+        info: client.info,
         clients: ClientsManager.clientIds(),
         mode: this.type
       });

@@ -1,6 +1,7 @@
 (function() {
   var Class = require('clah'),
       EventEmitter = require('events').EventEmitter,
+      Gravatar = require('./gravatar.js'),
       _ = require('underscore');
   
   var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
@@ -12,14 +13,19 @@
       this.disconnectionTimeouts = {};
     },
     connected: function(client) {
-      var that = this;
+      var that = this,
+          prevClient = this.clientsHash[client.userid],
+          index;
       
       //Useful to know when someone connects
       console.log('\t socket.io:: client ' + client.userid + ' connected');
       
-      if (this.clientsHash[client.userid]) {
+      if (prevClient) {
+        client.info = prevClient.info;
         
-        this.clients[this.clients.indexOf(client)] = client;
+        index = _.find(this.clients, function(c) { return c.userid === client.userid; });
+        
+        this.clients[index] = client;
         
         console.log('client returned ' + client.userid);
         
@@ -40,6 +46,22 @@
     
       });
       //client.on disconnect
+      
+      client.on('identify', function(name) {
+         if (!name) {
+           return;
+         }
+         
+         if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
+           Gravatar.profile(name, false, function(profile) {
+             that.identifyClient(client, profile);
+           });
+         }else{
+           that.identifyClient(client, {
+             displayName: name
+           });
+         }
+      });
       
       this.emit('connected', client);
     },
@@ -67,6 +89,15 @@
       this.clients.splice(index, 1);
       
       delete this.clientsHash[client.userid];
+    },
+    identifyClient: function(client, info) {
+      if (info.entry && info.entry.length) {
+        info = info.entry[0];
+      }
+      
+      client.info = info;
+      
+      client.emit('identify', info);
     },
     get: function(userid) {
       return this.clientsHash[userid];

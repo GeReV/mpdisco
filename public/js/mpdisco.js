@@ -93,6 +93,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     template: '#layout_template',
     regions: {
       player: '#player',
+      user: '#user',
       playlist: '#playlist',
       library: '#library'
     }
@@ -116,6 +117,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     this.container.show(this.layout);
     
     this.layout.player.show(new MPDisco.mode.player);
+    
+    this.layout.user.show(new MPDisco.mode.user);
     
     this.layout.playlist.show(new MPDisco.mode.playlist);
     

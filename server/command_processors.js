@@ -1,9 +1,6 @@
 (function() {
   
-  var exec = require('child_process').exec,
-      trim = function(s) {
-        return s.replace(/^\s+|\s+$/g, '');
-      };
+  var exec = require('child_process').exec;
   
   var CommandProcessors = {
     add: function(mpd, args, callback) {
@@ -15,7 +12,7 @@
       
       if (/^https?:\/\/.*?youtube.com\/watch/.test(url)) {
         exec('youtube-dl -g ' + url, function(error, stdout, stderr) {
-          var streamUrl = trim(stdout);
+          var streamUrl = stdout.trim();
           
           console.log('Retrieved stream url for: ', streamUrl);
           
