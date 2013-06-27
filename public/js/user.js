@@ -1,4 +1,4 @@
-define(['mpdisco'], function(MPDisco) {  
+define(['mpdisco', 'jquery.cookie'], function(MPDisco) {  
   var User = MPDisco.module('User', function(User, MPDisco, Backbone, Marionette, $, _) {
     User.Model = MPDisco.Model.extend({
       defaults: {
@@ -19,7 +19,7 @@ define(['mpdisco'], function(MPDisco) {
   });
   
   User.UserView = Marionette.ItemView.extend({
-    className: 'frame',
+    className: 'user',
     
     getTemplate: function() {
       if (this.identified) {
@@ -30,7 +30,7 @@ define(['mpdisco'], function(MPDisco) {
     },
     
     modelEvents: {
-      change: 'showUser'
+      'change': 'showUser',
     },
     
     model: new User.Model,
@@ -45,18 +45,30 @@ define(['mpdisco'], function(MPDisco) {
     
     identified: false,
     
-    showUser: function() {
-      console.log(this.model.toJSON());
+    onShow: function() {
+      if ($.cookie('mpdisco.name') && !this.identified) {
+        this.sendInfo();
+      }
+    },
+    
+    showUser: function(model) {
+      if (_.any(['name', 'thumbnailUrl', 'displayName'], function(k) { return model.changedAttributes().hasOwnProperty(k); })) {
+        this.identified = true;
       
-      this.identified = true;
-      
-      this.render();
+        this.render();
+        
+        this.$el.removeClass('loading');
+      }
     },
     
     sendInfo: function() {
-      MPDisco.network.send('identify', this.ui.name.val());
+      var name = $.cookie('mpdisco.name') || this.ui.name.val();
       
       this.$el.addClass('loading');
+      
+      $.cookie('mpdisco.name', name, { expires: 7 });
+      
+      MPDisco.network.send('identify', name);
     }
   });
   

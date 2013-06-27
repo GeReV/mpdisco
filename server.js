@@ -98,10 +98,6 @@ sio.configure(function() {
 //maintain the list of players.
 sio.sockets.on('connection', function(client) {
   
-  client.userid = client.handshake.sessionID;
-
-  client.broadcast.emit('clientconnected', client.userid);
-  
   ClientsManager.connected(client);
 
   client.on('command', function(cmd) {

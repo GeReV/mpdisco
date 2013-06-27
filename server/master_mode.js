@@ -24,18 +24,19 @@
       console.log(client);
       
       client.emit('connected', {
-        id: client.userid,
+        id: client.info.userid,
         info: client.info,
-        clients: ClientsManager.clientIds(),
+        clients: ClientsManager.clientsInfo(),
         mode: this.type,
         master: this.master
       });
+      client.broadcast.emit('clientconnected', client.info);
     },
     
     disconnected: function(client) {
       console.log('MASTER_MODE :: DISCONNECTED');
       
-      console.log(ClientsManager.clientIds());
+      console.log(ClientsManager.clientsInfo());
       
       if (ClientsManager.isEmpty()) {
         this.clearMaster();
@@ -59,7 +60,7 @@
     },
     
     isMaster: function(client) {
-      return this.master === client.userid;
+      return this.master === client.info.userid;
     },
     
     setMaster: function(client) {
@@ -70,7 +71,7 @@
         return;
       }
       
-      this.master = client.userid;
+      this.master = client.info.userid;
 
       client.emit('master', this.master);
       client.broadcast.emit('master', this.master);

@@ -13,21 +13,25 @@
       this.disconnectionTimeouts = {};
     },
     connected: function(client) {
+      client.info = {
+        userid: client.handshake.sessionID
+      };
+      
       var that = this,
-          prevClient = this.clientsHash[client.userid],
+          prevClient = this.clientsHash[client.info.userid],
           index;
       
       //Useful to know when someone connects
-      console.log('\t socket.io:: client ' + client.userid + ' connected');
+      console.log('\t socket.io:: client ' + client.info.userid + ' connected');
       
       if (prevClient) {
         client.info = prevClient.info;
         
-        index = _.find(this.clients, function(c) { return c.userid === client.userid; });
+        index = _.find(this.clients, function(c) { return c.info.userid === client.info.userid; });
         
         this.clients[index] = client;
         
-        console.log('client returned ' + client.userid);
+        console.log('client returned ' + client.info.userid);
         
       } else {
         
@@ -35,9 +39,9 @@
         
       }
       
-      this.clientsHash[client.userid] = client;
+      this.clientsHash[client.info.userid] = client;
       
-      this.disconnectionTimeouts[client.userid] && clearTimeout(this.disconnectionTimeouts[client.userid]);
+      this.disconnectionTimeouts[client.info.userid] && clearTimeout(this.disconnectionTimeouts[client.info.userid]);
       
       //When this client disconnects
       client.on('disconnect', function() {
@@ -67,12 +71,12 @@
     },
     disconnected: function(client) {
       
-      console.log('\t socket.io:: client disconnected ' + client.userid);
+      console.log('\t socket.io:: client disconnected ' + client.info.userid);
       console.log('client has 5 seconds to return');
       
-      this.disconnectionTimeouts[client.userid] = setTimeout(function() {
+      this.disconnectionTimeouts[client.info.userid] = setTimeout(function() {
         
-        client.broadcast.emit('clientdisconnected', client.userid);
+        client.broadcast.emit('clientdisconnected', client.info.userid);
         
         this.dropClient(client);
         
@@ -82,20 +86,20 @@
       
     },
     dropClient: function(client) {      
-      var index = _.find(this.clients, function(c) { return c.userid === client.userid; });
+      var index = _.find(this.clients, function(c) { return c.info.userid === client.info.userid; });
       
-      console.log('Dropped client ' + client.userid);
+      console.log('Dropped client ' + client.info.userid);
       
       this.clients.splice(index, 1);
       
-      delete this.clientsHash[client.userid];
+      delete this.clientsHash[client.info.userid];
     },
     identifyClient: function(client, info) {
       if (info.entry && info.entry.length) {
         info = info.entry[0];
       }
       
-      client.info = info;
+      client.info = _.extend(client.info, info);
       
       client.emit('identify', info);
     },
@@ -113,8 +117,8 @@
     isEmpty: function() {
       return this.clients.length <= 0;
     },
-    clientIds: function() {
-      return _.map(this.clients, function(v) { return v.userid; });
+    clientsInfo: function() {
+      return _.map(this.clients, function(v) { return v.info; });
     }
   }));
   

@@ -46,6 +46,7 @@ require.config({
     jquery: 'vendor/jquery',
     jqueryui: 'vendor/jquery-ui',
     'jquery.ui.widget': 'vendor/jquery.ui.widget',
+    'jquery.cookie': 'vendor/jquery.cookie',
     jquerysortable: 'vendor/jquery-sortable',
     marionette: 'vendor/backbone-marionette-min',
     handlebars: 'vendor/handlebars',

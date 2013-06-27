@@ -95,6 +95,7 @@ section {
   background: #eee;
   border: 1px solid #dedede;
   border-radius: 3px;
+  box-sizing: border-box;
   padding: 5px;
   z-index: 0;
 }
@@ -117,6 +118,7 @@ section {
 .player {
   @extend .frame;
   
+  height: 160px;
   position: relative;
   
   .info {
@@ -131,6 +133,9 @@ section {
   
   menu {
     margin-top: 10px;
+    margin-bottom: 5px;
+    position: absolute;
+    bottom: 0;
   }
   
   button {
@@ -376,6 +381,34 @@ section {
     border-bottom: 1px solid #dedede;
     color: #333;
     text-decoration: none;
+  }
+}
+
+.user {
+  
+  @extend .frame;
+  
+  height: 160px;
+  position: relative;
+  
+  &.loading:after {
+    background: rgba(255, 255, 255, 0.6);
+    content: "Logging in...";
+    color: #333;
+    line-height: 160px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  img {
+    border-radius: 5px;
+    float: left;
+    margin-right: 15px;
   }
 }
 

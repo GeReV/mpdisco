@@ -16,8 +16,8 @@
   <body>
     <div id="container" role="main" class="container_12"></div>
     <script type="text/template" id="layout_template">
-      <section id="player" class="grid_8"></section>
-      <section id="user" class="grid_4"></section>
+      <section id="player" class="grid_6"></section>
+      <section id="user" class="grid_6"></section>
       <section id="library" class="grid_6"></section>
       <section id="playlist" class="grid_6"></section>
     </script>
@@ -77,8 +77,10 @@
       <div id="overlay"></div>
     </script>
     <script type="text/template" id="user_template">
-      <img src="{{thumbnailUrl}}" alt="{{displayName}}" />
-      <h2>{{displayName}}</h2>
+      <img src="{{thumbnailUrl}}?s=100" alt="{{displayName}}" />
+      <h2>
+        {{#if name}}{{name.givenName}} {{name.familyName}}{{else}}{{displayName}}{{/if}}
+      </h2>
     </script>
     <script type="text/template" id="user_identify_template">
       <input type="text" placeholder="E-mail or Nickname" /><button class="btn">Send</button>

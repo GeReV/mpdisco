@@ -72,11 +72,12 @@
     },
     connected: function(client) {
       client.emit('connected', {
-        id: client.userid,
+        id: client.info.userid,
         info: client.info,
-        clients: ClientsManager.clientIds(),
+        clients: ClientsManager.clientsInfo(),
         mode: this.type
       });
+      client.broadcast.emit('clientconnected', client.info);
     },
     command: function(command, args, client) {
       var processor;
