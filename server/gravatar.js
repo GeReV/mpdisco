@@ -37,8 +37,6 @@
       
       error = error || function() {};
       
-      console.log(options);
-      
       var req = http.get(options, function followRedirects(res) {
         if (res.statusCode > 300 && res.statusCode < 400 && res.headers.location) {
           var location = res.headers.location,
@@ -71,8 +69,6 @@
           });
     
           res.on('end', function() {
-            console.log(body);
-            
             var json = JSON.parse(body);
             
             callback(json);

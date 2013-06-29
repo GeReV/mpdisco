@@ -83,6 +83,7 @@ sio.configure(function() {
         // note that you will need to use the same key to grad the
         // session id, as you specified in the Express setup.
         data.sessionID = data.cookie[config.sessionKey];
+        data.name = data.cookie['mpdisco.name'];
     } else {
        // if there isn't, turn down the connection with a message
        // and leave the function.
@@ -101,7 +102,7 @@ sio.sockets.on('connection', function(client) {
   ClientsManager.connected(client);
 
   client.on('command', function(cmd) {
-
+    
     mode.command(cmd.command, cmd.args, client);
 
   });

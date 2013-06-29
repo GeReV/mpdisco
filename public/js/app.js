@@ -66,7 +66,6 @@ require(['mpdisco', 'syncer', 'basic_mode', 'master_mode'], function(MPDisco) {
       
       console.log('Connected.', data);
     });
-    
   });
 
 });

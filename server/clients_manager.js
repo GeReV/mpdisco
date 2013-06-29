@@ -3,15 +3,27 @@
       EventEmitter = require('events').EventEmitter,
       Gravatar = require('./gravatar.js'),
       _ = require('underscore');
+      
+  _.findIndex = function(obj, iterator, context) {
+    var result = -1;
+    _.any(obj, function(value, index, list) {
+        if(iterator.call(context, value, index, list)) {
+            result = index;
+            return true;
+        }
+    });
+    return result;
+  }
   
   var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
     init: function() {
-      this.clients = [];
+      this.loggedClients = [];
       
       this.clientsHash = {};
       
       this.disconnectionTimeouts = {};
     },
+    
     connected: function(client) {
       client.info = {
         userid: client.handshake.sessionID
@@ -27,15 +39,7 @@
       if (prevClient) {
         client.info = prevClient.info;
         
-        index = _.find(this.clients, function(c) { return c.info.userid === client.info.userid; });
-        
-        this.clients[index] = client;
-        
         console.log('client returned ' + client.info.userid);
-        
-      } else {
-        
-        this.clients.push(client);
         
       }
       
@@ -52,23 +56,16 @@
       //client.on disconnect
       
       client.on('identify', function(name) {
-         if (!name) {
-           return;
-         }
-         
-         if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
-           Gravatar.profile(name, false, function(profile) {
-             that.identifyClient(client, profile);
-           });
-         }else{
-           that.identifyClient(client, {
-             displayName: name
-           });
-         }
+        that.performIdentification.call(that, client, name);
       });
+      
+      if (client.handshake.name) {
+        this.performIdentification(client, client.handshake.name);
+      }
       
       this.emit('connected', client);
     },
+    
     disconnected: function(client) {
       
       console.log('\t socket.io:: client disconnected ' + client.info.userid);
@@ -85,40 +82,79 @@
       }.bind(this), 5000);
       
     },
+    
     dropClient: function(client) {      
-      var index = _.find(this.clients, function(c) { return c.info.userid === client.info.userid; });
-      
       console.log('Dropped client ' + client.info.userid);
       
-      this.clients.splice(index, 1);
+      this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
       
       delete this.clientsHash[client.info.userid];
     },
-    identifyClient: function(client, info) {
+    
+    performIdentification: function(client, name) {
+       var that = this;
+       
+       if (!name) {
+         return;
+       }
+       
+       if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
+         Gravatar.profile(name, false, function(profile) {
+           that.identifyClient.call(that, client, profile);
+         });
+       }else{
+         that.identifyClient.call(that, client, {
+           displayName: name
+         });
+       }
+    },
+    
+    identifyClient: function(client, info) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
+      var index;
+      
       if (info.entry && info.entry.length) {
         info = info.entry[0];
       }
       
       client.info = _.extend(client.info, info);
       
+      index = _.findIndex(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
+      
+      if (index >= 0) {
+        this.loggedClients[index] = client;
+      } else {
+        this.loggedClients.push(client);
+      }
+      
+      console.log(_.map(this.loggedClients, function(c) { return c.info.userid; }));
+      
       client.emit('identify', info);
+      
+      client.broadcast.emit('clientconnected', client.info);
+       
+      this.emit('identified', client);
     },
+    
     get: function(userid) {
       return this.clientsHash[userid];
     },
+    
     first: function() {
-      if (this.clients.length) {
-        return this.clients[0];
+      if (this.loggedClients.length) {
+        return this.loggedClients[0];
       }
     },
+    
     rotate: function() {
-      this.clients.push(this.clients.shift());
+      this.loggedClients.push(this.loggedClients.shift());
     },
+    
     isEmpty: function() {
-      return this.clients.length <= 0;
+      return this.loggedClients.length <= 0;
     },
+    
     clientsInfo: function() {
-      return _.map(this.clients, function(v) { return v.info; });
+      return _.map(this.loggedClients, function(v) { return v.info; });
     }
   }));
   

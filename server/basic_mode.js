@@ -77,7 +77,6 @@
         clients: ClientsManager.clientsInfo(),
         mode: this.type
       });
-      client.broadcast.emit('clientconnected', client.info);
     },
     command: function(command, args, client) {
       var processor;
@@ -90,8 +89,6 @@
 
       if (this.canExecute(command, client)) {
         
-        //console.log('Received command [', command, args.join(' '), '] from', client.userid);
-
         processor = this.commandProcessors[command];
 
         if (processor) {
@@ -148,8 +145,8 @@
         
       }
     },
-    canExecute: function() {
-      return true;
+    canExecute: function(command, client) {
+      return !!ClientsManager.get(client.info.userid);
     },
     execute: function(command, args, client) {
       var cmd;
@@ -159,12 +156,14 @@
       }
 
       cmd = mpd.cmd(command, args);
+      
+      //console.log(command);
 
       this.mpd.sendCommand(cmd, function(err, result) {
         var response = parseResponse(result),
             special = specialCommands[command];
         
-        //console.log('Result for command', command, ': ', result);
+        //console.log('Result for command', command, ': ', response);
         
         if (special) {
           

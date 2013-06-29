@@ -27,21 +27,24 @@ define(['mpdisco'], function(MPDisco) {
       ui: {
         playlist: 'ul',
         url: '#url',
-        remove: '.remove'
+        remove: '.remove',
+        shuffle: '.shuffle',
+        repeat: '.repeat'
       },
+      
+      model: MPDisco.state,
       
       collection: new Playlist.Collection,
       
       itemView: Playlist.PlaylistItemView,
       itemViewContainer: '.list',
       
-      socketEvents: {
-        status: 'updatePlaylist',
-        currentsong: 'updatePlaylist',
-      },
-      
       collectionEvents: {
         reset: 'render'
+      },
+      
+      modelEvents: {
+        change: 'updatePlaylist'
       },
       
       events: {
@@ -49,7 +52,9 @@ define(['mpdisco'], function(MPDisco) {
         'click .remove': 'remove',
         'dblclick li': 'play',
         'click li': 'select',
-        'drop': 'drop'
+        'drop': 'drop',
+        'click .shuffle': 'toggleShuffle',
+        'click .repeat': 'toggleRepeat'
       },
       
       selectedSongs: [],
@@ -119,7 +124,7 @@ define(['mpdisco'], function(MPDisco) {
         
         this.ui.playlist.disableSelection();
         
-        this.updatePlaylist(MPDisco.state.toJSON());
+        this.updatePlaylist();
         
         $.each(this.selectedSongs, function(i, v) {
           that.ui.playlist.find('[data-songid="' + v + '"]').addClass('selected');
@@ -134,8 +139,10 @@ define(['mpdisco'], function(MPDisco) {
         $(document).off('keydown.playlist');
       },
       
-      updatePlaylist: function(status) {
-        var songid = status.songid || status.id;
+      updatePlaylist: function(model) {
+        model = model || this.model;
+        
+        var songid = model.get('songid') || model.id;
         
         if (songid) {
           this.ui.playlist
@@ -144,6 +151,10 @@ define(['mpdisco'], function(MPDisco) {
         }else{
           this.ui.playlist.children().removeClass('current');
         }
+        
+        this.ui.shuffle.toggleClass('active', model.get('random') === '1');
+        this.ui.repeat.toggleClass('active', model.get('repeat') === '1');
+        this.ui.repeat.toggleClass('single', model.get('single') === '1');
       },
       
       add: function() {
@@ -188,6 +199,39 @@ define(['mpdisco'], function(MPDisco) {
         return false;
       },
       
+      toggleShuffle: function() {
+        var state = (~MPDisco.state.get('random') & 1);
+        
+        this.ui.shuffle.toggleClass('active', state);
+        
+        MPDisco.command('random', state);
+        
+        return false;
+      },
+      toggleRepeat: function() {
+        var repeat = +MPDisco.state.get('repeat'),
+            single = +MPDisco.state.get('single');
+            
+        if (repeat && single) {
+          this.ui.repeat.removeClass('active single');
+          
+          MPDisco.commands([
+            { command: 'repeat', args: 0 },
+            { command: 'single', args: 0 }
+          ]);
+        } else if (repeat) {
+          this.ui.repeat.addClass('single');
+          
+          MPDisco.command('single', 1);
+        }else {
+          this.ui.repeat.addClass('active');
+          
+          MPDisco.command('repeat', 1);
+        }
+        
+        return false;
+      },
+      
       select: function(e) {
         var item = e, itemTop, height, scrollTop;
         
@@ -199,7 +243,7 @@ define(['mpdisco'], function(MPDisco) {
           return;
         }
         
-        this.ui.remove.prop('disabled', false);
+        this.ui.remove.removeClass('disabled');
         
         if (e.ctrlKey || e.metaKey) {
           this.selectToggle(item);
@@ -227,7 +271,7 @@ define(['mpdisco'], function(MPDisco) {
       selectNone: function() {
         this.$('.selected').removeClass('selected');
         
-        this.ui.remove.prop('disabled', true);
+        this.ui.remove.addClass('disabled');
       },
       selectOne: function(item) {
         item.addClass('selected')
@@ -315,7 +359,7 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.playlist.prop('scrollTop', scrollTop);
       },
       setRemoveButton: function() {
-        this.ui.remove.prop('disabled', (this.$('.selected').length <= 0));
+        this.ui.remove.toggleClass('disabled', (this.$('.selected').length <= 0));
       },
       
       handleKeyboard: function(e) {

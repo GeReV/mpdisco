@@ -2,9 +2,17 @@
 @import 'bootstrap.css';
 @import 'jquery-ui.css';
 
+html {
+  background: #956dc6;
+}
+
+body {
+  background: transparent;
+}
+
 #container {
-  width: 960px;
-  margin: 15px auto;
+  margin-top: 40px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
 #overlay {
@@ -22,18 +30,38 @@
   }
 }
 
+#player-head {
+  background: url('img/noise.png') #434343;
+  height: 150px;
+  overflow: hidden;
+}
+
 menu {
   margin: 0;
   padding: 0;
 }
 
 input[type="text"] {
+  border: 1px solid #cbcbcb;
+  border-radius: 3px;
+  box-sizing: border-box;
+  color: #666;
+  height: 24px;
   margin-bottom: 0;
+  outline: 0;
+  padding: 2px 6px;
 }
 
 section {
-  margin: 5px 0;
-  
+  header {
+    border-top: 1px solid #fff;
+    box-sizing: border-box;
+    color: #666;
+    font-weight: bold;
+    line-height: 30px;
+    padding: 0 11px;
+    text-transform: uppercase;
+  }
   ul {
     list-style-type: none;
     margin: 0;
@@ -41,9 +69,7 @@ section {
 }
 
 .list {
-  background: #f9f9f9;
-  border: 1px solid #dedede;
-  border-radius: 2px;
+  box-sizing: border-box;
   list-style-type: none;
   margin: 0;
   overflow: auto;
@@ -55,9 +81,7 @@ section {
 }
 
 .tree {
-  background: #f9f9f9;
-  border: 1px solid #dedede;
-  border-radius: 2px;
+  background: #efefef;
   list-style-type: none;
   margin: 0;
   overflow: auto;
@@ -73,31 +97,28 @@ section {
 }
 .name:before {
   @extend .icon;
-  @extend .icon-plus-sign-alt:before;
+  @extend .icon-caret-right:before;
   
   margin-right: 2px;
+  text-align: center;
+  width: 18px;
 }
 .name.open:before {
   @extend .icon;
-  @extend .icon-minus-sign-alt:before;
+  @extend .icon-caret-down:before;
+  
+  width: 18px;
 }
 .songs .name:before {
   counter-increment: album;
   content: counter(album) ". ";
+  display: inline;
+  text-align: left;
 }
 
 .collapsed {
   height: 0;
   visibility: hidden;
-}
-
-.frame {
-  background: #eee;
-  border: 1px solid #dedede;
-  border-radius: 3px;
-  box-sizing: border-box;
-  padding: 5px;
-  z-index: 0;
 }
 
 .dropzone {
@@ -116,18 +137,60 @@ section {
 }
 
 .player {
-  @extend .frame;
-  
-  height: 160px;
+  color: #cccbcd;
+  height: 150px;
   position: relative;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+  
+  .image {
+    cursor: pointer;
+    float: left;
+    position: relative;
+  }
+  
+  .play {
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+    margin: -20px 0 0 -20px;
+    text-align: center;
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    
+    &:before {
+      @extend .icon;
+      @extend .icon-play:before;
+      
+      color: #fff;
+      font-size: 120%;
+      margin: 10px 0 0 4px;
+      text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+    }
+    
+    &.pause:before {
+      @extend .icon-pause:before;
+      
+      margin: 10px 0 0 1px;
+    }
+  }
   
   .info {
     overflow: hidden;
+    padding: 32px;
     
-    img {
-      border-radius: 5px;
-      float: left;
-      margin-right: 15px;
+    h1 {
+      font-size: 32px;
+      line-height: 32px;
+      margin: 0;
+    }
+    
+    h2 {
+      font-size: 16px;
+      margin: 0;
     }
   }
   
@@ -141,12 +204,108 @@ section {
   button {
     width: 38px;
   }
+}
+
+.playlist {
+  background: #fff;
+  counter-reset: playlist;
+  position: relative;
+  margin-left: 300px;
+  
+  &.playlist-drop > .list:after {
+    background: rgba(255, 255, 255, 0.6);
+    content: "Drop";
+    color: #333;
+    font-size: 26px;
+    line-height: 480px;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  header {
+    background: #efefef;
+    border-bottom: 1px solid #d7d7d7;
+    
+    a {
+      color: #666;
+      display: inline-block;
+      text-align: center;
+      width: 30px;
+      
+      &:hover {
+        text-decoration: none;
+      }
+    }
+    
+    .separator {
+      border-left: 1px solid #c6c6c6;
+      display: inline;
+      height: 15px;
+      margin: 0 5px;
+    }
+    
+    .remove {
+      margin: 0 5px;
+      
+      &.disabled {
+        color: #ccc;
+      }
+    }
+  }
+  
+  menu {
+    background: #dcdcdc;
+    height: 50px;
+    line-height: 50px;
+    padding: 0 10px 0 20px;
+    position: relative;
+    
+    input[type="text"] {
+      padding-right: 20px;
+      vertical-align: middle;
+      width: 100%;
+    }
+    
+    &:after {
+      @extend .icon;
+      @extend .icon-plus:before;
+      
+      color: #989898;
+      line-height: 24px;
+      height: 24px;
+      position: absolute;
+      top: 14px;
+      right: 18px;
+    }
+  }
+  
+  > .list {
+    height: 480px;
+    position: relative;
+  }
+  
+  .playlist-item-placeholder {
+    /* This makes sure all elements stay in place while displaying the placeholder. I honestly have no idea why this works. */
+    border: 2px solid #333;
+    height: 0;
+    margin: -2px 0;
+    padding: 0;
+  }
+  
+  .active {
+    color: #00b6e4;
+  }
   
   .repeat {
     position: relative;
     
     &.active.single:after {
-      background: #333;
+      background: #00b6e4;
       border-radius: 50%;
       color: #fff;
       content: "1";
@@ -164,55 +323,28 @@ section {
   }
 }
 
-.playlist {
-  @extend .frame;
-  
-  position: relative;
-  
-  &.playlist-drop > .list:after {
-    background: rgba(255, 255, 255, 0.6);
-    content: "Drop";
-    color: #333;
-    font-size: 26px;
-    line-height: 480px;
-    text-align: center;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-  
-  menu {
-    height: 30px;
-    margin-top: 10px;
-  }
-  
-  > .list {
-    height: 480px;
-    position: relative;
-  }
-  
-  .playlist-item-placeholder {
-    /* This makes sure all elements stay in place while displaying the placeholder. I honestly have no idea why this works. */
-    border: 2px solid #333;
-    height: 0;
-    margin: -2px 0;
-    padding: 0;
-  }
-}
-
 .playlist-item {
-  background: #f4f4f4;
+  background: #fff;
+  clear: both;
+  color: #666;
+  counter-increment: playlist;
   font-size: 12px;
+  height: 30px;
+  line-height: 13px;
   list-style-type: none;
-  padding: 2px 5px;
+  margin: 20px 0;
   
-  /* Removed because of issues with sortable DOM manipulations. */
-  /*&:nth-child(even) {
-    background: #fdfdfd;
-  }*/
+  &:before {
+    color: #d1d1d1;
+    content: counter(playlist);
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+    text-align: center;
+    width: 55px;
+    height: 30px;
+  }
   
   &.current {
     color: #3a87ad;
@@ -222,7 +354,11 @@ section {
     background: #fcf8e3;
   }
   
-  span {
+  p {
+    margin: 0;
+  }
+  
+  p, span {
     display: inline-block;
     max-width: 100%;
     overflow: hidden;
@@ -230,14 +366,32 @@ section {
     white-space: nowrap;
   }
   
+  .image {
+    background: #666;
+    float: left;
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+  }
+  
   .title, .url {
     display: block;
-    font-size: 16px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+  .title {
+    padding: 0;
+    text-transform: uppercase;
+  }
+  
+  .details {
+    margin-top: 5px;
   }
 }
 
 .library {
-  @extend .frame;
+  background: #efefef;
   
   &.library-drop {
     > .content > .tree:after {
@@ -260,6 +414,11 @@ section {
     }
   }
   
+  header {
+    background: #e0e0e0;
+    border-bottom: 1px solid #c9c9c9;
+  }
+  
   > .content {
     position: relative;
     
@@ -270,8 +429,7 @@ section {
   } 
   
   menu {
-    height: 30px;
-    margin-top: 10px;
+    height: 50px;
   }
   
   a {
@@ -349,25 +507,24 @@ section {
 }
 
 .library-item {
-  background: #f9f9f9;
+  background: #efefef;
   font-size: 14px;
-  text-indent: 2px;
   
-  &.selected {
-    background: #fcf8e3;
+  &.selected .name {
+    color: #956dc6;
   }
   
-  .albums > * {
-    text-indent: 17px;  
+  .albums {
+    padding-left: 40px;
+  }
+  
+  .songs {
+    padding-left: 30px;
     counter-reset: album;
-  }
-  .songs > * {
-    text-indent: 33px;
   }
   
   &.ui-draggable-dragging {
     border: 1px solid #dedede;
-    border-bottom: 0;
     width: 300px;
     z-index: 10;
     
@@ -377,38 +534,39 @@ section {
   }
   
   .name {
-    border-top: 1px solid #fefefe;
-    border-bottom: 1px solid #dedede;
-    color: #333;
+    color: #666;
     text-decoration: none;
   }
 }
 
 .user {
+  background: url('img/noise.png') #ee4832;
+  color: #fcdbd6;  
+  height: 150px;
+  transition: all 400ms ease-in-out;
+  text-align: center;
   
-  @extend .frame;
-  
-  height: 160px;
-  position: relative;
-  
-  &.loading:after {
-    background: rgba(255, 255, 255, 0.6);
-    content: "Logging in...";
-    color: #333;
-    line-height: 160px;
-    text-align: center;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  &.loading {
+    -webkit-transform: translate3d(100%, 0, 0);
+    -moz-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
   }
   
   img {
-    border-radius: 5px;
-    float: left;
-    margin-right: 15px;
+    margin: 15px 0 12px;
+  }
+  
+  h2 {
+    border-top: 1px solid #f26e56;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 18px;
+    margin: 0 20px;
+    padding-top: 15px;
+  }
+  
+  input[type="text"] {
+    margin-top: 60px;
   }
 }
 

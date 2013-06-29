@@ -1,7 +1,7 @@
 define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
   var Syncer = Class.extend({
     init: function() {
-      MPDisco.vent.on('update connected', this.update, this);
+      MPDisco.network.on('update', this.update.bind(this));
     },
     update: function(system) {
       var command = this.commands[system];

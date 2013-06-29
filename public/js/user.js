@@ -36,7 +36,7 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
     model: new User.Model,
     
     events: {
-      'click button': 'sendInfo'
+      'keyup input[type="text"]': 'enterInfo'
     },
     
     ui: {
@@ -58,6 +58,12 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         this.render();
         
         this.$el.removeClass('loading');
+      }
+    },
+    
+    enterInfo: function(e) {
+      if (e.which == 0x0d) {
+        this.sendInfo();
       }
     },
     

@@ -13,48 +13,55 @@
     <link rel="stylesheet" href="mpdisco.css">
     <script src="js/vendor/modernizr-2.6.2.min.js"></script>
   </head>
-  <body>
-    <div id="container" role="main" class="container_12"></div>
+  <body class="container_12">
+    <div id="container" role="main" class="grid_12"></div>
     <script type="text/template" id="layout_template">
-      <section id="player" class="grid_6"></section>
-      <section id="user" class="grid_6"></section>
-      <section id="library" class="grid_6"></section>
-      <section id="playlist" class="grid_6"></section>
+      <div id="player-head" class="grid_12 alpha omega">
+        <section id="player" class="grid_9 alpha"></section>
+        <section id="user" class="grid_3 omega"></section>
+      </div>
+      <div class="grid_12 alpha omega">
+        <section id="library" class="grid_4 alpha omega"></section>
+        <section id="playlist"></section>
+      </div>
     </script>
     <script type="text/template" id="playlist_item_template">        
+      <div class="image"></div>
       {{#if title}}
-        <span class="title">{{title}}</span>
+        <p class="title">{{title}}</p>
+        <p class="details">
         {{#if artist}}<span class="artist">{{artist}}</span>{{/if}}
         {{#if album}}(<span class="album">{{album}}</span>{{#if date}}, <span class="year">{{date}}</span>{{/if}}){{/if}}
+        </p>
       {{else}}
         <span class="url">{{file}}</span>
       {{/if}}
     </script>
     <script type="text/template" id="playlist_template">
+      <header>
+        <div class="button-group pull-right">
+          <a class="shuffle" href="#"><i class="icon-random"></i></a>
+          <a class="repeat" href="#"><i class="icon-refresh"></i></a>
+          <span class="separator"></span>
+          <a class="remove disabled" href="#"><i class="icon-trash"></i></a>
+        </div>
+        <span>Playlist</span>
+      </header>
       <ul class="list"></ul>
       <menu>
-        <input type="text" id="url" name="url" />
-        <button class="add btn">Add</button>
-        <button class="remove btn pull-right" disabled="disabled"><i class="icon-trash"></i></button>
+        <input type="text" id="url" name="url" placeholder="Add a link" />
       </menu>
     </script>
     <script type="text/template" id="player_template">
+      <div class="image">
+        <span class="play"></span>
+        <img src="http://placehold.it/150x150" alt="placeholder" />
+      </div>
       <div class="info">
-        <img src="http://placehold.it/100x100" alt="placeholder" />
-        <h2>{{title}}</h2>
-        <p>{{artist}} - {{album}}</p>
+        <h1>{{title}}</h1>
+        <h2>{{artist}}{{#if album}} - {{album}}{{/if}}</h2>
         <span class="master"></span>
       </div>
-      <menu class="controls">
-        <button class="prev btn"><i class="icon-step-backward"></i></button>
-        <button class="play btn"><i class="icon-play"></i></button>
-        <button class="stop btn"><i class="icon-stop"></i></button>
-        <button class="next btn"><i class="icon-step-forward"></i></button>
-        <span class="btn-group">
-          <button class="repeat btn"><i class="icon-refresh"></i></button>
-          <button class="shuffle btn"><i class="icon-random"></i></button>
-        </span>
-      </menu>
     </script>
     <script type="text/template" id="song_template">
       <a class="name" href="#" data-id="{{title}}">{{title}}</a>
@@ -68,6 +75,9 @@
       <ul class="albums tree collapsed"></ul>
     </script>
     <script type="text/template" id="library_template">
+      <header>
+        Library
+      </header>
       <div class="content">
         <ul class="artists tree"></ul>
         <ul class="upload"></ul>
@@ -77,13 +87,13 @@
       <div id="overlay"></div>
     </script>
     <script type="text/template" id="user_template">
-      <img src="{{thumbnailUrl}}?s=100" alt="{{displayName}}" />
+      <img src="{{thumbnailUrl}}?s=48" alt="{{displayName}}" />
       <h2>
         {{#if name}}{{name.givenName}} {{name.familyName}}{{else}}{{displayName}}{{/if}}
       </h2>
     </script>
     <script type="text/template" id="user_identify_template">
-      <input type="text" placeholder="E-mail or Nickname" /><button class="btn">Send</button>
+      <input type="text" placeholder="E-mail or Nickname" />
     </script>
     <script src="js/vendor/jquery-min.js"></script>
     <script src="js/vendor/socket.io.js"></script>

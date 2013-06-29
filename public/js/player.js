@@ -28,8 +28,6 @@ define(['mpdisco'], function(MPDisco) {
         'click .stop': 'stopSong',
         'click .play': 'playSong',
         'click .pause': 'pauseSong',
-        'click .shuffle': 'toggleShuffle',
-        'click .repeat': 'toggleRepeat'
       },
       
       ui: {
@@ -63,10 +61,6 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.play.toggleClass('pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-pause', (MPDisco.state.get('state') === 'play'));
         this.ui.playIcon.toggleClass('icon-play', (MPDisco.state.get('state') !== 'play'));
-        
-        this.ui.shuffle.toggleClass('active', (MPDisco.state.get('random') === '1'));
-        this.ui.repeat.toggleClass('active', (MPDisco.state.get('repeat') === '1'));
-        this.ui.repeat.toggleClass('single', (MPDisco.state.get('single') === '1'));
       },
       
       updateMaster: function(master) {
@@ -92,40 +86,12 @@ define(['mpdisco'], function(MPDisco) {
       pauseSong: function() {
         MPDisco.command('pause', 1);
       },
-      toggleShuffle: function() {
-        var state = (~MPDisco.state.get('random') & 1);
-        
-        this.ui.shuffle.toggleClass('active', state);
-        
-        MPDisco.command('random', state);
-      },
-      toggleRepeat: function() {
-        var repeat = +MPDisco.state.get('repeat'),
-            single = +MPDisco.state.get('single');
-            
-        if (repeat && single) {
-          this.ui.repeat.removeClass('active single');
-          
-          MPDisco.commands([
-            { command: 'repeat', args: 0 },
-            { command: 'single', args: 0 }
-          ]);
-        } else if (repeat) {
-          this.ui.repeat.addClass('single');
-          
-          MPDisco.command('single', 1);
-        }else {
-          this.ui.repeat.addClass('active');
-          
-          MPDisco.command('repeat', 1);
-        }
-      },
       
       handleKeyboard: function(e) {
         if (e.which === 0x20) {
           (MPDisco.state.get('state') !== 'play') ? this.playSong() : this.pauseSong();
           
-          return false;
+          e.preventDefault();
         }
       }
       

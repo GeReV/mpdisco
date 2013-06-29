@@ -14,15 +14,11 @@
       ClientsManager.on('disconnected', this.disconnected.bind(this));
       
       ClientsManager.on('connected', this.connected.bind(this));
+      
+      ClientsManager.on('identified', this.identified.bind(this));
     },
     
     connected: function(client) {
-      if (!this.master && !ClientsManager.isEmpty()) {
-        this.setMaster(ClientsManager.first());
-      }
-      
-      console.log(client);
-      
       client.emit('connected', {
         id: client.info.userid,
         info: client.info,
@@ -30,17 +26,18 @@
         mode: this.type,
         master: this.master
       });
-      client.broadcast.emit('clientconnected', client.info);
     },
     
     disconnected: function(client) {
-      console.log('MASTER_MODE :: DISCONNECTED');
-      
-      console.log(ClientsManager.clientsInfo());
-      
       if (ClientsManager.isEmpty()) {
         this.clearMaster();
       } else if (!this.isMaster(ClientsManager.first())) {
+        this.setMaster(ClientsManager.first());
+      }
+    },
+    
+    identified: function(client) {
+      if (!this.master && !ClientsManager.isEmpty()) {
         this.setMaster(ClientsManager.first());
       }
     },
@@ -64,14 +61,19 @@
     },
     
     setMaster: function(client) {
-      console.log('master changed');
+      
       
       if (!client) {
         this.master = null;
+        
+        console.log('master cleared');
+        
         return;
       }
       
       this.master = client.info.userid;
+      
+      console.log('master changed', this.master);
 
       client.emit('master', this.master);
       client.broadcast.emit('master', this.master);
