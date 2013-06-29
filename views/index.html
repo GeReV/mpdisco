@@ -19,6 +19,7 @@
       <div id="player-head" class="grid_12 alpha omega">
         <section id="player" class="grid_9 alpha"></section>
         <section id="user" class="grid_3 omega"></section>
+        <section id="scrubber" class="grid_12 alpha omega"></section>
       </div>
       <div class="grid_12 alpha omega">
         <section id="library" class="grid_4 alpha omega"></section>
@@ -26,6 +27,7 @@
       </div>
     </script>
     <script type="text/template" id="playlist_item_template">        
+      {{time time}}
       <div class="image"></div>
       {{#if title}}
         <p class="title">{{title}}</p>
@@ -53,14 +55,14 @@
       </menu>
     </script>
     <script type="text/template" id="player_template">
-      <div class="image">
-        <span class="play"></span>
+      <div class="image play">
+        <span class="indicator"></span>
         <img src="http://placehold.it/150x150" alt="placeholder" />
       </div>
       <div class="info">
         <h1>{{title}}</h1>
         <h2>{{artist}}{{#if album}} - {{album}}{{/if}}</h2>
-        <span class="master"></span>
+        <h2 class="duration">{{time time}}</h2>
       </div>
     </script>
     <script type="text/template" id="song_template">
@@ -94,6 +96,9 @@
     </script>
     <script type="text/template" id="user_identify_template">
       <input type="text" placeholder="E-mail or Nickname" />
+    </script>
+    <script type="text/template" id="scrubber_template">
+      <div class="progress"></div>
     </script>
     <script src="js/vendor/jquery-min.js"></script>
     <script src="js/vendor/socket.io.js"></script>

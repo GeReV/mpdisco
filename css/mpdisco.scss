@@ -32,7 +32,7 @@ body {
 
 #player-head {
   background: url('img/noise.png') #434343;
-  height: 150px;
+  height: 160px;
   overflow: hidden;
 }
 
@@ -149,38 +149,40 @@ section {
   }
   
   .play {
-    background: rgba(0, 0, 0, 0.05);
-    border: 2px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
-    margin: -20px 0 0 -20px;
-    text-align: center;
-    width: 40px;
-    height: 40px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    
-    &:before {
-      @extend .icon;
-      @extend .icon-play:before;
+    .indicator {
+      background: rgba(0, 0, 0, 0.05);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+      margin: -20px 0 0 -20px;
+      text-align: center;
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
       
-      color: #fff;
-      font-size: 120%;
-      margin: 10px 0 0 4px;
-      text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+      &:before {
+        @extend .icon;
+        @extend .icon-play:before;
+        
+        color: #fff;
+        font-size: 120%;
+        margin: 10px 0 0 4px;
+        text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+      }
     }
     
-    &.pause:before {
-      @extend .icon-pause:before;
-      
-      margin: 10px 0 0 1px;
-    }
-  }
+    &.pause .indicator:before {
+        @extend .icon-pause:before;
+        
+        margin: 10px 0 0 1px;
+      }
+  } 
   
   .info {
     overflow: hidden;
-    padding: 32px;
+    padding: 26px 32px;
     
     h1 {
       font-size: 32px;
@@ -190,7 +192,21 @@ section {
     
     h2 {
       font-size: 16px;
-      margin: 0;
+      font-weight: normal;
+      line-height: 18px;
+      margin: 5px 0;
+    }
+    
+    .duration {
+      color: #666;
+      font-size: 32px;
+      margin-bottom: 0;
+      margin-top: 12px;
+      line-height: 26px;
+    }
+    
+    .time {
+      color: #cccbcd;
     }
   }
   
@@ -203,6 +219,23 @@ section {
   
   button {
     width: 38px;
+  }
+}
+
+.scrubber {
+  background: #121212;
+  height: 10px;
+  
+  .progress {
+    background-image: -moz-linear-gradient(top, #00d3ef, #009fdc);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#00d3ef), to(#009fdc));
+    background-image: -webkit-linear-gradient(top, #00d3ef, #009fdc);
+    background-image: -o-linear-gradient(top, #00d3ef, #009fdc);
+    background: linear-gradient(to bottom, #00d3ef, #009fdc);
+    border-radius: 0 5px 5px 0;
+    padding-right: 5px;
+    width: 0;
+    height: 10px;
   }
 }
 
@@ -334,16 +367,19 @@ section {
   list-style-type: none;
   margin: 20px 0;
   
-  &:before {
+  &:before, .time {
     color: #d1d1d1;
-    content: counter(playlist);
-    float: left;
     font-size: 20px;
     font-weight: bold;
     line-height: 30px;
     text-align: center;
     width: 55px;
     height: 30px;
+  }
+  
+  &:before {
+    content: counter(playlist);
+    float: left;
   }
   
   &.current {
@@ -387,6 +423,10 @@ section {
   
   .details {
     margin-top: 5px;
+  }
+  
+  .time {
+    float: right;
   }
 }
 

@@ -1,25 +1,39 @@
-define(['mpdisco'], function(MPDisco) {
+define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
+  
   var Player = MPDisco.module('Player', function(Player, MPDisco, Backbone, Marionette) {
     Player.Song = MPDisco.Model.extend({
       defaults: {
         title: 'Title',
         artist: 'Artist',
-        album: 'Album'
+        album: 'Album',
+        time: '0:0'
       },
       socketEvents: {
+        status: 'set',
         currentsong: 'set'
+      },
+      set: function(attributes) {
+        
+        if (attributes.time && attributes.time.indexOf(':') === -1) {
+          delete attributes.time;
+        }
+        
+        MPDisco.Model.prototype.set.apply(this, arguments);
       }
     });
+    
+    MPDisco.current = new Player.Song;
     
     Player.PlayerView = Marionette.ItemView.extend({
       template: '#player_template',
       
       className: 'player',
       
-      model: new Player.Song,
+      model: MPDisco.current,
       
       modelEvents: {
-        change: 'render'
+        change: 'render',
+        'change:time': 'updatePlayer'
       },
       
       events: {
@@ -38,7 +52,7 @@ define(['mpdisco'], function(MPDisco) {
         play: '.play',
         shuffle: '.shuffle',
         repeat: '.repeat',
-        playIcon: '.play i'
+        runningTime: '.time.running'
       },
       
       initialize: function() {
@@ -57,10 +71,36 @@ define(['mpdisco'], function(MPDisco) {
         $(document).off('keyup.player');
       },
       
+      onRender: function() {
+        this.updatePlayer();
+      },
+      
       updatePlayer: function() {
+        var model = this.model,
+            time = this.model.get('time').split(':'),
+            running = +time[0],
+            length = +time[1];
+        
         this.ui.play.toggleClass('pause', (MPDisco.state.get('state') === 'play'));
-        this.ui.playIcon.toggleClass('icon-pause', (MPDisco.state.get('state') === 'play'));
-        this.ui.playIcon.toggleClass('icon-play', (MPDisco.state.get('state') !== 'play'));
+        
+        // TODO: Place this in the model?
+        if (MPDisco.state.get('state') === 'play') {
+          clearInterval(this.playInterval);
+          
+          this.playInterval = setInterval(function() {
+            model.set('time', (++running) + ':' + length);
+          }, 1000);
+          
+        } else {
+          clearInterval(this.playInterval);
+        }
+      },
+      
+      updateTimer: function() {
+        var timer = this.ui.runningTime,
+            time = +(this.model.get('time')).split(':')[0];
+            
+        timer.html( MPDisco.Utils.formatSeconds(time) );
       },
       
       updateMaster: function(master) {
@@ -95,6 +135,41 @@ define(['mpdisco'], function(MPDisco) {
         }
       }
       
+    });
+    
+    Player.ScrubberView = Marionette.ItemView.extend({
+      className: 'scrubber',
+      
+      template: '#scrubber_template',
+      
+      model: MPDisco.current,
+      
+      modelEvents: {
+        'change:time': 'updateScrubber'
+      },
+      
+      ui: {
+        progress: '.progress'
+      },
+      
+      initialize: function() {
+        this.listenTo(MPDisco.state, 'change', function() {
+          this.updateScrubber();
+        });
+      },
+      
+      onRender: function() {
+        this.updateScrubber();
+      },
+      
+      updateScrubber: function() {
+        var progress = this.ui.progress,
+            time = this.model.get('time').split(':'),
+            running = +(time[0] || 0),
+            length = +(time[1] || 1);
+            
+        progress.css('width', (running / length * 100) + '%' );
+      }
     });
   });
   
