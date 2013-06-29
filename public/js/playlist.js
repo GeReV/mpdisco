@@ -348,12 +348,13 @@ define(['mpdisco'], function(MPDisco) {
       scrollIntoView: function(item) {
         var scrollTop = this.ui.playlist.prop('scrollTop'),
             height = this.ui.playlist.height(),
-            itemTop = item.position().top;
+            itemTop = item.position().top,
+            itemHeight = item.outerHeight();
             
         if (itemTop < 0) {
           scrollTop += itemTop;
-        } else if (itemTop > height) {
-          scrollTop -= height + item.height();
+        } else if (itemTop + itemHeight > height) {
+          scrollTop -= height - itemTop - itemHeight;
         }
         
         this.ui.playlist.prop('scrollTop', scrollTop);

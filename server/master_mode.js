@@ -1,6 +1,7 @@
 (function() {
   var BasicMode = require('./basic_mode.js'),
-      ClientsManager = require('./clients_manager.js')();
+      ClientsManager = require('./clients_manager.js')(),
+      config = require('../config.json'),
       _ = require('underscore');
   
   var MasterMode = BasicMode.extend({
@@ -24,7 +25,7 @@
         info: client.info,
         clients: ClientsManager.clientsInfo(),
         mode: this.type,
-        master: this.master
+        master: this.master && ClientsManager.get(this.master).info
       });
     },
     
@@ -61,7 +62,7 @@
     },
     
     setMaster: function(client) {
-      
+      var timeout;
       
       if (!client) {
         this.master = null;
@@ -74,12 +75,31 @@
       this.master = client.info.userid;
       
       console.log('master changed', this.master);
+      
+      this.setMasterTimeout();
 
-      client.emit('master', this.master);
-      client.broadcast.emit('master', this.master);
+      client.emit('master', ClientsManager.get(this.master).info);
+      client.broadcast.emit('master', ClientsManager.get(this.master).info);
     },
     clearMaster: function() {
       this.setMaster(null);
+    },
+    setMasterTimeout: function() {
+
+      clearTimeout(this.masterTimeout);
+      
+      console.log('master timeout (mins):', config.masterTime);
+      
+      this.masterTimeout = setTimeout(function() {
+        console.log('rotating master');
+        
+        ClientsManager.rotate();
+        
+        this.setMaster(ClientsManager.first());
+        
+        clearTimeout(this.masterTimeout);
+      }.bind(this), +config.masterTime * 60 * 1000);
+      
     },
     
     isWhitelistCommand: function(cmd) {

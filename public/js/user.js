@@ -7,12 +7,12 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
       },
       
       socketEvents: {
-        identify: 'set'
+        master: 'set'
       },
       
       initialize: function() {
         this.listenTo(MPDisco.vent, 'networkready', function(data) {
-          data.info && this.set(data.info);
+          data.master && this.set(data.master);
         });
       }
     });
@@ -22,15 +22,19 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
     className: 'user',
     
     getTemplate: function() {
-      if (this.identified) {
+      if (this.isIdentified) {
         return '#user_template';
       }
       
       return '#user_identify_template';
     },
     
+    socketEvents: {
+      identify: 'identified',
+    },
+    
     modelEvents: {
-      'change': 'showUser',
+      change: 'showUser'
     },
     
     model: new User.Model,
@@ -43,18 +47,67 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
       name: 'input[type="text"]'
     },
     
-    identified: false,
+    isIdentified: false,
+    
+    render: function() {
+      this.isClosed = false;
+
+      this.triggerMethod("before:render", this);
+      this.triggerMethod("item:before:render", this);
+    
+      var data = this.serializeData();
+      data = this.mixinTemplateHelpers(data);
+    
+      var template = this.getTemplate();
+      var html = Marionette.Renderer.render(template, data);
+      
+      this.$el.on('transitionend webkitTransitionEnd oTransitionEnd', function clearContent() {
+        var that = $(this);
+        
+        if (that.find('.content').length > 1) {
+          that.removeClass('switching').find('.content').first().remove();
+        }
+        
+        that.off('transitionend webkitTransitionEnd oTransitionEnd', clearContent);
+      });
+    
+      if (this.$el.find('.content').length) {
+        this.$el.append(html);
+        
+        // TODO: Adding the class immediately after the content is appended prevents the transition from affecting the new content.
+        var timeout = setTimeout(function() {
+          
+          this.$el.addClass('switching');
+          
+          clearTimeout(timeout);
+          
+        }.bind(this), 100);
+      }else{
+        this.$el.html(html);
+      }
+      
+      this.bindUIElements();
+    
+      this.triggerMethod("render", this);
+      this.triggerMethod("item:rendered", this);
+    
+      return this;
+    },
     
     onShow: function() {
-      if ($.cookie('mpdisco.name') && !this.identified) {
+      if ($.cookie('mpdisco.name') && !this.isIdentified) {
         this.sendInfo();
       }
     },
     
-    showUser: function(model) {
-      if (_.any(['name', 'thumbnailUrl', 'displayName'], function(k) { return model.changedAttributes().hasOwnProperty(k); })) {
-        this.identified = true;
+    identified: function() {
+      this.isIdentified = true;
       
+      this.showUser();
+    },
+    
+    showUser: function() {
+      if (this.isIdentified) {
         this.render();
         
         this.$el.removeClass('loading');

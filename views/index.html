@@ -89,10 +89,13 @@
       <div id="overlay"></div>
     </script>
     <script type="text/template" id="user_template">
-      <img src="{{thumbnailUrl}}?s=48" alt="{{displayName}}" />
-      <h2>
-        {{#if name}}{{name.givenName}} {{name.familyName}}{{else}}{{displayName}}{{/if}}
-      </h2>
+      <div class="content">
+        <p>Current Master</p>
+        <img src="{{thumbnailUrl}}?s=48" alt="{{displayName}}" />
+        <h2>
+          {{#if name}}{{name.givenName}} {{name.familyName}}{{else}}{{displayName}}{{/if}}
+        </h2>
+      </div>
     </script>
     <script type="text/template" id="user_identify_template">
       <input type="text" placeholder="E-mail or Nickname" />

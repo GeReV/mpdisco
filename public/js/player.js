@@ -3,9 +3,9 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
   var Player = MPDisco.module('Player', function(Player, MPDisco, Backbone, Marionette) {
     Player.Song = MPDisco.Model.extend({
       defaults: {
-        title: 'Title',
-        artist: 'Artist',
-        album: 'Album',
+        title: '',
+        artist: '',
+        album: '',
         time: '0:0'
       },
       socketEvents: {
@@ -117,6 +117,10 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         MPDisco.network.command('stop');
       },
       playSong: function() {
+        if (this.ui.play.is('.pause')) {
+          return;
+        }
+        
         if (MPDisco.state.get('state') === 'pause') {
           MPDisco.command('pause', 0);
         } else {
