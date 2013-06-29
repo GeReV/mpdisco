@@ -126,8 +126,6 @@
         this.loggedClients.push(client);
       }
       
-      console.log(_.map(this.loggedClients, function(c) { return c.info.userid; }));
-      
       client.emit('identify', info);
       
       client.broadcast.emit('clientconnected', client.info);
