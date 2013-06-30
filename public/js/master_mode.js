@@ -26,9 +26,11 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
           
           master || (master = MPDisco.meta.master);
           
-          if (MPDisco.meta.id) {
-            lock = (master !== MPDisco.meta.id);
+          if (MPDisco.meta.id && master.userid) {
+            lock = (master.userid !== MPDisco.meta.id);
           }
+          
+          this.locked = lock;
           
           this.setLockUI(lock);
         },
@@ -41,19 +43,28 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
       },
       onDomRefresh: function() {
         this.updateLock();
-      },
+      }
     }));
     
     MasterMode.PlaylistView = Playlist.PlaylistView.extend(_.extend(buildLockableMixinFor(Playlist.PlaylistView), {
       setLockUI: function(lock) {
         this.ui.playlist.sortable(lock ? 'disable' : 'enable');
+        
+        this.ui.url.prop('disabled', lock);
+        
+        this.ui.repeat.toggleClass('disabled', lock);
+        this.ui.shuffle.toggleClass('disabled', lock);
       },
       
       onRender: function() {
         Playlist.PlaylistView.prototype.onCompositeCollectionRendered.call(this);
         
         this.updateLock();
-      }
+      },
+      
+      setRemoveButton: function() {
+        this.ui.remove.toggleClass('disabled', (this.$('.selected').length <= 0 || this.locked));
+      },
     }));
     
     MasterMode.LibrarySongView = Library.LibrarySongView.extend(_.extend(buildLockableMixinFor(Library.LibrarySongView), {

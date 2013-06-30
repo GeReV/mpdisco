@@ -25,6 +25,7 @@
         <section id="library" class="grid_4 alpha omega"></section>
         <section id="playlist"></section>
       </div>
+      <div id="error"></div>
     </script>
     <script type="text/template" id="playlist_item_template">        
       {{time time}}
@@ -102,6 +103,11 @@
     </script>
     <script type="text/template" id="scrubber_template">
       <div class="progress"></div>
+    </script>
+    <script type="text/template" id="error_template">
+      <button class="close"></button>
+      <p>Whoops. Looks like something didn't work on my end.</p>
+      <p>If this keeps happening, please <a href="https://github.com/gerev/mpdisco/issues">let my author know</a>.</p>
     </script>
     <script src="js/vendor/jquery-min.js"></script>
     <script src="js/vendor/socket.io.js"></script>

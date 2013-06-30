@@ -170,9 +170,13 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         var progress = this.ui.progress,
             time = this.model.get('time').split(':'),
             running = +(time[0] || 0),
-            length = +(time[1] || 1);
+            length = +(time[1]);
             
-        progress.css('width', (running / length * 100) + '%' );
+        if (!length) {
+          progress.width(0);
+        }
+            
+        progress.width((running / length * 100) + '%' );
       }
     });
   });

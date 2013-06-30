@@ -153,7 +153,7 @@ section {
       background: rgba(0, 0, 0, 0.05);
       border: 2px solid #fff;
       border-radius: 50%;
-      box-shadow: 0 0 2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
       margin: -20px 0 0 -20px;
       text-align: center;
       width: 40px;
@@ -169,7 +169,7 @@ section {
         color: #fff;
         font-size: 120%;
         margin: 10px 0 0 4px;
-        text-shadow: 0 0 1px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 0 1px rgba(0, 0, 0, 1);
       }
     }
     
@@ -273,6 +273,10 @@ section {
       &:hover {
         text-decoration: none;
       }
+      
+      &.disabled {
+        color: #ccc;
+      }
     }
     
     .separator {
@@ -284,10 +288,6 @@ section {
     
     .remove {
       margin: 0 5px;
-      
-      &.disabled {
-        color: #ccc;
-      }
     }
   }
   
@@ -627,6 +627,66 @@ section {
   input[type="text"] {
     margin-top: 60px;
   }
+}
+
+.error {
+  background-color: #f2dede;
+  border: 1px solid #eed3d7;
+  border-radius: 4px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25);
+  color: #b94a48;
+  margin-right: 30px;
+  padding: 8px 35px 8px 14px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  transition: all 400ms ease-in-out;
+  width: 300px;
+  position: fixed;
+  top: 100%;
+  right: 0;
+  
+  &.shown {
+    -webkit-transform: translate3d(0, -150%, 0);
+       -moz-transform: translate3d(0, -150%, 0);
+            transform: translate3d(0, -150%, 0);
+  }
+  
+  > :last-child {
+    margin-bottom: 0;
+  }
+  
+  a {
+    font-weight: bold;
+    color: #b94a48;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  
+  .close {
+    border: 0;
+    background: 0;
+    line-height: 16px;
+    opacity: 0.2;
+    padding: 0;
+    text-align: center;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    
+    &:hover {
+      opacity: 0.4;
+    }
+    
+    &:before {
+      @extend .icon;
+      @extend .icon-remove:before;
+    }
+  }
+  
+  
 }
 
 /* font-awesome.css */

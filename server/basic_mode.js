@@ -61,6 +61,16 @@
 
     return (json.length == 1 ? json[0] : json);
   }
+  
+  function sanitizeArgs(args) {
+    return _.map(args, function(arg) {
+      return '' + arg;
+    });
+  }
+  
+  function ensureArray(args) {
+    return _.isArray(args) ? args : [args];
+  }
 
   var BasicMode = Class.extend({
     init: function(mpd, cmdProcessors) {
@@ -79,24 +89,31 @@
       });
     },
     command: function(command, args, client) {
-      var processor;
+      var processor,
+          callback = function(args) {
+            this.execute(command, args, client);
+          }.bind(this),
+          error = function(args) {
+            
+            client.emit('error', {
+              command: command,
+              args: args
+            });
+            
+          };
       
       command = command.toLowerCase();
       
-      if (!_.isArray(args)) {
-        args = [args];
-      }
-
+      args = sanitizeArgs(ensureArray(args));
+      
       if (this.canExecute(command, client)) {
         
         processor = this.commandProcessors[command];
 
         if (processor) {
-
+          
           // Run the command through the processor, which calls back with modified args (e.g. Youtube stream from url).
-          processor(this.mpd, args, function(args) {
-            this.execute(command, args, client);
-          }.bind(this));
+          processor(this.mpd, args, callback, error);
 
         }else{
           this.execute(command, args, client);
@@ -120,6 +137,8 @@
         if (!_.isArray(cmd.args)) {
           cmd.args = [cmd.args];
         }
+        
+        cmd.args = sanitizeArgs(cmd.args);
         
         return cmd;
       });
@@ -154,6 +173,8 @@
       if (!_.isArray(args)) {
         args = [args]; // Ensure array.
       }
+      
+      args = sanitizeArgs(args);
 
       cmd = mpd.cmd(command, args);
       

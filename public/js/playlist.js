@@ -51,7 +51,7 @@ define(['mpdisco'], function(MPDisco) {
         'keyup #url': 'add',
         'click .remove': 'remove',
         'dblclick li': 'play',
-        'click li': 'select',
+        'click li': 'selectClick',
         'drop': 'drop',
         'click .shuffle': 'toggleShuffle',
         'click .repeat': 'toggleRepeat'
@@ -158,9 +158,13 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       add: function(e) {
-        if (e.which === 0x0d) {
-          MPDisco.command('add', this.ui.url.val());
+        var value = $.trim(this.ui.url.val());
+        
+        if (e.which === 0x0d && value) {
+          MPDisco.command('add', value);
         }
+        
+        return false;
       },
       
       drop: function(e, ui) {
@@ -234,8 +238,18 @@ define(['mpdisco'], function(MPDisco) {
         return false;
       },
       
-      select: function(e) {
-        var item = e, itemTop, height, scrollTop;
+      selectClick: function(e) {
+        this.ui.url.trigger('blur');
+        
+        this.select( e, $(e.currentTarget) );
+      },
+      
+      select: function(e, item) {
+        var itemTop, height, scrollTop;
+        
+        if (!item) {
+          item = e;
+        }
         
         if (e.currentTarget) {
           item = $(e.currentTarget);
@@ -244,8 +258,6 @@ define(['mpdisco'], function(MPDisco) {
         if (!item.size()) {
           return;
         }
-        
-        this.ui.remove.removeClass('disabled');
         
         if (e.ctrlKey || e.metaKey) {
           this.selectToggle(item);
@@ -273,7 +285,7 @@ define(['mpdisco'], function(MPDisco) {
       selectNone: function() {
         this.$('.selected').removeClass('selected');
         
-        this.ui.remove.addClass('disabled');
+        this.setRemoveButton();
       },
       selectOne: function(item) {
         item.addClass('selected')
@@ -361,6 +373,7 @@ define(['mpdisco'], function(MPDisco) {
         
         this.ui.playlist.prop('scrollTop', scrollTop);
       },
+      
       setRemoveButton: function() {
         this.ui.remove.toggleClass('disabled', (this.$('.selected').length <= 0));
       },

@@ -103,6 +103,41 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     }
   };
   
+  MPDisco.Error = MPDisco.Model.extend({
+    socketEvents: {
+      error: 'set'
+    }
+  });
+  MPDisco.ErrorView = Marionette.ItemView.extend({
+    className: 'error',
+    
+    template: '#error_template',
+    
+    model: new MPDisco.Error,
+    
+    modelEvents: {
+      change: 'show'
+    },
+    
+    socketEvents: {
+      error: 'show'
+    },
+    
+    events: {
+      'click .close': 'hide'
+    },
+    
+    show: function() {
+      this.render();
+      
+      this.$el.addClass('shown');
+    },
+    
+    hide: function() {
+      this.$el.removeClass('shown');
+    }
+  });
+  
   MPDisco.State = MPDisco.Model.extend({
     socketEvents: {
       status: 'set'
@@ -118,7 +153,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
       user: '#user',
       scrubber: '#scrubber',
       playlist: '#playlist',
-      library: '#library'
+      library: '#library',
+      error: '#error'
     }
   });
   
@@ -148,6 +184,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     this.layout.playlist.show(new MPDisco.mode.playlist);
     
     this.layout.library.show(new MPDisco.mode.library);
+    
+    this.layout.error.show(new MPDisco.ErrorView);
     
     this.network.command('status');
   });
