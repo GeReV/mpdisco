@@ -157,7 +157,7 @@ define(['mpdisco'], function(MPDisco) {
         this.ui.repeat.toggleClass('single', model.get('single') === '1');
       },
       
-      add: function() {
+      add: function(e) {
         if (e.which === 0x0d) {
           MPDisco.command('add', this.ui.url.val());
         }
