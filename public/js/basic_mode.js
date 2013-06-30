@@ -6,6 +6,7 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
       user: User.UserView,
       scrubber: Player.ScrubberView,
       playlist: Playlist.PlaylistView,
+      listeners: User.Listeners,
       library: Library.LibraryView
     };
   });

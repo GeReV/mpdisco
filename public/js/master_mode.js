@@ -24,9 +24,9 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
         updateLock: function(master) {
           var lock = true;
           
-          master || (master = MPDisco.meta.master);
+          master = master || MPDisco.meta.master;
           
-          if (MPDisco.meta.id && master.userid) {
+          if (master && master.userid && MPDisco.meta.id) {
             lock = (master.userid !== MPDisco.meta.id);
           }
           
@@ -111,11 +111,68 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
       itemView: MasterMode.LibraryArtistView
     });
     
+    MasterMode.ListenersView = User.ListenersView.extend({
+      socketEvents: {
+        master: 'setMaster',
+        clientconnected: 'updateClients',
+        clientdisconnected: 'updateClients'
+      },
+      
+      initialize: function() {
+        User.ListenersView.prototype.initialize.call(this);
+        
+        this.listenTo(MPDisco.vent, 'networkready', function(data) {
+          this.clients = data.clients || [];
+          
+          this.setMaster(data.master);
+        });
+      },
+      
+      onRender: function() {
+        this.updateMaster();
+      },
+      
+      setMaster: function(master) {
+        this.master = master;
+        
+        this.updateMaster();
+      },
+      
+      updateMaster: function() {
+        var i, next;
+        
+        if (!this.master) {
+          return;
+        }
+        
+        this.$('.listener').removeClass('up-next master');
+        
+        this.$('[data-id="' + this.master.userid + '"]').addClass('master');
+          
+        i = _.findIndex(this.clients, function(c) {
+          return c.userid === this.master.userid;
+        }, this);
+        
+        if (i !== -1) {
+          next = this.clients[ ((i + 1) % this.clients.length) ];
+        
+          if (next.userid !== this.master.userid) {
+            this.$('[data-id="' + next.userid + '"]').addClass('up-next');
+          }
+        }
+      },
+      
+      updateClients: function(client, clientList) {
+        this.clients = clientList;
+      }
+    });
+    
     MasterMode.Mode = {
       player: MasterMode.PlayerView,
       user: User.UserView,
       scrubber: Player.ScrubberView,
       playlist: MasterMode.PlaylistView,
+      listeners: MasterMode.ListenersView,
       library: MasterMode.LibraryView
     };
   });

@@ -1,4 +1,15 @@
 define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionette, Network, Handlebars, _) {
+
+  _.findIndex = function(obj, iterator, context) {
+    var result = -1;
+    _.any(obj, function(value, index, list) {
+        if(iterator.call(context, value, index, list)) {
+            result = index;
+            return true;
+        }
+    });
+    return result;
+  }
   
   Handlebars.registerHelper('time', function(time) {
     time = time || '';
@@ -153,6 +164,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
       user: '#user',
       scrubber: '#scrubber',
       playlist: '#playlist',
+      listeners: '#listeners',
       library: '#library',
       error: '#error'
     }
@@ -182,6 +194,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     this.layout.scrubber.show(new MPDisco.mode.scrubber);
     
     this.layout.playlist.show(new MPDisco.mode.playlist);
+    
+    this.layout.listeners.show(new MPDisco.mode.listeners);
     
     this.layout.library.show(new MPDisco.mode.library);
     

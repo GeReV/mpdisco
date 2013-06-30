@@ -73,7 +73,7 @@
       
       this.disconnectionTimeouts[client.info.userid] = setTimeout(function() {
         
-        client.broadcast.emit('clientdisconnected', client.info.userid);
+        client.broadcast.emit('clientdisconnected', client.info, this.clientsInfo);
         
         this.dropClient(client);
         
@@ -128,7 +128,7 @@
       
       client.emit('identify', info);
       
-      client.broadcast.emit('clientconnected', client.info);
+      client.broadcast.emit('clientconnected', client.info, this.clientsInfo);
        
       this.emit('identified', client);
     },

@@ -242,8 +242,9 @@ section {
 .playlist {
   background: #fff;
   counter-reset: playlist;
+  float: left;
   position: relative;
-  margin-left: 300px;
+  width: 500px;
   
   &.playlist-drop > .list:after {
     background: rgba(255, 255, 255, 0.6);
@@ -430,8 +431,21 @@ section {
   }
 }
 
-.library {
+.library, .listeners {
   background: #efefef;
+  
+  header {
+    background: #e0e0e0;
+    border-bottom: 1px solid #c9c9c9;
+  }
+  
+  menu {
+    height: 50px;
+  }
+}
+
+.library {
+  
   
   &.library-drop {
     > .content > .tree:after {
@@ -454,10 +468,7 @@ section {
     }
   }
   
-  header {
-    background: #e0e0e0;
-    border-bottom: 1px solid #c9c9c9;
-  }
+  
   
   > .content {
     position: relative;
@@ -467,10 +478,6 @@ section {
       position: relative;
     }
   } 
-  
-  menu {
-    height: 50px;
-  }
   
   a {
     display: block;
@@ -581,7 +588,7 @@ section {
 
 .user {
   background: url('img/noise.png') #ee4832;
-  color: #fcdbd6;  
+  color: #fcdbd6;
   height: 150px;
   overflow: hidden;
   transition: all 400ms ease-in-out;
@@ -612,7 +619,10 @@ section {
   }
   
   img {
+    background: #fff;
     margin: 15px 0 12px;
+    width: 48px;
+    height: 48px;
   }
   
   h2 {
@@ -687,6 +697,48 @@ section {
   }
   
   
+}
+
+.listeners {
+  
+  .list {
+    height: 480px;
+  }
+  
+  .listener {
+    background: 0;
+    font-size: 13px;
+    font-weight: bold;
+    
+    &:after {
+      border-radius: 2px;
+      color: #fff;
+      display: inline-block;
+      float: right;
+      font-size: 9px;
+      font-weight: bold;
+      line-height: 8px;
+      margin: 8px 0;
+      padding: 2px 3px;
+    }
+    
+    &.master:after {
+      background: #75c33c;
+      content: "DJ";
+    }
+    
+    &.up-next:after {
+      background: #956dc6;
+      content: "Up Next";
+    }
+    
+    img {
+      background: #666;
+      margin-right: 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
 }
 
 /* font-awesome.css */

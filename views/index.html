@@ -22,8 +22,9 @@
         <section id="scrubber" class="grid_12 alpha omega"></section>
       </div>
       <div class="grid_12 alpha omega">
-        <section id="library" class="grid_4 alpha omega"></section>
+        <section id="library" class="grid_3 alpha omega"></section>
         <section id="playlist"></section>
+        <section id="listeners" class="grid_3 alpha omega"></section>
       </div>
       <div id="error"></div>
     </script>
@@ -100,6 +101,19 @@
     </script>
     <script type="text/template" id="user_identify_template">
       <input type="text" placeholder="E-mail or Nickname" />
+    </script>
+    <script type="text/template" id="listener_template">
+      <img src="{{thumbnailUrl}}?s=48" alt="{{displayName}}" />
+      <span>{{#if name}}{{name.givenName}} {{name.familyName}}{{else}}{{displayName}}{{/if}}</span>
+    </script>
+    <script type="text/template" id="listeners_template">
+      <header>
+        Listeners
+      </header>
+      <div class="content">
+        <ul class="list"></ul>
+        <menu></menu>
+      </div>
     </script>
     <script type="text/template" id="scrubber_template">
       <div class="progress"></div>
