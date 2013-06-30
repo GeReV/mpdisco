@@ -48,7 +48,7 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       events: {
-        'click .add': 'add',
+        'keyup #url': 'add',
         'click .remove': 'remove',
         'dblclick li': 'play',
         'click li': 'select',
@@ -158,7 +158,9 @@ define(['mpdisco'], function(MPDisco) {
       },
       
       add: function() {
-        MPDisco.command('add', this.ui.url.val());
+        if (e.which === 0x0d) {
+          MPDisco.command('add', this.ui.url.val());
+        }
       },
       
       drop: function(e, ui) {
