@@ -18,7 +18,21 @@
         return s;
       }
       
-      return s.replace(/[^\w\-,\. ]+/g, '').replace(/[, ]+/g, '_');
+      return s
+        .trim()
+        .replace('&', 'and')
+        .replace(/[^\w\-,\. ]+/g, '')
+        .replace(/\b(\S+?)\b/g, function(s) {
+          // Uppercase every word.
+          return s.substring(0, 1).toUpperCase() + s.slice(1);
+        }).replace(/\b(an?|and|of|the|is|for|to|at|but|by|n?or|so)\b/gi, function(s) {
+          // Lower case connection words.
+          return s.toLowerCase();
+        }).replace(/^(\S+?)\b|\b(\S+?)$/g, function(s) {
+          // Uppercase first and last words.
+          return s.substring(0, 1).toUpperCase() + s.slice(1);
+        })
+        .replace(/[, ]+/g, '_');
     }
   };
   

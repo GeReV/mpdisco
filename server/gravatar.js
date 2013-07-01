@@ -69,6 +69,13 @@
           });
     
           res.on('end', function() {
+            
+            if (body.indexOf('not found') >= 0) {
+              callback(null);
+              
+              return;
+            }
+            
             var json = JSON.parse(body);
             
             callback(json);

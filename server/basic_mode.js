@@ -3,7 +3,13 @@
       mpd = require('mpd'),
       _ = require('underscore'),
       ClientsManager = require('./clients_manager.js')(),
-      specialCommands;
+      
+      ObjectListParser = require('./response_parsers/object_list_parser.js'),
+      SimpleParser = require('./response_parsers/simple_parser.js'),
+      LineParser = require('./response_parsers/line_parser.js'),
+      
+      specialCommands,
+      parsers;
       
       
   specialCommands = {
@@ -32,35 +38,14 @@
       }
     }
   };
-
-  function parseResponse(s) {
-    if (!s) {
-      return s;
-    }
-    
-    var lines = s.split('\n'),
-        obj = {},
-        json = [];
-
-    _(lines).chain().compact().each(function(l) {
-      var i = l.indexOf(':'),
-          key = l.slice(0, i).toLowerCase(),
-          value = l.slice(i + 1);
-          
-      // If we ran into an existing key, it means it's a new record.
-      if (obj.hasOwnProperty(key)) {
-        json.push(obj);
-        
-        obj = {};
-      }
-
-      obj[key] = (value || '').trim();
-    });
-    
-    json.push(obj);
-
-    return (json.length == 1 ? json[0] : json);
-  }
+  
+  parsers = {
+    'list':         new LineParser,
+    'list:album':   new ObjectListParser('file'),
+    'find':         new ObjectListParser('file'),
+    'playlistinfo': new ObjectListParser('file'),
+    'simple':       new SimpleParser
+  };
   
   function sanitizeArgs(args) {
     return _.map(args, function(arg) {
@@ -70,6 +55,14 @@
   
   function ensureArray(args) {
     return _.isArray(args) ? args : [args];
+  }
+  
+  function getParser(command, args) {
+    var key = command + ':' + args[0];
+    
+    return  parsers[key] ||
+            parsers[command] ||
+            parsers.simple;
   }
 
   var BasicMode = Class.extend({
@@ -181,7 +174,8 @@
       //console.log(command);
 
       this.mpd.sendCommand(cmd, function(err, result) {
-        var response = parseResponse(result),
+        
+        var response = getParser(command, args).parse(result),
             special = specialCommands[command];
         
         //console.log('Result for command', command, ': ', response);
@@ -190,11 +184,13 @@
           
           special(command, args, response, client);
           
-        } else {
-          //console.log('Emitting:', command);
+          return;
           
-          client.emit(command, response);
         }
+        
+        //console.log('Emitting:', command);
+          
+        client.emit(command, response);
       });
     }
   });

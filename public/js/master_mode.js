@@ -114,8 +114,7 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
     MasterMode.ListenersView = User.ListenersView.extend({
       socketEvents: {
         master: 'setMaster',
-        clientconnected: 'updateClients',
-        clientdisconnected: 'updateClients'
+        clientslist: 'updateClients'
       },
       
       initialize: function() {
@@ -126,16 +125,14 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
           
           this.setMaster(data.master);
         });
-      },
-      
-      onRender: function() {
-        this.updateMaster();
+        
+        this.listenTo(this, 'render after:item:added after:item:removed', this.requestUpdateClients, this);
       },
       
       setMaster: function(master) {
         this.master = master;
         
-        this.updateMaster();
+        this.requestUpdateClients();
       },
       
       updateMaster: function() {
@@ -162,8 +159,14 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
         }
       },
       
-      updateClients: function(client, clientList) {
+      requestUpdateClients: function() {
+        MPDisco.network.send('clientslist');
+      },
+      
+      updateClients: function(clientList) {
         this.clients = clientList;
+        
+        this.updateMaster();
       }
     });
     

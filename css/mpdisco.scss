@@ -178,11 +178,17 @@ section {
         
         margin: 10px 0 0 1px;
       }
-  } 
+  }
   
   .info {
     overflow: hidden;
     padding: 26px 32px;
+    
+    h1, h2 {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     
     h1 {
       font-size: 32px;
@@ -562,11 +568,11 @@ section {
   }
   
   .albums {
-    padding-left: 40px;
+    padding-left: 20px;
   }
   
   .songs {
-    padding-left: 30px;
+    padding-left: 20px;
     counter-reset: album;
   }
   
@@ -582,7 +588,10 @@ section {
   
   .name {
     color: #666;
+    overflow: hidden;
     text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 

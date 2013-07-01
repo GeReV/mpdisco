@@ -59,6 +59,10 @@
         that.performIdentification.call(that, client, name);
       });
       
+      client.on('clientslist', function(name) {
+        client.emit('clientslist', that.clientsInfo());
+      });
+      
       if (client.handshake.name) {
         this.performIdentification(client, client.handshake.name);
       }
@@ -100,10 +104,19 @@
        
        if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
          Gravatar.profile(name, false, function(profile) {
+           
+           if (!profile) {
+             that.identifyClient.call(that, client, {
+               displayName: name
+             });
+             
+             return;
+           }
+           
            that.identifyClient.call(that, client, profile);
          });
        }else{
-         that.identifyClient.call(that, client, {
+         this.identifyClient(client, {
            displayName: name
          });
        }
@@ -126,7 +139,7 @@
         this.loggedClients.push(client);
       }
       
-      client.emit('identify', info);
+      client.emit('identify', client.info);
       
       client.broadcast.emit('clientconnected', client.info, this.clientsInfo);
        

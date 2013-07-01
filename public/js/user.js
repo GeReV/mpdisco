@@ -14,7 +14,9 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         this.listenTo(MPDisco.vent, 'networkready', function(data) {
           data.master && this.set(data.master);
         });
-      }
+      },
+      
+      idAttribute: 'displayName'
     });
 
 
@@ -37,10 +39,10 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
           data.clients && this.reset(data.clients);
         });
       },
-
-      removeById: function(id) {
+      
+      removeById: function(info) {
         this.remove(this.findWhere({
-          userid: id
+          userid: info.userid
         }));
       }
     });
@@ -165,10 +167,10 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
 
       template: '#listener_template',
 
-      initialize: function() {
+      onRender: function() {
         this.$el.attr('data-id', this.model.get('userid'));
       }
-    })
+    });
 
     User.ListenersView = Marionette.CompositeView.extend({
       className: 'listeners',
@@ -177,17 +179,24 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
 
       collectionEvents: {
         reset: 'render',
-        remove: 'render',
-        add: 'render'
       },
 
       collection: new User.Collection,
 
       itemView: User.ListenerView,
       itemViewContainer: '.list',
+      
+      appendHtml: function(collectionView, itemView, index){
+        var childrenContainer = collectionView.itemViewContainer ? collectionView.$(collectionView.itemViewContainer) : collectionView.$el;
+        var children = childrenContainer.children();
+        
+        if (children.size() - 1 <= index) {
+          childrenContainer.append(itemView.el);
+        } else {
+          childrenContainer.children().eq(index).before(itemView.el);
+        }
+      }
 
-      addChildView: function() {},
-      removeItemView: function() {}
     });
 
   });

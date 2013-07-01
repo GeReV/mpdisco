@@ -72,11 +72,6 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
           MPDisco.network.on(key, method);
         };
       },
-      reset: function(data) {
-        console.log(data);
-        
-        type.prototype.reset.call(this, data);
-      }
     };
     
   };

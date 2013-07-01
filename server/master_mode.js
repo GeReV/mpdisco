@@ -106,7 +106,7 @@
       return (this.commandWhitelist.indexOf(cmd) !== -1);
     },
     
-    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find']
+    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update']
     
   });
   
