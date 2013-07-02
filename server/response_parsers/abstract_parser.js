@@ -3,6 +3,7 @@
   var Class = require('clah');
   
   var AbstractParser = Class.extend({
+    init: function() {},
     parse: function(response) {
       return {};
     },

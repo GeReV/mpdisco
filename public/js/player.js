@@ -25,7 +25,7 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
     MPDisco.current = new Player.Song;
     
     Player.PlayerView = Marionette.ItemView.extend({
-      template: '#player_template',
+      template: 'player',
       
       className: 'player',
       
@@ -144,12 +144,16 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
     Player.ScrubberView = Marionette.ItemView.extend({
       className: 'scrubber',
       
-      template: '#scrubber_template',
+      template: 'scrubber',
       
       model: MPDisco.current,
       
       modelEvents: {
         'change:time': 'updateScrubber'
+      },
+      
+      events: {
+        'mousedown': 'scrub'
       },
       
       ui: {
@@ -177,6 +181,16 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         }
             
         progress.width((running / length * 100) + '%' );
+      },
+      
+      scrub: function(e) {
+        var percent = (e.offsetX / this.$el.width()),
+            time = this.model.get('time').split(':'),
+            length = +(time[1]);
+        
+        if (length) {
+          MPDisco.command('seekid', [ this.model.id, Math.floor(length * percent) ]);
+        }
       }
     });
   });

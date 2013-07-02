@@ -16,7 +16,7 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         });
       },
       
-      idAttribute: 'displayName'
+      idAttribute: 'userid'
     });
 
 
@@ -52,10 +52,10 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
 
       getTemplate: function() {
         if (this.isIdentified) {
-          return '#user_template';
+          return 'user';
         }
 
-        return '#user_identify_template';
+        return 'user_identify';
       },
 
       socketEvents: {
@@ -165,7 +165,7 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
 
       className: 'listener',
 
-      template: '#listener_template',
+      template: 'listener',
 
       onRender: function() {
         this.$el.attr('data-id', this.model.get('userid'));
@@ -175,7 +175,7 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
     User.ListenersView = Marionette.CompositeView.extend({
       className: 'listeners',
 
-      template: '#listeners_template',
+      template: 'listeners',
 
       collectionEvents: {
         reset: 'render',

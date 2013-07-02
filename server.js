@@ -13,8 +13,6 @@ var port = process.env.PORT || 3000,
     config = require('./config.json'),
     commandProcessors = require('./server/command_processors.js'),
     upload = require('./server/file_upload.js'),
-    metadata = require('./server/meta_data.js'),
-    ClientsManager = require('./server/clients_manager.js')(),
     modes = {
       basic:  require('./server/basic_mode.js'),
       master: require('./server/master_mode.js')
@@ -51,6 +49,22 @@ app.use(scss.middleware({
 }));
 
 app.use(express.static(__dirname + '/public'));
+
+app.configure(function(){
+  var dir     = __dirname + "/public/js/templates"
+      output  = __dirname + "/public/js/templates.js",
+      hbsPrecompiler = require('handlebars-precompiler');
+  
+  hbsPrecompiler.watchDir(dir, output, ['handlebars', 'hbs']);
+  
+  hbsPrecompiler.do({
+    templates: [dir],
+    output: output,
+    fileRegex: /\.handlebars$|\.hbs$/i,
+    min: true
+  });
+  
+});
 
 app.get('/', function (req, res) {
   res.sendfile('views/index.html');
@@ -98,6 +112,7 @@ sio.configure(function() {
 //So we can send that client a unique ID we use so we can
 //maintain the list of players.
 sio.sockets.on('connection', function(client) {
+  var ClientsManager = require('./server/clients_manager.js')();
   
   ClientsManager.connected(client);
 
@@ -128,6 +143,8 @@ mode = new modes.master(mpdClient, commandProcessors);
 
 upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
 upload.uploadPath = function(file, callback) {
+  var metadata = require('./server/meta_data.js');
+  
   metadata.forFile(file, function(data) {
     
     var parts = _.compact([

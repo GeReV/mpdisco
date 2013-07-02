@@ -36,6 +36,9 @@ require.config({
     },
     'class': {
       exports: 'Class'
+    },
+    templates: {
+      deps: ['handlebars']
     }
   },
   paths: {
@@ -50,11 +53,11 @@ require.config({
     jquerysortable: 'vendor/jquery-sortable',
     marionette: 'vendor/backbone-marionette-min',
     handlebars: 'vendor/handlebars',
-    'class': 'vendor/class'
+    'class': 'vendor/class',
   }
 });
 
-require(['mpdisco', 'syncer', 'basic_mode', 'master_mode'], function(MPDisco) {
+require(['mpdisco', 'templates', 'syncer', 'basic_mode', 'master_mode'], function(MPDisco) {
 
   $(function() {
     MPDisco.network.on('connected', function(data) {

@@ -20,13 +20,11 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   });
   
   Marionette.TemplateCache.prototype.loadTemplate = function(template) {
-  // use Handlebars.js to compile the template
-    return $(template).html();
+    return Handlebars.templates[template];
   };
   
   Marionette.TemplateCache.prototype.compileTemplate = function(template) {
-  // use Handlebars.js to compile the template
-    return Handlebars.compile(template);
+    return template;
   };
   
   var buildSocketEventsMixinFor = function(type) {
@@ -117,7 +115,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   MPDisco.ErrorView = Marionette.ItemView.extend({
     className: 'error',
     
-    template: '#error_template',
+    template: 'error',
     
     model: new MPDisco.Error,
     
@@ -153,7 +151,8 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   MPDisco.state = new MPDisco.State;
   
   MPDisco.Layout = Marionette.Layout.extend({
-    template: '#layout_template',
+    template: 'layout',
+    
     regions: {
       player: '#player',
       user: '#user',

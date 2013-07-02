@@ -26,7 +26,8 @@
       return baseUrl + createHash(email) + '.' + format;
     },
     profile: function(email, https, callback, error) {
-      var options = url.parse(gravatar.profileUrl(email, 'json', https)),
+      var that = this,
+          options = url.parse(gravatar.profileUrl(email, 'json', https)),
           requests = 0,
           maxRequests = 3;
       
@@ -71,7 +72,13 @@
           res.on('end', function() {
             
             if (body.indexOf('not found') >= 0) {
-              callback(null);
+              
+              // If no profile was found, send the avatar link anyway.
+              
+              callback({
+                displayName: email,
+                thumbnailUrl: that.avatar(email)
+              });
               
               return;
             }

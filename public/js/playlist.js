@@ -12,7 +12,7 @@ define(['mpdisco'], function(MPDisco) {
       
       className: 'playlist-item',
       
-      template: '#playlist_item_template',
+      template: 'playlist_item',
       
       onDomRefresh: function() {
         this.$el.attr('data-songid', this.model.id);
@@ -20,7 +20,7 @@ define(['mpdisco'], function(MPDisco) {
     });
     
     Playlist.PlaylistView = Marionette.CompositeView.extend({
-      template: '#playlist_template',
+      template: 'playlist',
       
       className: 'playlist',
       
@@ -162,6 +162,8 @@ define(['mpdisco'], function(MPDisco) {
         
         if (e.which === 0x0d && value) {
           MPDisco.command('add', value);
+          
+          this.ui.url.addClass('disabled loading');
         }
         
         return false;

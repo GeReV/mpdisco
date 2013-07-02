@@ -41,7 +41,7 @@
   
   parsers = {
     'list':         new LineParser,
-    'list:album':   new ObjectListParser('file'),
+    'list:album':   new LineParser,
     'find':         new ObjectListParser('file'),
     'playlistinfo': new ObjectListParser('file'),
     'simple':       new SimpleParser
@@ -49,7 +49,7 @@
   
   function sanitizeArgs(args) {
     return _.map(args, function(arg) {
-      return '' + arg;
+      return arg ? '' + arg : '';
     });
   }
   
@@ -171,14 +171,14 @@
 
       cmd = mpd.cmd(command, args);
       
-      //console.log(command);
+      console.log(command, args);
 
       this.mpd.sendCommand(cmd, function(err, result) {
         
         var response = getParser(command, args).parse(result),
             special = specialCommands[command];
         
-        //console.log('Result for command', command, ': ', response);
+        //console.log('Result for command', command, ': ', result);
         
         if (special) {
           

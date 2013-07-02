@@ -153,7 +153,7 @@ section {
       background: rgba(0, 0, 0, 0.05);
       border: 2px solid #fff;
       border-radius: 50%;
-      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 0 1px #000;
       margin: -20px 0 0 -20px;
       text-align: center;
       width: 40px;
@@ -169,7 +169,7 @@ section {
         color: #fff;
         font-size: 120%;
         margin: 10px 0 0 4px;
-        text-shadow: 0 0 1px rgba(0, 0, 0, 1);
+        text-shadow: 0 0 1px #000;
       }
     }
     
@@ -230,6 +230,7 @@ section {
 
 .scrubber {
   background: #121212;
+  cursor: pointer;
   height: 10px;
   
   .progress {
@@ -299,6 +300,7 @@ section {
   }
   
   menu {
+    border-top: 1px solid #c9c9c9;
     background: #dcdcdc;
     height: 50px;
     line-height: 50px;
@@ -446,7 +448,10 @@ section {
   }
   
   menu {
+    border-top: 1px solid #c9c9c9; 
     height: 50px;
+    line-height: 50px;
+    padding: 0 10px;
   }
 }
 
@@ -557,6 +562,28 @@ section {
       height: 100%;
     }
   }
+  
+  menu {
+    position: relative;
+    
+    .search {
+      padding-right: 20px;
+      vertical-align: middle;
+      width: 100%;
+    }
+  
+    &:after {
+      @extend .icon;
+      @extend .icon-search:before;
+      
+      color: #989898;
+      line-height: 24px;
+      height: 24px;
+      position: absolute;
+      top: 14px;
+      right: 18px;
+    }
+  }
 }
 
 .library-item {
@@ -599,18 +626,28 @@ section {
   background: url('img/noise.png') #ee4832;
   color: #fcdbd6;
   height: 150px;
-  overflow: hidden;
-  transition: all 400ms ease-in-out;
+  position: relative;
+  transition: all 500ms cubic-bezier(.2,.5,.5,1);
   text-align: center;
+  
+  &:after {
+    background: url('img/user_side.png') transparent no-repeat 0 0;
+    content: "";
+    width: 31px;
+    height: 150px;
+    position: absolute;
+    top: 0;
+    left: -30px;
+  }
   
   .content {
     height: 150px;
   }
   
   &.loading {
-    -webkit-transform: translate3d(100%, 0, 0);
-    -moz-transform: translate3d(100%, 0, 0);
-    transform: translate3d(100%, 0, 0);
+    -webkit-transform: translate3d(120%, 0, 0);
+    -moz-transform: translate3d(120%, 0, 0);
+    transform: translate3d(120%, 0, 0);
   }
   
   &.switching {

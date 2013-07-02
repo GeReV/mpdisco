@@ -23,7 +23,7 @@
     "cookie": "0.1.x",
     "socket.io": "0.9.x",
     "consolidate": "0.9.x",
-    "handlebars": "1.x",
+    "handlebars-precompiler": "1.0.x",
     "node-sass": "0.5.x",
     "node-uuid": "1.4.x",
     "underscore": "1.4.x",

@@ -76,7 +76,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       
       className: 'library-item song',
       
-      template: '#song_template',
+      template: 'song',
       
       events: {
         'mousedown > .name': 'select',
@@ -127,7 +127,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       
       className: 'library-item album',
       
-      template: '#album_template',
+      template: 'album',
       
       events: {
         'click > .name': 'toggleSongs',
@@ -219,7 +219,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       
       className: 'library-item artist',
       
-      template: '#artist_template',
+      template: 'artist',
       
       events: {
         'click > .name': 'toggleAlbums',
@@ -302,7 +302,7 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
     });
     
     Library.LibraryView = Marionette.CompositeView.extend({
-      template: '#library_template',
+      template: 'library',
       
       className: 'library',
       
