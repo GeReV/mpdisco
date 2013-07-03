@@ -1,6 +1,6 @@
 {
   "name": "mpdisco",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": "Amir Grozki",
   "description": "A team-controlled music server based on mpd.",
   "scripts": {
