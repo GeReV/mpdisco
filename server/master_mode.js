@@ -88,7 +88,9 @@
 
       clearTimeout(this.masterTimeout);
       
-      console.log('master timeout (mins):', config.masterTime);
+      console.log('master timeout (mins):', config.master_time);
+      
+      this.masterTimestamp = (new Date).getTime();
       
       this.masterTimeout = setTimeout(function() {
         console.log('rotating master');
@@ -98,7 +100,7 @@
         this.setMaster(ClientsManager.first());
         
         clearTimeout(this.masterTimeout);
-      }.bind(this), +config.masterTime * 60 * 1000);
+      }.bind(this), +config.master_time * 60 * 1000);
       
     },
     

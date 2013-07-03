@@ -20,8 +20,8 @@
       
       return s
         .trim()
-        .replace('&', 'and')
-        .replace(/[^\w\-,\. ]+/g, '')
+        .replace('&', ' and ')
+        .replace(/[^\w\-,\.\s]+/g, '')
         .replace(/\b(\S+?)\b/g, function(s) {
           // Uppercase every word.
           return s.substring(0, 1).toUpperCase() + s.slice(1);
@@ -32,7 +32,7 @@
           // Uppercase first and last words.
           return s.substring(0, 1).toUpperCase() + s.slice(1);
         })
-        .replace(/[, ]+/g, '_');
+        .replace(/[,\s\-]+/g, '_');
     }
   };
   

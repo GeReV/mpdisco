@@ -2,15 +2,22 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
   
   var Player = MPDisco.module('Player', function(Player, MPDisco, Backbone, Marionette) {
     Player.Song = MPDisco.Model.extend({
+      initialize: function() {
+        this.listenTo(this, 'change:album', function() {
+          this.set('coverart', this.defaults.coverart);
+        });
+      },
       defaults: {
         title: '',
         artist: '',
         album: '',
+        coverart: 'http://placehold.it/150x150',
         time: '0:0'
       },
       socketEvents: {
         status: 'set',
-        currentsong: 'set'
+        currentsong: 'set',
+        coverart: 'set'
       },
       set: function(attributes) {
         
@@ -32,8 +39,10 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
       model: MPDisco.current,
       
       modelEvents: {
-        change: 'render',
-        'change:time': 'updatePlayer'
+        'change': 'updatePlayer',
+        'change:title': 'render',
+        'change:time': 'updateTimer',
+        'change:coverart': 'updateCoverArt'
       },
       
       events: {
@@ -52,7 +61,9 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         play: '.play',
         shuffle: '.shuffle',
         repeat: '.repeat',
-        runningTime: '.time.running'
+        runningTime: '.time.running',
+        lengthTime: '.time.length',
+        coverart: '.image'
       },
       
       initialize: function() {
@@ -75,6 +86,12 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         this.updatePlayer();
       },
       
+      updateCoverArt: function(model) {
+        var url = model.get('coverart');
+        
+        this.ui.coverart.css('background-image', 'url(\'' + url + '\')');
+      },
+      
       updatePlayer: function() {
         var model = this.model,
             time = this.model.get('time').split(':'),
@@ -88,7 +105,7 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
           clearInterval(this.playInterval);
           
           this.playInterval = setInterval(function() {
-            model.set('time', (++running) + ':' + length);
+            model.set({ time: (++running) + ':' + length });
           }, 1000);
           
         } else {
@@ -96,11 +113,13 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         }
       },
       
-      updateTimer: function() {
-        var timer = this.ui.runningTime,
-            time = +(this.model.get('time')).split(':')[0];
+      updateTimer: function(model) {
+        var time = model.get('time').split(':'),
+            running = +time[0],
+            length = +time[1];
             
-        timer.html( MPDisco.Utils.formatSeconds(time) );
+        this.ui.runningTime.html( MPDisco.Utils.formatSeconds(running) );
+        this.ui.lengthTime.html( MPDisco.Utils.formatSeconds(length) );
       },
       
       updateMaster: function(master) {

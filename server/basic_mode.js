@@ -8,6 +8,8 @@
       SimpleParser = require('./response_parsers/simple_parser.js'),
       LineParser = require('./response_parsers/line_parser.js'),
       
+      CoverArt = require('./cover_art.js'),
+      
       specialCommands,
       parsers;
       
@@ -35,6 +37,19 @@
           args: _.filter(args, function(v, i) { return (i % 2 == 1); }),
           data: response
         });
+      }
+    },
+    currentsong: function(command, args, response, client) {
+      
+      client.emit(command, response);
+      
+      if (response && response.artist && response.album) {
+        CoverArt.getCover({ artist: response.artist, release: response.album }, function(url) {
+          client.emit('coverart', {
+            coverart: url
+          });
+        },
+        function(e) { console.log(e); });
       }
     }
   };

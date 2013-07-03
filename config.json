@@ -1,6 +1,7 @@
 {
   "music_directory": "~/Music",
   "secret": "secret",
-  "sessionKey": "mpdisco.sid",
-  "masterTime": "60"
+  "session_key": "mpdisco.sid",
+  "master_time": "60",
+  "default_url": "http://localhost:3000"
 }

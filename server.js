@@ -37,7 +37,7 @@ app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({
   secret: config.secret,
-  key: config.sessionKey
+  key: config.session_key
 }));
 //app.use(express.bodyParser());
 
@@ -70,6 +70,15 @@ app.get('/', function (req, res) {
   res.sendfile('views/index.html');
 });
 
+app.get('/covers/:artist/:album/front.jpg', function(req, res) {
+  var mm = require('./server/meta_data.js'),
+      artist = mm.safeName(req.params.artist),
+      album = mm.safeName(req.params.album),
+      file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
+      
+  res.sendfile(file, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+});
+
 app.all('/upload', upload.action);
 
 server.listen(port);
@@ -96,7 +105,7 @@ sio.configure(function() {
         data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
         // note that you will need to use the same key to grad the
         // session id, as you specified in the Express setup.
-        data.sessionID = data.cookie[config.sessionKey];
+        data.sessionID = data.cookie[config.session_key];
         data.name = data.cookie['mpdisco.name'];
     } else {
        // if there isn't, turn down the connection with a message
