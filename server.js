@@ -70,7 +70,7 @@ app.get('/', function (req, res) {
   res.sendfile('views/index.html');
 });
 
-app.get('/covers/:artist/:album/front.jpg', function(req, res) {
+app.get('/covers/:artist/:album', function(req, res) {
   var mm = require('./server/meta_data.js'),
       artist = mm.safeName(req.params.artist),
       album = mm.safeName(req.params.album),

@@ -10,9 +10,6 @@
       _ = require('underscore');
   
   var CoverArt = Class.extend({
-    init: function(baseUrl) {
-      this.baseUrl = baseUrl;
-    },
     findRelease: function(options, callback, error) {
       var that = this,
           baseUrl = 'http://musicbrainz.org/ws/2/release/?fmt=json&query=',
@@ -69,7 +66,7 @@
               return mm.safeName(s).replace(/_/g, '-').toLowerCase();
           };
           
-        callback(that.baseUrl + '/covers/' + urlName(options.artist) + '/' + urlName(options.release) + '/front.jpg');
+        callback('/covers/' + urlName(options.artist) + '/' + urlName(options.release));
       }
           
       function success(results) {
@@ -155,5 +152,5 @@
     }
   });
   
-  module.exports = new CoverArt(config.default_url);
+  module.exports = new CoverArt;
 })();
