@@ -4,9 +4,9 @@
   "author": "Amir Grozki",
   "description": "A team-controlled music server based on mpd.",
   "scripts": {
-    "start": "node server.js"
+    "start": "node index.js"
   },
-  "main": "server.js",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/GeReV/mpdisco.git"
