@@ -101,10 +101,6 @@ html, body {
   font-style: italic;
 }
 
-#container {
-  
-}
-
 header {
   background: #fafafa;
   line-height: 70px;
@@ -123,6 +119,11 @@ header hgroup {
   margin: 0 auto;
   overflow: hidden;
   width: 960px;
+}
+
+#content {
+  overflow: visible;
+  text-align: center;
 }
 
 hgroup h1,
@@ -165,6 +166,10 @@ code {
   background: #b398d6;
   border-radius: 3px;
   padding: 6px;
+}
+img {
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  margin: 40px auto;
 }
 
 
