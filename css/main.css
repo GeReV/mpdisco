@@ -165,6 +165,7 @@ a {
 code {
   background: #b398d6;
   border-radius: 3px;
+  font-style: normal;
   padding: 6px;
 }
 img {
