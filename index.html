@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <title>MPDisco - A team-controlled music server based on mpd</title>
+      <meta name="description" content="MPDisco is a team-controlled music server based on mpd">
+      <meta name="viewport" content="width=device-width">
+
+      <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+      <link rel="stylesheet" href="css/normalize.css">
+      <link rel="stylesheet" href="css/main.css">
+      <script src="js/vendor/modernizr-2.6.2.min.js"></script>
+  </head>
+  <body>
+    <div id="container" role="main">
+      <header>
+        <hgroup>
+          <h1>MPDisco</h1>
+          <h2>A team-controlled music server based on MPD</h2>
+        </hgroup>
+      </header>
+      
+      <div id="content">
+      
+        <p>MPDisco is a <a href="http://nodejs.org">Node.js</a>-based music server built to let teams and groups control a single music player together.</p>
+        <p>Right now, accessing the MPDisco server puts each user, after logging in, in a rotating DJ queue. Each user will be given one hour (by default) to control the playlist and music player.</p>
+        
+        <div></div>
+        
+        <h2>Download</h2>
+        <p>You can download MPDisco source code in the <a href="https://github.com/GeReV/mpdisco">GitHub repository</a>.</p>
+        
+        <h2>Installation</h2>
+        <p>First off, MPDisco depends on the installation of <a href="http://www.musicpd.org">MPD</a> on the server. Follow the <a href="http://mpd.wikia.com/wiki/Install">installation instructions</a> to install.</p>
+        <p>Using <a href="https://npmjs.org">NPM</a>, run: <code>npm install mpdisco</code></p>
+        <p>Modify <code>config.json</code> to change the music directory, play time for each DJ and session secret (recommended).</p>
+        
+        <h2>Running</h2>
+        <p>To run MPDisco, in the installation directory, use: <code>node index.js</code></p>
+        
+      </div>
+      
+      <footer>
+        <p>
+          &copy; 2013 <a href="https://github.com/gerev">Amir Grozki</a>, MPDisco is released under the <a href="http://opensource.org/licenses/MIT">MIT License</a><br />
+          Design by Eyal Richter
+        </p>
+      </footer>
+    </div>
+    <script>
+      // (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      // (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      // m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      // })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+//         
+      // ga('create', 'UA-42446296-1', 'gerev.github.io');
+      // ga('send', 'pageview');
+    
+    </script>
+  </body>
+</html>
