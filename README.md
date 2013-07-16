@@ -1,6 +1,8 @@
 mpdisco
 =======
 
+[MPDisco Homepage](http://gerev.github.io/mpdisco)
+
 A team-controlled music server based on mpd.
 
 Accessing the MPDisco server puts each user, after logging in, in a rotating DJ queue.
