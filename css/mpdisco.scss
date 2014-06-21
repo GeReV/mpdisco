@@ -32,7 +32,7 @@ body {
 }
 
 #player-head {
-  background: url('img/noise.png') #434343;
+  background: url('../img/noise.png') #434343;
   height: 160px;
   overflow: hidden;
 }
@@ -628,7 +628,7 @@ section {
 }
 
 .user {
-  background: url('img/noise.png') #ee4832;
+  background: url('../img/noise.png') #ee4832;
   color: #fcdbd6;
   height: 150px;
   position: relative;
@@ -636,7 +636,7 @@ section {
   text-align: center;
   
   &:after {
-    background: url('img/user_side.png') transparent no-repeat 0 0;
+    background: url('../img/user_side.png') transparent no-repeat 0 0;
     content: "";
     width: 31px;
     height: 150px;
