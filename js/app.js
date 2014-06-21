@@ -44,14 +44,14 @@ require.config({
   paths: {
     json:  'vendor/requirejs-plugins/json',
     text: 'vendor/requirejs-plugins/text',
-    backbone: 'vendor/backbone-min',
-    underscore: 'vendor/underscore-min',
+    backbone: 'vendor/backbone',
+    underscore: 'vendor/underscore',
     jquery: 'vendor/jquery',
     jqueryui: 'vendor/jquery-ui',
     'jquery.ui.widget': 'vendor/jquery.ui.widget',
     'jquery.cookie': 'vendor/jquery.cookie',
-    jquerysortable: 'vendor/jquery-sortable',
-    marionette: 'vendor/backbone-marionette-min',
+    //jquerysortable: 'vendor/jquery-sortable',
+    marionette: 'vendor/backbone.marionette',
     handlebars: 'vendor/handlebars',
     'class': 'vendor/class',
   }
