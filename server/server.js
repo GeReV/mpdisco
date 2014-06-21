@@ -19,10 +19,12 @@
   var MPDisco = Class.extend({
     config: require('../config.json'),
     init: function(options) {
+      var config = this.config;
+            
       this.options = _.extend(options || {}, {
         mpdPort: 6600,
         mpdHost: 'localhost',
-        serverPort: process.env.PORT || 5000
+        serverPort: process.env.PORT || 3000
       });
       
       this.app = express();
@@ -50,6 +52,8 @@
       };
     },
     initApp: function(app) {
+      var config = this.config;
+      
       var bodyParser = require('body-parser');
       var methodOverride = require('method-override');
       var compression = require('compression');
@@ -106,7 +110,8 @@
       this.mode = new mode(this.mpd, commandProcessors);
     },
     startSocketIO: function(sio) {
-      var that = this;
+      var that = this,
+        config = this.config;
       
       //Configure the socket.io connection settings.
       //See http://socket.io/
