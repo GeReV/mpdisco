@@ -1,0 +1,11 @@
+{{time time}}
+<div class="image"></div>
+{{#if title}}
+  <p class="title">{{title}}</p>
+  <p class="details">
+  {{#if artist}}<span class="artist">{{artist}}</span>{{/if}}
+  {{#if album}}(<span class="album">{{album}}</span>{{#if date}}, <span class="year">{{date}}</span>{{/if}}){{/if}}
+  </p>
+{{else}}
+  <span class="url">{{file}}</span>
+{{/if}}
