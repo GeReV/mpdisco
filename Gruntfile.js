@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
-      src: ['public/js', 'public/mpdisco.css']
+      src: ['public/js', 'public/css']
     },
     jshint: {
       gruntfile: {
@@ -54,9 +54,11 @@ module.exports = function(grunt) {
       debug: {
         options: {
           compress: false,
-          mangle: false
+          mangle: false,
+          beautify: true
         },
         files: [{
+          expand: true,
           cwd: 'js',
           src: '**/*.js',
           dest: 'public/js'
@@ -65,6 +67,14 @@ module.exports = function(grunt) {
     },
     sass: {
       release: {
+        options: {
+          style: 'compressed'
+        },
+        files: {
+          'public/css/mpdisco.css': 'css/mpdisco.scss'
+        }
+      },
+      debug: {
         files: {
           'public/css/mpdisco.css': 'css/mpdisco.scss'
         }
