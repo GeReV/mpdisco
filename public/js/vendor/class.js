@@ -1,0 +1,2 @@
+/*! mpdisco 2014-06-22 */
+define(function(){var a=!1,b=/xyz/.test(function(){})?/\b_super\b/:/.*/;return Class=function(){},Class.extend=function(c){var d=this.prototype;a=!0;var e=new this;a=!1;for(var f in c)e[f]="function"==typeof c[f]&&"function"==typeof d[f]&&b.test(c[f])?function(a,b){return function(){var c=this._super;this._super=d[a];var e=b.apply(this,arguments);return this._super=c,e}}(f,c[f]):c[f];return Class=function(){!a&&this.init&&this.init.apply(this,arguments)},Class.prototype=e,Class.constructor=Class,Class.extend=arguments.callee,Class},Class});
