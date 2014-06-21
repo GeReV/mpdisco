@@ -1,7 +1,7 @@
 (function() {
   var BasicMode = require('./basic_mode.js'),
-      ClientsManager = require('./clients_manager.js')(),
-      config = require('../config.json'),
+      ClientsManager = require('../clients_manager.js')(),
+      config = require('../../config.json'),
       _ = require('underscore');
   
   var MasterMode = BasicMode.extend({

@@ -1,5 +1,6 @@
 (function() {
   var 
+    Class = require('clah'),
     path = require('path'),
     _ = require('underscore'),
     http = require('http'),
@@ -11,30 +12,32 @@
     scss = require('node-sass'),
     UUID = require('node-uuid'),
     mpd = require('mpd'),
-    commandProcessors = require('./server/command_processors.js'),
-    upload = require('./server/file_upload.js');
+    commandProcessors = require('./command_processors.js'),
+    upload = require('./file_upload.js');
+    
+  var __pwd = path.join(__dirname, '..');
     
   var MPDisco = Class.extend({
-    config: require('./config.json'),
+    config: require('../config.json'),
     modes: {
-      basic:  require('./server/modes/basic_mode.js'),
-      master: require('./server/modes/master_mode.js')
+      basic:  require('./modes/basic_mode.js'),
+      master: require('./modes/master_mode.js')
     },
     init: function(options) {
-      this.options = _.extend(options, {
+      this.options = _.extend(options || {}, {
         mpdPort: 6600,
         mpdHost: 'localhost',
         serverPort: process.env.PORT || 3000
       });
       
       this.app = express();
-      this.server = http.createServer(app);
+      this.server = http.createServer(this.app);
       
-      this.initApp(app);
+      this.initApp(this.app);
       
       upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
       upload.uploadPath = function(file, callback) {
-        var metadata = require('./server/meta_data.js');
+        var metadata = require('./meta_data.js');
         
         metadata.forFile(file, function(data) {
           
@@ -67,17 +70,17 @@
       //app.use(express.bodyParser());
       
       app.use(scss.middleware({
-        src: __dirname + '/css',
-        dest: __dirname + '/public',
+        src: __pwd + '/css',
+        dest: __pwd + '/public',
         debug: true,
         outputStyle: 'compressed'
       }));
       
-      app.use(express.static(__dirname + '/public'));
+      app.use(express.static(__pwd + '/public'));
       
       app.configure(function(){
-        var dir     = __dirname + "/public/js/templates"
-            output  = __dirname + "/public/js/templates.js",
+        var dir     = __pwd + "/public/js/templates"
+            output  = __pwd + "/public/js/templates.js",
             hbsPrecompiler = require('handlebars-precompiler');
         
         hbsPrecompiler.watchDir(dir, output, ['handlebars', 'hbs']);
@@ -96,7 +99,7 @@
       });
       
       app.get('/covers/:artist/:album', function(req, res) {
-        var mm = require('./server/meta_data.js'),
+        var mm = require('./meta_data.js'),
             artist = mm.safeName(req.params.artist),
             album = mm.safeName(req.params.album),
             file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
@@ -105,7 +108,7 @@
       });
       
       app.all('/upload', upload.action);
-    }
+    },
     start: function(mode) {
       this.server.listen(this.options.port);
   
@@ -163,7 +166,7 @@
       //So we can send that client a unique ID we use so we can
       //maintain the list of players.
       sio.sockets.on('connection', function(client) {
-        var ClientsManager = require('./server/clients_manager.js')();
+        var ClientsManager = require('./clients_manager.js')();
         
         ClientsManager.connected(client);
       

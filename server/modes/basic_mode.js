@@ -2,13 +2,13 @@
   var Class = require('clah'),
       mpd = require('mpd'),
       _ = require('underscore'),
-      ClientsManager = require('./clients_manager.js')(),
+      ClientsManager = require('../clients_manager.js')(),
       
-      ObjectListParser = require('./response_parsers/object_list_parser.js'),
-      SimpleParser = require('./response_parsers/simple_parser.js'),
-      LineParser = require('./response_parsers/line_parser.js'),
+      ObjectListParser = require('../response_parsers/object_list_parser.js'),
+      SimpleParser = require('../response_parsers/simple_parser.js'),
+      LineParser = require('../response_parsers/line_parser.js'),
       
-      CoverArt = require('./cover_art.js'),
+      CoverArt = require('../cover_art.js'),
       
       specialCommands,
       parsers;
