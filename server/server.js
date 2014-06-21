@@ -78,22 +78,6 @@
       
       app.use(express.static(__pwd + '/public'));
       
-      app.configure(function(){
-        var dir     = __pwd + "/public/js/templates"
-            output  = __pwd + "/public/js/templates.js",
-            hbsPrecompiler = require('handlebars-precompiler');
-        
-        hbsPrecompiler.watchDir(dir, output, ['handlebars', 'hbs']);
-        
-        hbsPrecompiler.do({
-          templates: [dir],
-          output: output,
-          fileRegex: /\.handlebars$|\.hbs$/i,
-          min: true
-        });
-        
-      });
-      
       app.get('/', function (req, res) {
         res.sendfile('views/index.html');
       });

@@ -89,7 +89,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-handlebars');
 
   // Default task(s).
-  grunt.registerTask('default', [/*'jshint',*/ 'clean', 'uglify:vendor', 'uglify:release', 'sass:release']);
-  grunt.registerTask('debug', [/*'jshint',*/ 'clean', 'uglify:debug', 'sass:debug']);
+  grunt.registerTask('default', [/*'jshint',*/ 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release']);
+  grunt.registerTask('debug', [/*'jshint',*/ 'clean', 'handlebars', 'uglify:debug', 'sass:debug']);
 
 };
