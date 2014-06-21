@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: {
-      src: ['public']
+      src: ['public/js', 'public/mpdisco.css']
     },
     jshint: {
       gruntfile: {
@@ -69,6 +69,16 @@ module.exports = function(grunt) {
           'public/css/mpdisco.css': 'css/mpdisco.scss'
         }
       }
+    },
+    handlebars: {
+      compile: {
+        options: {
+          namespace: "JST"
+        },
+        files: {
+          'public/js/templates.js': ['views/templates/**/*.hbs']
+        }
+      }
     }
   });
 
@@ -76,6 +86,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-handlebars');
 
   // Default task(s).
   grunt.registerTask('default', [/*'jshint',*/ 'clean', 'uglify:vendor', 'uglify:release', 'sass:release']);
