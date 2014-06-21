@@ -9,7 +9,6 @@
     io = require('socket.io'),
     express = require('express'),
     engines = require('consolidate'),
-    scss = require('node-sass'),
     UUID = require('node-uuid'),
     mpd = require('mpd'),
     commandProcessors = require('./command_processors.js'),
@@ -19,21 +18,18 @@
     
   var MPDisco = Class.extend({
     config: require('../config.json'),
-    modes: {
-      basic:  require('./modes/basic_mode.js'),
-      master: require('./modes/master_mode.js')
-    },
     init: function(options) {
       this.options = _.extend(options || {}, {
         mpdPort: 6600,
         mpdHost: 'localhost',
-        serverPort: process.env.PORT || 3000
+        serverPort: process.env.PORT || 5000
       });
       
       this.app = express();
-      this.server = http.createServer(this.app);
       
       this.initApp(this.app);
+      
+      this.server = http.createServer(this.app);
       
       upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
       upload.uploadPath = function(file, callback) {
@@ -54,26 +50,20 @@
       };
     },
     initApp: function(app) {
-      /*app.engine('html', engines.handlebars);
-  
-      app.set('view engine', 'html');
-      app.set('views', __dirname + '/views');*/
+      var bodyParser = require('body-parser');
+      var methodOverride = require('method-override');
+      var compression = require('compression');
+      var cookieParser = require('cookie-parser');
       
       //app.use(express.logger());
-      app.use(express.compress());
-      app.use(express.methodOverride());
-      app.use(express.cookieParser());
+      app.use(compression());
+      app.use(methodOverride());
+      app.use(bodyParser());
+      app.use(cookieParser());
+      
       app.use(express.session({
         secret: this.config.secret,
         key: this.config.session_key
-      }));
-      //app.use(express.bodyParser());
-      
-      app.use(scss.middleware({
-        src: __pwd + '/css',
-        dest: __pwd + '/public',
-        debug: true,
-        outputStyle: 'compressed'
       }));
       
       app.use(express.static(__pwd + '/public'));
@@ -94,11 +84,13 @@
       app.all('/upload', upload.action);
     },
     start: function(mode) {
-      this.server.listen(this.options.port);
-  
-      console.log('\t :: Express :: Listening on port ' + this.options.port);
+      var port = this.options.serverPort;
       
-      this.socket = io.listen(this.server);
+      this.server.listen(port, function() {
+        console.log('\t MPDisco :: Listening on port ' + port);
+      });
+      
+      this.socket = io(this.server);
       
       this.startSocketIO(this.socket);
       
@@ -108,7 +100,7 @@
       });
       
       this.mpd.on('ready', function() {
-        console.log('\t :: MPD :: connection established')
+        console.log('\t :: MPD :: connection established');
       });
       
       this.mode = new mode(this.mpd, commandProcessors);
@@ -118,32 +110,23 @@
       
       //Configure the socket.io connection settings.
       //See http://socket.io/
-      sio.configure(function() {
-      
-        sio.set('log level', 0);
-      
-        sio.set('authorization', function(handshakeData, callback) {
-          callback(null, true);
-          // error first callback style
-        });
-        
-        sio.set('authorization', function (data, accept) {
-          // check if there's a cookie header
-          if (data.headers.cookie) {
-              // if there is, parse the cookie
-              data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
-              // note that you will need to use the same key to grad the
-              // session id, as you specified in the Express setup.
-              data.sessionID = data.cookie[config.session_key];
-              data.name = data.cookie['mpdisco.name'];
-          } else {
-             // if there isn't, turn down the connection with a message
-             // and leave the function.
-             return accept('No cookie transmitted.', false);
-          }
-          // accept the incoming connection
-          accept(null, true);
-        });
+      sio.use(function (socket, next) {
+        var data = socket.request;
+        // check if there's a cookie header
+        if (data.headers.cookie) {
+            // if there is, parse the cookie
+            data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
+            // note that you will need to use the same key to grad the
+            // session id, as you specified in the Express setup.
+            data.sessionID = data.cookie[config.session_key];
+            data.name = data.cookie['mpdisco.name'];
+        } else {
+           // if there isn't, turn down the connection with a message
+           // and leave the function.
+           return next(new Error('No cookie transmitted.'));
+        }
+        // accept the incoming connection
+        next();
       });
       
       //Socket.io will call this function when a client connects,
@@ -156,13 +139,13 @@
       
         client.on('command', function(cmd) {
           
-          mode.command(cmd.command, cmd.args, client);
+          that.mode.command(cmd.command, cmd.args, client);
       
         });
         
         client.on('commands', function(cmds) {
       
-          mode.commands(cmds, client);
+          that.mode.commands(cmds, client);
       
         });
       
@@ -174,6 +157,11 @@
       //sio.sockets.on connection
     }
   });
+  
+  MPDisco.Modes = {
+    Basic:  require('./modes/basic_mode.js'),
+    Master: require('./modes/master_mode.js')
+  };
   
   if (this.define && define.amd) {
     // Publish as AMD module

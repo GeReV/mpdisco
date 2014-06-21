@@ -150,7 +150,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   
   MPDisco.state = new MPDisco.State;
   
-  MPDisco.Layout = Marionette.Layout.extend({
+  MPDisco.Layout = Marionette.LayoutView.extend({
     template: 'layout',
     
     regions: {
