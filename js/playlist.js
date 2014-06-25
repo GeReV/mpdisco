@@ -34,7 +34,7 @@ define(['mpdisco'], function(MPDisco) {
       
       model: MPDisco.state,
       
-      collection: new Playlist.Collection,
+      collection: new Playlist.Collection(),
       
       itemView: Playlist.PlaylistItemView,
       itemViewContainer: '.list',
@@ -63,6 +63,10 @@ define(['mpdisco'], function(MPDisco) {
         MPDisco.command('playlistinfo');
         
         this.listenTo(MPDisco.state, 'change:songid', this.updatePlaylist);
+      },
+      
+      onRender: function() {
+        this.pluginsInitialized = false;
       },
       
       onCompositeCollectionRendered: function() {
@@ -102,7 +106,7 @@ define(['mpdisco'], function(MPDisco) {
                 i = elements.index(ui.item),
                 playlist = this.ui.playlist;
             
-            ui.item.before(elements.slice(0, i))
+            ui.item.before(elements.slice(0, i));
             ui.item.after(elements.slice(i + 1));
             
             elements.show();
@@ -129,6 +133,8 @@ define(['mpdisco'], function(MPDisco) {
         $.each(this.selectedSongs, function(i, v) {
           that.ui.playlist.find('[data-songid="' + v + '"]').addClass('selected');
         });
+        
+        this.pluginsInitialized = true;
       },
       
       onShow: function() {

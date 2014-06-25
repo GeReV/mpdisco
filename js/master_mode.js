@@ -34,7 +34,7 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
           
           this.setLockUI(lock);
         },
-      }
+      };
     };
     
     MasterMode.PlayerView = Player.PlayerView.extend(_.extend(buildLockableMixinFor(Player.PlayerView), {
@@ -48,7 +48,11 @@ define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, P
     
     MasterMode.PlaylistView = Playlist.PlaylistView.extend(_.extend(buildLockableMixinFor(Playlist.PlaylistView), {
       setLockUI: function(lock) {
-        this.ui.playlist.sortable(lock ? 'disable' : 'enable');
+        if (this.pluginsInitialized) {
+          // Make sure this is only run if the sortable plugin has been initialized.
+          this.ui.playlist.sortable(lock ? 'disable' : 'enable');
+        }
+        
         
         this.ui.url.prop('disabled', lock);
         

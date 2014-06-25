@@ -13,7 +13,7 @@
         }
     });
     return result;
-  }
+  };
   
   var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
     init: function() {
@@ -26,7 +26,7 @@
     
     connected: function(client) {
       client.info = {
-        userid: client.handshake.sessionID
+        userid: client.request.sessionID // TODO: UUID here instead?
       };
       
       var that = this,
@@ -77,7 +77,7 @@
       
       this.disconnectionTimeouts[client.info.userid] = setTimeout(function() {
         
-        client.broadcast.emit('clientdisconnected', client.info, this.clientsInfo);
+        client.broadcast.emit('clientdisconnected', client.info/*, this.clientsInfo*/);
         
         this.dropClient(client);
         
@@ -132,7 +132,7 @@
       
       client.emit('identify', client.info);
       
-      client.broadcast.emit('clientconnected', client.info, this.clientsInfo);
+      client.broadcast.emit('clientconnected', client.info/*, this.clientsInfo*/);
        
       this.emit('identified', client);
     },
