@@ -1,1 +1,313 @@
-(function(){var a=Handlebars.template,b=Handlebars.templates=Handlebars.templates||{};b.listener=a(function(a,b,c,d,e){function k(a,b){var c="",d;return c+=i((d=(d=a.name,d==null||d===!1?d:d.givenName),typeof d===h?d.apply(a):d))+" "+i((d=(d=a.name,d==null||d===!1?d:d.familyName),typeof d===h?d.apply(a):d)),c}function l(a,b){var d;return(d=c.displayName)?d=d.call(a,{hash:{},data:b}):(d=a.displayName,d=typeof d===h?d.apply(a):d),i(d)}this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h="function",i=this.escapeExpression,j=this;f+='<img src="',(g=c.thumbnailUrl)?g=g.call(b,{hash:{},data:e}):(g=b.thumbnailUrl,g=typeof g===h?g.apply(b):g),f+=i(g)+'?s=48" alt="',(g=c.displayName)?g=g.call(b,{hash:{},data:e}):(g=b.displayName,g=typeof g===h?g.apply(b):g),f+=i(g)+'" />\n<span>',g=c["if"].call(b,b.name,{hash:{},inverse:j.program(3,l,e),fn:j.program(1,k,e),data:e});if(g||g===0)f+=g;return f+="</span>",f}),b.album=a(function(a,b,c,d,e){this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h="function",i=this.escapeExpression;return f+='<a class="name" href="#" data-id="',(g=c.album)?g=g.call(b,{hash:{},data:e}):(g=b.album,g=typeof g===h?g.apply(b):g),f+=i(g)+'" title="',(g=c.album)?g=g.call(b,{hash:{},data:e}):(g=b.album,g=typeof g===h?g.apply(b):g),f+=i(g)+'">',(g=c.album)?g=g.call(b,{hash:{},data:e}):(g=b.album,g=typeof g===h?g.apply(b):g),f+=i(g)+'</a>\n<ol class="songs tree collapsed"></ol>',f}),b.user=a(function(a,b,c,d,e){function k(a,b){var c="",d;return c+=i((d=(d=a.name,d==null||d===!1?d:d.givenName),typeof d===h?d.apply(a):d))+" "+i((d=(d=a.name,d==null||d===!1?d:d.familyName),typeof d===h?d.apply(a):d)),c}function l(a,b){var d;return(d=c.displayName)?d=d.call(a,{hash:{},data:b}):(d=a.displayName,d=typeof d===h?d.apply(a):d),i(d)}this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h="function",i=this.escapeExpression,j=this;f+='<div class="">\n  <div class="content">\n    <p>Current Master</p>\n    <img src="',(g=c.thumbnailUrl)?g=g.call(b,{hash:{},data:e}):(g=b.thumbnailUrl,g=typeof g===h?g.apply(b):g),f+=i(g)+'?s=48" alt="',(g=c.displayName)?g=g.call(b,{hash:{},data:e}):(g=b.displayName,g=typeof g===h?g.apply(b):g),f+=i(g)+'" />\n    <h2>\n      ',g=c["if"].call(b,b.name,{hash:{},inverse:j.program(3,l,e),fn:j.program(1,k,e),data:e});if(g||g===0)f+=g;return f+="\n    </h2>\n  </div>\n</div>",f}),b.error=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<button class="close"></button>\n<p>Whoops. Looks like something didn\'t work on my end.</p>\n<p>If this keeps happening, please <a href="https://github.com/gerev/mpdisco/issues">let my author know</a>.</p>'}),b.player=a(function(a,b,c,d,e){function m(a,b){var d="",e;return d+=" - ",(e=c.album)?e=e.call(a,{hash:{},data:b}):(e=a.album,e=typeof e===i?e.apply(a):e),d+=j(e),d}this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h,i="function",j=this.escapeExpression,k=this,l=c.helperMissing;f+='<div class="image play" style="background-image: url(\'',(g=c.coverart)?g=g.call(b,{hash:{},data:e}):(g=b.coverart,g=typeof g===i?g.apply(b):g),f+=j(g)+'\')">\n  <span class="indicator"></span>\n</div>\n<div class="info">\n  <h1>',(g=c.title)?g=g.call(b,{hash:{},data:e}):(g=b.title,g=typeof g===i?g.apply(b):g),f+=j(g)+"</h1>\n  <h2>",(g=c.artist)?g=g.call(b,{hash:{},data:e}):(g=b.artist,g=typeof g===i?g.apply(b):g),f+=j(g),g=c["if"].call(b,b.album,{hash:{},inverse:k.noop,fn:k.program(1,m,e),data:e});if(g||g===0)f+=g;return f+='</h2>\n  <h2 class="duration">',h={hash:{},data:e},f+=j((g=c.time||b.time,g?g.call(b,b.time,h):l.call(b,"time",b.time,h)))+"</h2>\n</div>",f}),b.song=a(function(a,b,c,d,e){this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h="function",i=this.escapeExpression;return f+='<a class="name" href="#" data-id="',(g=c.title)?g=g.call(b,{hash:{},data:e}):(g=b.title,g=typeof g===h?g.apply(b):g),f+=i(g)+'" title="',(g=c.title)?g=g.call(b,{hash:{},data:e}):(g=b.title,g=typeof g===h?g.apply(b):g),f+=i(g)+'">',(g=c.title)?g=g.call(b,{hash:{},data:e}):(g=b.title,g=typeof g===h?g.apply(b):g),f+=i(g)+"</a>",f}),b.library=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<header>Library</header>\n<div class="content">\n  <ul class="artists tree"></ul>\n  <ul class="upload"></ul>\n  <menu>\n    <input type="text" id="search" class="search" placeholder="Search">\n  </menu>\n  <input type="file" id="fileupload" name="files[]" data-url="upload" multiple="multiple" />\n</div>\n<div id="overlay"></div>'}),b.scrubber=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<div class="progress"></div>'}),b.layout=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<div id="player-head" class="grid_12 alpha omega">\n  <section id="player" class="grid_9 alpha"></section>\n  <section id="user" class="grid_3 omega"></section>\n  <section id="scrubber" class="grid_12 alpha omega"></section>\n</div>\n<div class="grid_12 alpha omega">\n  <section id="library" class="grid_3 alpha omega"></section>\n  <section id="playlist"></section>\n  <section id="listeners" class="grid_3 alpha omega"></section>\n</div>\n<div id="error"></div>'}),b.playlist=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<header>\n  <div class="button-group pull-right">\n    <a class="shuffle" href="#"><i class="icon-random"></i></a>\n    <a class="repeat" href="#"><i class="icon-refresh"></i></a>\n    <span class="separator"></span>\n    <a class="remove disabled" href="#"><i class="icon-trash"></i></a>\n  </div>\n  <span>Playlist</span>\n</header>\n<ul class="list"></ul>\n<menu>\n  <input type="text" id="url" name="url" placeholder="Add a link" />\n</menu>'}),b.listeners=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<header>Listeners</header>\n<div class="content">\n  <ul class="list"></ul>\n  <menu></menu>\n</div>'}),b.playlist_item=a(function(a,b,c,d,e){function n(a,b){var d="",e;d+='\n  <p class="title">',(e=c.title)?e=e.call(a,{hash:{},data:b}):(e=a.title,e=typeof e===j?e.apply(a):e),d+=k(e)+'</p>\n  <p class="details">\n  ',e=c["if"].call(a,a.artist,{hash:{},inverse:l.noop,fn:l.program(2,o,b),data:b});if(e||e===0)d+=e;d+="\n  ",e=c["if"].call(a,a.album,{hash:{},inverse:l.noop,fn:l.program(4,p,b),data:b});if(e||e===0)d+=e;return d+="\n  </p>\n",d}function o(a,b){var d="",e;return d+='<span class="artist">',(e=c.artist)?e=e.call(a,{hash:{},data:b}):(e=a.artist,e=typeof e===j?e.apply(a):e),d+=k(e)+"</span>",d}function p(a,b){var d="",e;d+='(<span class="album">',(e=c.album)?e=e.call(a,{hash:{},data:b}):(e=a.album,e=typeof e===j?e.apply(a):e),d+=k(e)+"</span>",e=c["if"].call(a,a.date,{hash:{},inverse:l.noop,fn:l.program(5,q,b),data:b});if(e||e===0)d+=e;return d+=")",d}function q(a,b){var d="",e;return d+=', <span class="year">',(e=c.date)?e=e.call(a,{hash:{},data:b}):(e=a.date,e=typeof e===j?e.apply(a):e),d+=k(e)+"</span>",d}function r(a,b){var d="",e;return d+='\n  <span class="url">',(e=c.file)?e=e.call(a,{hash:{},data:b}):(e=a.file,e=typeof e===j?e.apply(a):e),d+=k(e)+"</span>\n",d}this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h,i,j="function",k=this.escapeExpression,l=this,m=c.helperMissing;i={hash:{},data:e},f+=k((g=c.time||b.time,g?g.call(b,b.time,i):m.call(b,"time",b.time,i)))+'\n<div class="image"></div>\n',h=c["if"].call(b,b.title,{hash:{},inverse:l.program(7,r,e),fn:l.program(1,n,e),data:e});if(h||h===0)f+=h;return f}),b.user_identify=a(function(a,b,c,d,e){return this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{},'<input type="text" placeholder="E-mail or Nickname" />'}),b.artist=a(function(a,b,c,d,e){this.compilerInfo=[4,">= 1.0.0"],c=this.merge(c,a.helpers),e=e||{};var f="",g,h="function",i=this.escapeExpression;return f+='<a class="name" href="#" data-id="',(g=c.artist)?g=g.call(b,{hash:{},data:e}):(g=b.artist,g=typeof g===h?g.apply(b):g),f+=i(g)+'" title="',(g=c.artist)?g=g.call(b,{hash:{},data:e}):(g=b.artist,g=typeof g===h?g.apply(b):g),f+=i(g)+'">',(g=c.artist)?g=g.call(b,{hash:{},data:e}):(g=b.artist,g=typeof g===h?g.apply(b):g),f+=i(g)+'</a>\n<ul class="albums tree collapsed"></ul>',f})})()
+this["JST"] = this["JST"] || {};
+
+this["JST"]["views/templates/album.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<a class=\"name\" href=\"#\" data-id=\"";
+  if (helper = helpers.album) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.album); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" title=\"";
+  if (helper = helpers.album) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.album); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.album) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.album); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</a>\n<ol class=\"songs tree collapsed\"></ol>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/artist.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<a class=\"name\" href=\"#\" data-id=\"";
+  if (helper = helpers.artist) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.artist); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" title=\"";
+  if (helper = helpers.artist) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.artist); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.artist) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.artist); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</a>\n<ul class=\"albums tree collapsed\"></ul>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/error.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<button class=\"close\"></button>\n<p>Whoops. Looks like something didn't work on my end.</p>\n<p>If this keeps happening, please <a href=\"https://github.com/gerev/mpdisco/issues\">let my author know</a>.</p>";
+  });
+
+this["JST"]["views/templates/layout.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div id=\"player-head\" class=\"grid_12 alpha omega\">\n  <section id=\"player\" class=\"grid_9 alpha\"></section>\n  <section id=\"user\" class=\"grid_3 omega\"></section>\n  <section id=\"scrubber\" class=\"grid_12 alpha omega\"></section>\n</div>\n<div class=\"grid_12 alpha omega\">\n  <section id=\"library\" class=\"grid_3 alpha omega\"></section>\n  <section id=\"playlist\"></section>\n  <section id=\"listeners\" class=\"grid_3 alpha omega\"></section>\n</div>\n<div id=\"error\"></div>";
+  });
+
+this["JST"]["views/templates/library.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<header>Library</header>\n<div class=\"content\">\n  <ul class=\"artists tree\"></ul>\n  <ul class=\"upload\"></ul>\n  <menu>\n    <input type=\"text\" id=\"search\" class=\"search\" placeholder=\"Search\">\n  </menu>\n  <input type=\"file\" id=\"fileupload\" name=\"files[]\" data-url=\"upload\" multiple=\"multiple\" />\n</div>\n<div id=\"overlay\"></div>";
+  });
+
+this["JST"]["views/templates/listener.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.name)),stack1 == null || stack1 === false ? stack1 : stack1.givenName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.name)),stack1 == null || stack1 === false ? stack1 : stack1.familyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1));
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var stack1, helper;
+  if (helper = helpers.displayName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.displayName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  return escapeExpression(stack1);
+  }
+
+  buffer += "<img src=\"";
+  if (helper = helpers.thumbnailUrl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.thumbnailUrl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "?s=48\" alt=\"";
+  if (helper = helpers.displayName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.displayName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" />\n<span>";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.name), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</span>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/listeners.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<header>Listeners</header>\n<div class=\"content\">\n  <ul class=\"list\"></ul>\n  <menu></menu>\n</div>";
+  });
+
+this["JST"]["views/templates/player.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += " - ";
+  if (helper = helpers.album) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.album); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1);
+  return buffer;
+  }
+
+  buffer += "<div class=\"image play\" style=\"background-image: url('";
+  if (helper = helpers.coverart) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.coverart); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "')\">\n  <span class=\"indicator\"></span>\n</div>\n<div class=\"info\">\n  <h1>";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</h1>\n  <h2>";
+  if (helper = helpers.artist) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.artist); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1);
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.album), {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "</h2>\n  <h2 class=\"duration\">"
+    + escapeExpression((helper = helpers.time || (depth0 && depth0.time),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.time), options) : helperMissing.call(depth0, "time", (depth0 && depth0.time), options)))
+    + "</h2>\n</div>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/playlist.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<header>\n  <div class=\"button-group pull-right\">\n    <a class=\"shuffle\" href=\"#\"><i class=\"icon-random\"></i></a>\n    <a class=\"repeat\" href=\"#\"><i class=\"icon-refresh\"></i></a>\n    <span class=\"separator\"></span>\n    <a class=\"remove disabled\" href=\"#\"><i class=\"icon-trash\"></i></a>\n  </div>\n  <span>Playlist</span>\n</header>\n<ul class=\"list\"></ul>\n<menu>\n  <input type=\"text\" id=\"url\" name=\"url\" placeholder=\"Add a link\" />\n</menu>";
+  });
+
+this["JST"]["views/templates/playlist_item.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n  <p class=\"title\">";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</p>\n  <p class=\"details\">\n  ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.artist), {hash:{},inverse:self.noop,fn:self.program(2, program2, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.album), {hash:{},inverse:self.noop,fn:self.program(4, program4, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n  </p>\n";
+  return buffer;
+  }
+function program2(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "<span class=\"artist\">";
+  if (helper = helpers.artist) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.artist); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>";
+  return buffer;
+  }
+
+function program4(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "(<span class=\"album\">";
+  if (helper = helpers.album) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.album); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.date), {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += ")";
+  return buffer;
+  }
+function program5(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += ", <span class=\"year\">";
+  if (helper = helpers.date) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.date); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>";
+  return buffer;
+  }
+
+function program7(depth0,data) {
+  
+  var buffer = "", stack1, helper;
+  buffer += "\n  <span class=\"url\">";
+  if (helper = helpers.file) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.file); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</span>\n";
+  return buffer;
+  }
+
+  buffer += escapeExpression((helper = helpers.time || (depth0 && depth0.time),options={hash:{},data:data},helper ? helper.call(depth0, (depth0 && depth0.time), options) : helperMissing.call(depth0, "time", (depth0 && depth0.time), options)))
+    + "\n<div class=\"image\"></div>\n";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.title), {hash:{},inverse:self.program(7, program7, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  return buffer;
+  });
+
+this["JST"]["views/templates/scrubber.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<div class=\"progress\"></div>";
+  });
+
+this["JST"]["views/templates/song.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+  buffer += "<a class=\"name\" href=\"#\" data-id=\"";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" title=\"";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\">";
+  if (helper = helpers.title) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.title); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "</a>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/user.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
+
+function program1(depth0,data) {
+  
+  var buffer = "", stack1;
+  buffer += escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.name)),stack1 == null || stack1 === false ? stack1 : stack1.givenName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1))
+    + " "
+    + escapeExpression(((stack1 = ((stack1 = (depth0 && depth0.name)),stack1 == null || stack1 === false ? stack1 : stack1.familyName)),typeof stack1 === functionType ? stack1.apply(depth0) : stack1));
+  return buffer;
+  }
+
+function program3(depth0,data) {
+  
+  var stack1, helper;
+  if (helper = helpers.displayName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.displayName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  return escapeExpression(stack1);
+  }
+
+  buffer += "<div class=\"\">\n  <div class=\"content\">\n    <p>Current Master</p>\n    <img src=\"";
+  if (helper = helpers.thumbnailUrl) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.thumbnailUrl); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "?s=48\" alt=\"";
+  if (helper = helpers.displayName) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+  else { helper = (depth0 && depth0.displayName); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+  buffer += escapeExpression(stack1)
+    + "\" />\n    <h2>\n      ";
+  stack1 = helpers['if'].call(depth0, (depth0 && depth0.name), {hash:{},inverse:self.program(3, program3, data),fn:self.program(1, program1, data),data:data});
+  if(stack1 || stack1 === 0) { buffer += stack1; }
+  buffer += "\n    </h2>\n  </div>\n</div>";
+  return buffer;
+  });
+
+this["JST"]["views/templates/user_identify.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+  this.compilerInfo = [4,'>= 1.0.0'];
+helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+  
+
+
+  return "<input type=\"text\" placeholder=\"E-mail or Nickname\" />";
+  });

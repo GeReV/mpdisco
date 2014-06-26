@@ -15,7 +15,7 @@
           baseUrl = 'http://musicbrainz.org/ws/2/release/?fmt=json&query=',
           query;
           
-      error || (error = function() {});
+      error = error || function() {};
       
       query = _.map(options, function(v, k) { return k + ':"' + v + '"'; })
         .join(' AND ');
@@ -59,7 +59,7 @@
       var that = this,
           output = that._outputPath(options);
           
-      error || (error = function() {});
+      error = error || function() {};
           
       function returnUrl() {
         var urlName = function(s) {
@@ -152,5 +152,5 @@
     }
   });
   
-  module.exports = new CoverArt;
+  module.exports = new CoverArt();
 })();

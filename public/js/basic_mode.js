@@ -1,15 +1,2 @@
-define(['mpdisco', 'player', 'user', 'playlist', 'library'], function(MPDisco, Player, User, Playlist, Library) {
-  
-  var BasicMode = MPDisco.module('BasicMode', function(BasicMode, MPDisco) {
-    BasicMode.Mode = {
-      player: Player.PlayerView,
-      user: User.UserView,
-      scrubber: Player.ScrubberView,
-      playlist: Playlist.PlaylistView,
-      listeners: User.Listeners,
-      library: Library.LibraryView
-    };
-  });
-  
-  return BasicMode;
-});
+/*! mpdisco 2014-06-26 */
+define(["mpdisco","player","user","playlist","library"],function(a,b,c,d,e){var f=a.module("BasicMode",function(a){a.Mode={player:b.PlayerView,user:c.UserView,scrubber:b.ScrubberView,playlist:d.PlaylistView,listeners:c.Listeners,library:e.LibraryView}});return f});
