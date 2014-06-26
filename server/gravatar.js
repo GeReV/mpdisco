@@ -12,9 +12,9 @@
 
   var gravatar = module.exports = {
     avatar: function (email, options, https) {
-      var baseUrl = (https && "https://secure.gravatar.com/") || 'http://www.gravatar.com/';
+      var baseUrl = (https ? 'https://secure.gravatar.com/' : 'http://www.gravatar.com/'),
           queryData = querystring.stringify(options),
-          query = (queryData && "?" + queryData) || "";
+          query = (queryData ? "?" + queryData : "");
   
       return baseUrl + 'avatar/' + createHash(email) + query;
     },

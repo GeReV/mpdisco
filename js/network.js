@@ -1,7 +1,7 @@
 define(['class'], function(Class) {
   var Network = Class.extend({
     init: function(host, port) {
-      this.url = "ws://"+ host +":"+ port +"/",
+      this.url = "ws://"+ host +":"+ port +"/";
       this.callbacks = [];
       
       this.socket = io.connect(this.url);

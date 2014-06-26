@@ -141,11 +141,11 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         name: '.name'
       },
       
-      itemView: Library.LibrarySongView,
-      itemViewContainer: '.tree',
+      childView: Library.LibrarySongView,
+      childViewContainer: '.tree',
       
       initialize: function() {
-        this.collection = new Library.SongCollection; 
+        this.collection = new Library.SongCollection(); 
       },
       
       onDomRefresh: function() {
@@ -233,11 +233,11 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
         name: '.name'
       },
       
-      itemView: Library.LibraryAlbumView,
-      itemViewContainer: '.tree',
+      childView: Library.LibraryAlbumView,
+      childViewContainer: '.tree',
       
       initialize: function() {
-        this.collection = new Library.AlbumCollection; 
+        this.collection = new Library.AlbumCollection(); 
       },
       
       onDomRefresh: function() {
@@ -306,10 +306,10 @@ define(['mpdisco', 'vendor/jquery.iframe-transport', 'vendor/jquery.fileupload',
       
       className: 'library',
       
-      collection: new Library.ArtistCollection,
+      collection: new Library.ArtistCollection(),
       
-      itemView: Library.LibraryArtistView,
-      itemViewContainer: '.tree',
+      childView: Library.LibraryArtistView,
+      childViewContainer: '.tree',
       
       ui: {
         overlay: '#overlay',

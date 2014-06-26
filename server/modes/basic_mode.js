@@ -55,11 +55,11 @@
   };
   
   parsers = {
-    'list':         new LineParser,
-    'list:album':   new LineParser,
+    'list':         new LineParser(),
+    'list:album':   new LineParser(),
     'find':         new ObjectListParser('file'),
     'playlistinfo': new ObjectListParser('file'),
-    'simple':       new SimpleParser
+    'simple':       new SimpleParser()
   };
   
   function sanitizeArgs(args) {

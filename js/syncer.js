@@ -48,7 +48,7 @@ define(['class', 'underscore', 'mpdisco'], function(Class, _, MPDisco) {
   
   MPDisco.Syncer = Syncer;
   
-  MPDisco.syncer = new Syncer;
+  MPDisco.syncer = new Syncer();
   
   return Syncer;
 });

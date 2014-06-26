@@ -1,56 +1,59 @@
 define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
   var User = MPDisco.module('User', function(User, MPDisco, Backbone, Marionette, $, _) {
     User.Model = MPDisco.Model.extend({
-      defaults: {
-        displayName: 'User',
-        thumbnailUrl: 'http://www.gravatar.com/avatar/00000000000000000000000000000000'
+      defaults : {
+        displayName : 'User',
+        thumbnailUrl : 'http://www.gravatar.com/avatar/00000000000000000000000000000000'
       },
 
-      socketEvents: {
-        master: 'set'
+      socketEvents : {
+        master : 'set'
       },
 
-      initialize: function() {
+      initialize : function() {
         this.listenTo(MPDisco.vent, 'networkready', function(data) {
-          data.master && this.set(data.master);
+          if (data.master) {
+            this.set(data.master);            
+          } 
         });
       },
-      
-      idAttribute: 'userid'
+
+      idAttribute : 'userid'
     });
 
-
     User.Collection = MPDisco.Collection.extend({
-      model: User.Model,
+      model : User.Model,
 
-      comparator: function(user) {
+      comparator : function(user) {
         var name = user.get('name');
         return (name && name.giveName) || user.get('displayName');
       },
 
-      socketEvents: {
-        identify: 'add',
-        clientconnected: 'add',
-        clientdisconnected: 'removeById'
+      socketEvents : {
+        identify : 'add',
+        clientconnected : 'add',
+        clientdisconnected : 'removeById'
       },
 
-      initialize: function() {
+      initialize : function() {
         this.listenTo(MPDisco.vent, 'networkready', function(data) {
-          data.clients && this.reset(data.clients);
+          if (data.clients) {
+            this.reset(data.clients);
+          }
         });
       },
-      
-      removeById: function(info) {
+
+      removeById : function(info) {
         this.remove(this.findWhere({
-          userid: info.userid
+          userid : info.userid
         }));
       }
     });
 
     User.UserView = Marionette.ItemView.extend({
-      className: 'user',
+      className : 'user',
 
-      getTemplate: function() {
+      getTemplate : function() {
         if (this.isIdentified) {
           return 'user';
         }
@@ -58,27 +61,27 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         return 'user_identify';
       },
 
-      socketEvents: {
-        identify: 'identified',
+      socketEvents : {
+        identify : 'identified',
       },
 
-      modelEvents: {
-        change: 'showUser'
+      modelEvents : {
+        change : 'showUser'
       },
 
-      model: new User.Model,
+      model : new User.Model(),
 
-      events: {
-        'keyup input[type="text"]': 'enterInfo'
+      events : {
+        'keyup input[type="text"]' : 'enterInfo'
       },
 
-      ui: {
-        name: 'input[type="text"]'
+      ui : {
+        name : 'input[type="text"]'
       },
 
-      isIdentified: false,
+      isIdentified : false,
 
-      render: function() {
+      render : function() {
         this.isClosed = false;
 
         this.triggerMethod("before:render", this);
@@ -104,14 +107,14 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
           this.$el.append(html);
 
           // TODO: Adding the class immediately after the content is appended prevents the transition from affecting the new content.
-          var timeout = setTimeout(function() {
+          var timeout = setTimeout( function() {
 
             this.$el.addClass('switching');
 
             clearTimeout(timeout);
 
           }.bind(this), 100);
-        }else{
+        } else {
           this.$el.html(html);
         }
 
@@ -123,19 +126,19 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         return this;
       },
 
-      onShow: function() {
+      onShow : function() {
         if ($.cookie('mpdisco.name') && !this.isIdentified) {
           this.sendInfo();
         }
       },
 
-      identified: function() {
+      identified : function() {
         this.isIdentified = true;
 
         this.showUser();
       },
 
-      showUser: function() {
+      showUser : function() {
         if (this.isIdentified) {
           this.render();
 
@@ -143,60 +146,61 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
         }
       },
 
-      enterInfo: function(e) {
+      enterInfo : function(e) {
         if (e.which == 0x0d) {
           this.sendInfo();
         }
       },
 
-      sendInfo: function() {
+      sendInfo : function() {
         var name = $.cookie('mpdisco.name') || this.ui.name.val();
 
         this.$el.addClass('loading');
 
-        $.cookie('mpdisco.name', name, { expires: 7 });
+        $.cookie('mpdisco.name', name, {
+          expires : 7
+        });
 
         MPDisco.network.send('identify', name);
       }
     });
 
     User.ListenerView = Marionette.ItemView.extend({
-      tagName: 'li',
+      tagName : 'li',
 
-      className: 'listener',
+      className : 'listener',
 
-      template: 'listener',
+      template : 'listener',
 
-      onRender: function() {
+      onRender : function() {
         this.$el.attr('data-id', this.model.get('userid'));
       }
     });
 
     User.ListenersView = Marionette.CompositeView.extend({
-      className: 'listeners',
+      className : 'listeners',
 
-      template: 'listeners',
+      template : 'listeners',
 
-      collectionEvents: {
-        reset: 'render',
+      collectionEvents : {
+        reset : 'render',
       },
 
-      collection: new User.Collection,
+      collection : new User.Collection(),
 
-      itemView: User.ListenerView,
-      itemViewContainer: '.list',
-      
-      appendHtml: function(collectionView, itemView, index){
-        var childrenContainer = collectionView.itemViewContainer ? collectionView.$(collectionView.itemViewContainer) : collectionView.$el;
+      childView : User.ListenerView,
+      childViewContainer : '.list',
+
+      appendHtml : function(collectionView, itemView, index) {
+        var childrenContainer = collectionView.childViewContainer ? collectionView.$(collectionView.childViewContainer) : collectionView.$el;
         var children = childrenContainer.children();
-        
+
         if (children.size() - 1 <= index) {
           childrenContainer.append(itemView.el);
         } else {
           childrenContainer.children().eq(index).before(itemView.el);
         }
       }
-
     });
 
   });

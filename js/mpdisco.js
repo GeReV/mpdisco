@@ -9,7 +9,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
         }
     });
     return result;
-  }
+  };
   
   Handlebars.registerHelper('time', function(time) {
     time = time || '';
@@ -68,13 +68,13 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
           method = _.bind(method, this);
           
           MPDisco.network.on(key, method);
-        };
-      },
+        }
+      }
     };
     
   };
   
-  var MPDisco = new Marionette.Application;
+  var MPDisco = new Marionette.Application();
   
   // TODO: Nicer way to do this?
   Marionette.View = Marionette.View.extend(buildSocketEventsMixinFor(Marionette.View));
@@ -117,7 +117,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     
     template: 'error',
     
-    model: new MPDisco.Error,
+    model: new MPDisco.Error(),
     
     modelEvents: {
       change: 'show'
@@ -148,7 +148,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
     }
   });
   
-  MPDisco.state = new MPDisco.State;
+  MPDisco.state = new MPDisco.State();
   
   MPDisco.Layout = Marionette.LayoutView.extend({
     template: 'layout',
@@ -177,23 +177,23 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   MPDisco.addInitializer(function() {
     MPDisco.mode = MPDisco.module('MasterMode').Mode;
     
-    this.layout = new MPDisco.Layout;
+    this.layout = new MPDisco.Layout();
     
     this.container.show(this.layout);
     
-    this.layout.player.show(new MPDisco.mode.player);
+    this.layout.player.show(new MPDisco.mode.player());
     
-    this.layout.user.show(new MPDisco.mode.user);
+    this.layout.user.show(new MPDisco.mode.user());
     
-    this.layout.scrubber.show(new MPDisco.mode.scrubber);
+    this.layout.scrubber.show(new MPDisco.mode.scrubber());
     
-    this.layout.playlist.show(new MPDisco.mode.playlist);
+    this.layout.playlist.show(new MPDisco.mode.playlist());
     
-    this.layout.listeners.show(new MPDisco.mode.listeners);
+    this.layout.listeners.show(new MPDisco.mode.listeners());
     
-    this.layout.library.show(new MPDisco.mode.library);
+    this.layout.library.show(new MPDisco.mode.library());
     
-    this.layout.error.show(new MPDisco.ErrorView);
+    this.layout.error.show(new MPDisco.ErrorView());
     
     this.network.command('status');
   });

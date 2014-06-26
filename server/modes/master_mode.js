@@ -90,7 +90,7 @@
       
       console.log('master timeout (mins):', config.master_time);
       
-      this.masterTimestamp = (new Date).getTime();
+      this.masterTimestamp = (new Date()).getTime();
       
       this.masterTimeout = setTimeout(function() {
         console.log('rotating master');

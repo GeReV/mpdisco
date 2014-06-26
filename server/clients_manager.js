@@ -45,7 +45,9 @@
       
       this.clientsHash[client.info.userid] = client;
       
-      this.disconnectionTimeouts[client.info.userid] && clearTimeout(this.disconnectionTimeouts[client.info.userid]);
+      if (this.disconnectionTimeouts[client.info.userid]) {
+        clearTimeout(this.disconnectionTimeouts[client.info.userid]);
+      } 
       
       //When this client disconnects
       client.on('disconnect', function() {
@@ -165,7 +167,9 @@
       return ClientsManagerSingleton.prototype._singletonInstance;
     }
     
-    return (ClientsManagerSingleton.prototype._singletonInstance = new ClientsManager); 
+    ClientsManagerSingleton.prototype._singletonInstance = new ClientsManager();
+    
+    return ClientsManagerSingleton.prototype._singletonInstance; 
   };
   
   if (this.define && define.amd) {

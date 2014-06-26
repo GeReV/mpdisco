@@ -29,7 +29,7 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
       }
     });
     
-    MPDisco.current = new Player.Song;
+    MPDisco.current = new Player.Song();
     
     Player.PlayerView = Marionette.ItemView.extend({
       template: 'player',
@@ -152,7 +152,11 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
       
       handleKeyboard: function(e) {
         if (e.which === 0x20) {
-          (MPDisco.state.get('state') !== 'play') ? this.playSong() : this.pauseSong();
+          if (MPDisco.state.get('state') !== 'play') {
+            this.playSong();
+          } else {
+            this.pauseSong();
+          }
           
           e.preventDefault();
         }

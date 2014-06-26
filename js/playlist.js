@@ -36,8 +36,8 @@ define(['mpdisco'], function(MPDisco) {
       
       collection: new Playlist.Collection(),
       
-      itemView: Playlist.PlaylistItemView,
-      itemViewContainer: '.list',
+      childView: Playlist.PlaylistItemView,
+      childViewContainer: '.list',
       
       collectionEvents: {
         reset: 'render'
@@ -180,8 +180,8 @@ define(['mpdisco'], function(MPDisco) {
             args = [];
             
         _.each(['artist', 'album', 'title'], function(key) {
-          var value;
-          if (value = model[key]) {
+          var value = model[key];
+          if (value) {
             args.push(key);
             args.push(value);
           }

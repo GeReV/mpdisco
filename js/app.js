@@ -8,10 +8,10 @@ require.config({
       deps: ['jquery'],
       exports: '$'
     },
-    jquerysortable: {
+    /*jquerysortable: {
       deps: ['jquery'],
       exports: '$'
-    },
+    },*/
     underscore: {
       exports: '_'
     },

@@ -18,7 +18,7 @@
         var o = that.parseLine(l);
         
         if (obj.hasOwnProperty(o.key) && overwrites >= 2) {
-          console.warn('Key overwrite when parsing response (key=' + o.key + '), SimpleParser could be wrong for response. Response:')
+          console.warn('Key overwrite when parsing response (key=' + o.key + '), SimpleParser could be wrong for response. Response:');
           console.warn(s);
         }
         
