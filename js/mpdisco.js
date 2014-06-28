@@ -20,7 +20,7 @@ define(['marionette', 'network', 'handlebars', 'underscore'], function(Marionett
   });
   
   Marionette.TemplateCache.prototype.loadTemplate = function(template) {
-    return Handlebars.templates[template];
+    return window.JST[template];
   };
   
   Marionette.TemplateCache.prototype.compileTemplate = function(template) {

@@ -82,10 +82,10 @@ module.exports = function(grunt) {
     },
     handlebars: {
       compile: {
-       options: {
-          namespace: "Handlebars.templates",
+        options: {
+          namespace: "JST",
           processName: function(filePath) {
-              return filePath.replace(/^views\/templates\//, '').replace(/\.hbs$/, '');
+            return /\/([a-z0-9_]+)\.hbs$/gi.exec(filePath)[1];
           }
         },
         files: {

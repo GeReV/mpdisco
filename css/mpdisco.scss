@@ -1,4 +1,3 @@
-@import '960.scss';
 @import 'bootstrap.scss';
 @import 'bootstrap-theme.scss';
 @import 'jquery-ui.scss';
@@ -11,9 +10,50 @@ body {
   background: transparent;
 }
 
-#container {
-  margin-top: 40px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+html, body, #container, #container > div {
+  height: 100%;
+  min-height: 100%;
+}
+
+#player-head {
+  background: url('../img/noise.png') #434343;
+  height: 160px;
+  overflow: hidden;
+}
+
+#player-body {
+  height: calc(100% - 160px);
+}
+
+#container > div {
+  
+}
+
+#main {
+  float: left;
+  width: 85%;
+  height: 100%;
+}
+
+#library {
+  background: #354052;
+  float: left;
+  width: 15%;
+  height: 100%;
+}
+
+#playlist,
+#listeners {
+  float: left;
+  height: 100%;
+}
+#playlist {
+  background: #fff;
+  width: 85%;
+}
+#listeners {
+  background: #efefef;
+  width: 15%;
 }
 
 #overlay {
@@ -29,12 +69,6 @@ body {
   &.show {
     display: block;
   }
-}
-
-#player-head {
-  background: url('../img/noise.png') #434343;
-  height: 160px;
-  overflow: hidden;
 }
 
 menu {
@@ -55,11 +89,9 @@ input[type="text"] {
 
 section {
   header {
-    border-top: 1px solid #fff;
     box-sizing: border-box;
-    color: #666;
     font-weight: bold;
-    line-height: 30px;
+    line-height: 44px;
     padding: 0 11px;
     text-transform: uppercase;
   }
@@ -82,7 +114,6 @@ section {
 }
 
 .tree {
-  background: #efefef;
   list-style-type: none;
   margin: 0;
   overflow: auto;
@@ -254,9 +285,8 @@ section {
 .playlist {
   background: #fff;
   counter-reset: playlist;
-  float: left;
+  height: 100%;
   position: relative;
-  width: 500px;
   
   &.playlist-drop > .list:after {
     background: rgba(255, 255, 255, 0.6);
@@ -276,6 +306,7 @@ section {
   header {
     background: #efefef;
     border-bottom: 1px solid #d7d7d7;
+    height: 32px;
     
     a {
       color: #666;
@@ -302,37 +333,27 @@ section {
     .remove {
       margin: 0 5px;
     }
-  }
-  
-  menu {
-    border-top: 1px solid #c9c9c9;
-    background: #dcdcdc;
-    height: 50px;
-    line-height: 50px;
-    padding: 0 10px 0 20px;
-    position: relative;
     
     input[type="text"] {
       padding-right: 20px;
       vertical-align: middle;
-      width: 100%;
-    }
-    
-    &:after {
-      @extend .icon;
-      @extend .icon-plus:before;
       
-      color: #989898;
-      line-height: 24px;
-      height: 24px;
-      position: absolute;
-      top: 14px;
-      right: 18px;
+      &:after {
+        @extend .icon;
+        @extend .icon-plus:before;
+        
+        color: #989898;
+        line-height: 24px;
+        height: 24px;
+        position: absolute;
+        top: 14px;
+        right: 18px;
+      }
     }
   }
   
   > .list {
-    height: 480px;
+    height: calc(100% - 32px);
     position: relative;
   }
   
@@ -444,24 +465,9 @@ section {
   }
 }
 
-.library, .listeners {
-  background: #efefef;
-  
-  header {
-    background: #e0e0e0;
-    border-bottom: 1px solid #c9c9c9;
-  }
-  
-  menu {
-    border-top: 1px solid #c9c9c9; 
-    height: 50px;
-    line-height: 50px;
-    padding: 0 10px;
-  }
-}
-
 .library {
   
+  height: 100%;
   
   &.library-drop {
     > .content > .tree:after {
@@ -484,14 +490,19 @@ section {
     }
   }
   
-  
+  header {
+    background: #2f3949;
+    color: #fff;
+  }
   
   > .content {
+    height: calc(100% - 44px);
+    overflow: auto;
     position: relative;
     
     > .tree {
-      height: 480px;
       position: relative;
+      min-height: 480px;
     }
   } 
   
@@ -569,7 +580,7 @@ section {
   }
   
   menu {
-    position: relative;
+    display: none;
     
     .search {
       padding-right: 20px;
@@ -592,21 +603,7 @@ section {
 }
 
 .library-item {
-  background: #efefef;
-  font-size: 14px;
-  
-  &.selected .name {
-    color: #956dc6;
-  }
-  
-  .albums {
-    padding-left: 20px;
-  }
-  
-  .songs {
-    padding-left: 20px;
-    counter-reset: album;
-  }
+  font-size: 15px;
   
   &.ui-draggable-dragging {
     border: 1px solid #dedede;
@@ -619,11 +616,41 @@ section {
   }
   
   .name {
-    color: #666;
+    color: #a0acbf;
+    line-height: 32px;
     overflow: hidden;
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+    
+    img {
+      background: #fff;
+      display: inline-block;
+      margin-right: 4px;
+      vertical-align: middle;
+      width: 22px;
+      height: 22px;
+    }
+  }
+  
+  &.selected .name,
+  .name:hover {
+    color: #fff;
+    background: #2f3949;
+  }
+  
+  .albums .name {
+    padding-left: 20px;
+  }
+  
+  .songs {
+    counter-reset: album;
+    font-size: 12px;
+    
+    .name {
+      padding-left: 40px;
+      line-height: 20px;
+    }
   }
 }
 
@@ -751,6 +778,8 @@ section {
 }
 
 .listeners {
+  
+  height: 100%;
   
   .list {
     height: 480px;
