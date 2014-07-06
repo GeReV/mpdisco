@@ -78,7 +78,7 @@ menu {
 
 input[type="text"] {
   border: 1px solid #cbcbcb;
-  border-radius: 3px;
+  // border-radius: 3px;
   box-sizing: border-box;
   color: #666;
   height: 24px;
@@ -491,12 +491,12 @@ section {
   }
   
   header {
-    background: #2f3949;
+    background: rgba(0, 0, 0, 0.2);
     color: #fff;
   }
   
   > .content {
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 32px);
     overflow: auto;
     position: relative;
     
@@ -580,12 +580,31 @@ section {
   }
   
   menu {
-    display: none;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 5px;
     
     .search {
-      padding-right: 20px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #a0acbf;
+      font-size: 12px;
+      line-height: 20px;
+      padding: 4px 20px 4px 10px;
       vertical-align: middle;
       width: 100%;
+      
+      &:focus {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+    
+    ::-webkit-input-placeholder,
+    ::-moz-placeholder, 
+    :-moz-placeholder,
+    :-ms-input-placeholder {
+      color: #000; //rgba(255, 255, 255, 0.2);
     }
   
     &:after {
@@ -636,7 +655,7 @@ section {
   &.selected .name,
   .name:hover {
     color: #fff;
-    background: #2f3949;
+    background: rgba(0, 0, 0, 0.05);
   }
   
   .albums .name {
