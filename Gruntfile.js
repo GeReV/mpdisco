@@ -92,6 +92,20 @@ module.exports = function(grunt) {
           'public/js/templates.js': ['views/templates/**/*.hbs']
         }
       }
+    },
+    watch: {
+      src: {
+        files: ['js/**/*.js'],
+        tasks: ['uglify:debug']
+      },
+      sass: {
+        files: ['css/**/*.scss'],
+        tasks: ['sass:debug']
+      },
+      handlebars: {
+        files: ['views/templates/**/*.hbs'],
+        tasks: ['handlebars']
+      }
     }
   });
 
@@ -100,6 +114,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
   grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release']);
