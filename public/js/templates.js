@@ -1,6 +1,7 @@
-this["JST"] = this["JST"] || {};
+this["Handlebars"] = this["Handlebars"] || {};
+this["Handlebars"]["templates"] = this["Handlebars"]["templates"] || {};
 
-this["JST"]["views/templates/album.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["album"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -22,7 +23,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
-this["JST"]["views/templates/artist.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["artist"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -44,7 +45,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
-this["JST"]["views/templates/error.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["error"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -53,7 +54,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<button class=\"close\"></button>\n<p>Whoops. Looks like something didn't work on my end.</p>\n<p>If this keeps happening, please <a href=\"https://github.com/gerev/mpdisco/issues\">let my author know</a>.</p>";
   });
 
-this["JST"]["views/templates/layout.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["layout"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -62,7 +63,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div id=\"player-head\" class=\"grid_12 alpha omega\">\n  <section id=\"player\" class=\"grid_9 alpha\"></section>\n  <section id=\"user\" class=\"grid_3 omega\"></section>\n  <section id=\"scrubber\" class=\"grid_12 alpha omega\"></section>\n</div>\n<div class=\"grid_12 alpha omega\">\n  <section id=\"library\" class=\"grid_3 alpha omega\"></section>\n  <section id=\"playlist\"></section>\n  <section id=\"listeners\" class=\"grid_3 alpha omega\"></section>\n</div>\n<div id=\"error\"></div>";
   });
 
-this["JST"]["views/templates/library.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["library"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -71,7 +72,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<header>Library</header>\n<div class=\"content\">\n  <ul class=\"artists tree\"></ul>\n  <ul class=\"upload\"></ul>\n  <menu>\n    <input type=\"text\" id=\"search\" class=\"search\" placeholder=\"Search\">\n  </menu>\n  <input type=\"file\" id=\"fileupload\" name=\"files[]\" data-url=\"upload\" multiple=\"multiple\" />\n</div>\n<div id=\"overlay\"></div>";
   });
 
-this["JST"]["views/templates/listener.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["listener"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
@@ -108,7 +109,7 @@ function program3(depth0,data) {
   return buffer;
   });
 
-this["JST"]["views/templates/listeners.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["listeners"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -117,7 +118,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<header>Listeners</header>\n<div class=\"content\">\n  <ul class=\"list\"></ul>\n  <menu></menu>\n</div>";
   });
 
-this["JST"]["views/templates/player.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["player"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
@@ -152,7 +153,7 @@ function program1(depth0,data) {
   return buffer;
   });
 
-this["JST"]["views/templates/playlist.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["playlist"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -161,7 +162,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<header>\n  <div class=\"button-group pull-right\">\n    <a class=\"shuffle\" href=\"#\"><i class=\"icon-random\"></i></a>\n    <a class=\"repeat\" href=\"#\"><i class=\"icon-refresh\"></i></a>\n    <span class=\"separator\"></span>\n    <a class=\"remove disabled\" href=\"#\"><i class=\"icon-trash\"></i></a>\n  </div>\n  <span>Playlist</span>\n</header>\n<ul class=\"list\"></ul>\n<menu>\n  <input type=\"text\" id=\"url\" name=\"url\" placeholder=\"Add a link\" />\n</menu>";
   });
 
-this["JST"]["views/templates/playlist_item.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["playlist_item"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, options, functionType="function", escapeExpression=this.escapeExpression, self=this, helperMissing=helpers.helperMissing;
@@ -235,7 +236,7 @@ function program7(depth0,data) {
   return buffer;
   });
 
-this["JST"]["views/templates/scrubber.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["scrubber"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   
@@ -244,7 +245,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return "<div class=\"progress\"></div>";
   });
 
-this["JST"]["views/templates/song.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["song"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -266,7 +267,7 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   return buffer;
   });
 
-this["JST"]["views/templates/user.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["user"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression, self=this;
@@ -303,7 +304,7 @@ function program3(depth0,data) {
   return buffer;
   });
 
-this["JST"]["views/templates/user_identify.hbs"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
+this["Handlebars"]["templates"]["user_identify"] = Handlebars.template(function (Handlebars,depth0,helpers,partials,data) {
   this.compilerInfo = [4,'>= 1.0.0'];
 helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
   

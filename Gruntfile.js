@@ -82,8 +82,11 @@ module.exports = function(grunt) {
     },
     handlebars: {
       compile: {
-        options: {
-          namespace: "JST"
+       options: {
+          namespace: "Handlebars.templates",
+          processName: function(filePath) {
+              return filePath.replace(/^views\/templates\//, '').replace(/\.hbs$/, '');
+          }
         },
         files: {
           'public/js/templates.js': ['views/templates/**/*.hbs']
