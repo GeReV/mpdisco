@@ -42,7 +42,7 @@ define(['class'], function(Class) {
       this.socket.on(name, callback);
     },
     off: function(name, callback) {
-      this.socket.of(name, callback);
+      this.socket.off(name, callback);
     },
     createPublish: function(name) {
       return function(data) {
