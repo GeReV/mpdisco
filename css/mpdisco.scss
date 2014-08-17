@@ -10,9 +10,23 @@ body {
   background: transparent;
 }
 
-html, body, #container, #container > div {
-  height: 100%;
-  min-height: 100%;
+#container {
+  height: 100vh;
+  display: flex;
+  
+  > div {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+  }
+}
+
+header {
+  flex: 0 0 auto;
+}
+
+header + menu {
+  flex: 0 0 auto;
 }
 
 #player-head {
@@ -21,39 +35,30 @@ html, body, #container, #container > div {
   overflow: hidden;
 }
 
-#player-body {
-  height: calc(100% - 160px);
-}
-
-#container > div {
-  
-}
-
 #main {
-  float: left;
-  width: 85%;
-  height: 100%;
+  display: flex;
+  flex: 1 1 auto;
 }
 
 #library {
   background: #354052;
-  float: left;
-  width: 15%;
-  height: 100%;
+  display: flex;
+  width: 280px;
 }
 
-#playlist,
-#listeners {
-  float: left;
-  height: 100%;
+#player-body {
+  display: flex;
+  flex: 1 1 auto;
 }
+
 #playlist {
   background: #fff;
-  width: 85%;
+  display: flex;
+  flex: 1 1 auto;
 }
 #listeners {
   background: #efefef;
-  width: 15%;
+  width: 200px;
 }
 
 #overlay {
@@ -285,8 +290,9 @@ section {
 .playlist {
   background: #fff;
   counter-reset: playlist;
-  height: 100%;
-  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   
   &.playlist-drop > .list:after {
     background: rgba(255, 255, 255, 0.6);
@@ -353,8 +359,7 @@ section {
   }
   
   > .list {
-    height: calc(100% - 32px);
-    position: relative;
+    flex: 1 1 auto;
   }
   
   .playlist-item-placeholder {
@@ -397,10 +402,10 @@ section {
   color: #666;
   counter-increment: playlist;
   font-size: 12px;
-  height: 30px;
+  height: 36px;
   line-height: 13px;
   list-style-type: none;
-  padding: 10px;
+  padding: 3px;
   
   &:before, .time {
     color: #d1d1d1;
@@ -437,6 +442,10 @@ section {
     white-space: nowrap;
   }
   
+  span {
+    vertical-align: top;
+  }
+  
   .image {
     background: #666;
     float: left;
@@ -467,7 +476,9 @@ section {
 
 .library {
   
-  height: 100%;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
   
   &.library-drop {
     > .content > .tree:after {
@@ -496,9 +507,8 @@ section {
   }
   
   > .content {
-    height: calc(100% - 44px - 32px);
     overflow: auto;
-    position: relative;
+    flex: 0 1 auto;
     
     > .tree {
       position: relative;
@@ -797,8 +807,6 @@ section {
 }
 
 .listeners {
-  
-  height: 100%;
   
   .list {
     height: 480px;

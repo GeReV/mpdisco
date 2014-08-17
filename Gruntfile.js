@@ -80,6 +80,15 @@ module.exports = function(grunt) {
         }
       }
     },
+    autoprefixer: {
+      'default': {
+        options: {
+          // Target-specific options go here.
+        },
+        src: 'public/css/mpdisco.css',
+        dest: 'public/css/mpdisco.css'
+      }
+    },
     handlebars: {
       compile: {
         options: {
@@ -100,7 +109,7 @@ module.exports = function(grunt) {
       },
       sass: {
         files: ['css/**/*.scss'],
-        tasks: ['sass:debug']
+        tasks: ['sass:debug', 'autoprefixer:default']
       },
       handlebars: {
         files: ['views/templates/**/*.hbs'],
@@ -113,11 +122,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release']);
-  grunt.registerTask('debug', ['jshint', 'clean', 'handlebars', 'uglify:debug', 'sass:debug']);
+  grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release', 'autoprefixer:default']);
+  grunt.registerTask('debug', ['jshint', 'clean', 'handlebars', 'uglify:debug', 'sass:debug', 'autoprefixer:default']);
 
 };
