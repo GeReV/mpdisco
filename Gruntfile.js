@@ -102,6 +102,13 @@ module.exports = function(grunt) {
         }
       }
     },
+    bower: {
+      install: {
+        options: {
+          targetDir: './js/vendor'
+        }
+      }
+    },
     watch: {
       src: {
         files: ['js/**/*.js'],
@@ -125,9 +132,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-autoprefixer');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-bower-task');
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release', 'autoprefixer:default']);
-  grunt.registerTask('debug', ['jshint', 'clean', 'handlebars', 'uglify:debug', 'sass:debug', 'autoprefixer:default']);
+  grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release', 'autoprefixer:default', 'bower']);
+  grunt.registerTask('debug', ['jshint', 'clean', 'handlebars', 'uglify:debug', 'sass:debug', 'autoprefixer:default', 'bower']);
 
 };
