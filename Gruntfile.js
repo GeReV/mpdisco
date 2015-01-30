@@ -7,63 +7,21 @@ module.exports = function(grunt) {
       src: ['public/js', 'public/css']
     },
     jshint: {
-      gruntfile: {
-        options: {
-          jshintrc: '.jshintrc'
-        },
-        src: 'Gruntfile.js'
-      },
-      client: {
-        src: ['js/*.js']
-      },
-      server: {
-        src: ['server/**/*.js']
-      },
-      index: {
-        src: 'index.js'
-      }
-    },
-    uglify: {
       options: {
-        banner: '/*! <%= pkg.name %> <%= grunt.template.today("yyyy-mm-dd") %> */\n'
+        jshintrc: '.jshintrc'
       },
-      vendor: {
-        options: {
-          compress: {
-            unused: false
-          },
-          mangle: {
-            except: ['$', '_', 'Backbone', 'jQuery', 'Handlebars']
-          }
-        },
-        files: [{
-          expand: true,
-          cwd: 'js/vendor',
-          src: '*.js',
-          dest: 'public/js/vendor'
-        }]
-      },
-      release: {
-        files: [{
-          expand: true,
-          cwd: 'js',
-          src: '*.js',
-          dest: 'public/js'
-        }]
-      },
-      debug: {
-        options: {
-          compress: false,
-          mangle: false,
-          beautify: true
-        },
-        files: [{
-          expand: true,
-          cwd: 'js',
-          src: '**/*.js',
-          dest: 'public/js'
-        }]
-      }
+      //gruntfile: {
+      //  src: 'Gruntfile.js'
+      //},
+      //client: {
+      //  src: ['js/*.js']
+      //},
+      //server: {
+      //  src: ['server/**/*.js']
+      //},
+      //index: {
+      //  src: 'index.js'
+      //}
     },
     sass: {
       release: {
@@ -89,23 +47,21 @@ module.exports = function(grunt) {
         dest: 'public/css/mpdisco.css'
       }
     },
-    handlebars: {
-      compile: {
-        options: {
-          namespace: "JST",
-          processName: function(filePath) {
-            return /\/([a-z0-9_]+)\.hbs$/gi.exec(filePath)[1];
-          }
-        },
+    browserify: {
+      dist: {
         files: {
-          'public/js/templates.js': ['views/templates/**/*.hbs']
+          'public/js/mpdisco.js': ['js/app.jsx']
+        },
+        options: {
+          transform: ['reactify']
         }
       }
     },
     bower: {
       install: {
         options: {
-          targetDir: './js/vendor'
+          targetDir: './js/vendor',
+          cleanBowerDir: true
         }
       }
     },
@@ -125,17 +81,18 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-autoprefixer');
+  grunt.loadNpmTasks('grunt-bower-task');
+  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-clean');
-  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.loadNpmTasks('grunt-autoprefixer');
-  grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-bower-task');
+  grunt.loadNpmTasks('grunt-react');
+
 
   // Default task(s).
-  grunt.registerTask('default', ['jshint', 'clean', 'handlebars', 'uglify:vendor', 'uglify:release', 'sass:release', 'autoprefixer:default', 'bower']);
-  grunt.registerTask('debug', ['jshint', 'clean', 'handlebars', 'uglify:debug', 'sass:debug', 'autoprefixer:default', 'bower']);
+  grunt.registerTask('default', ['jshint', 'clean', 'bower', 'browserify', 'sass:release', 'autoprefixer:default']);
+  grunt.registerTask('debug',   ['jshint', 'clean', 'bower', 'browserify', 'sass:debug', 'autoprefixer:default']);
 
 };
