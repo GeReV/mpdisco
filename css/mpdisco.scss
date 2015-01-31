@@ -40,12 +40,6 @@ header + menu {
   flex: 1 1 auto;
 }
 
-#library {
-  background: #354052;
-  display: flex;
-  width: 280px;
-}
-
 #player-body {
   display: flex;
   flex: 1 1 auto;
@@ -474,10 +468,11 @@ section {
   }
 }
 
-.library {
-  
+#library {
+
+  background: #354052;
   display: flex;
-  flex: 1 0 auto;
+  flex: 0 0 280px;
   flex-direction: column;
   
   &.library-drop {
