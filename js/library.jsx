@@ -1,28 +1,20 @@
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 
 var LibraryArtistItem = require('./library_artist_item.jsx');
 
 var Library = React.createClass({
     getInitialState: function() {
         return {
-            artists: []
+            artists: this.props.model.artists || []
         };
     },
 
     componentWillMount: function() {
-        MPDisco.network.on('list:artist', function(res) {
-            var artists = res.data.map(function(item) {
-                return { name: item.artist };
-            });
-
+        this.props.model.on('artists', function(artists) {
             this.setState({
                 artists: artists
             });
         }.bind(this));
-
-        MPDisco.command('list', 'artist');
-
-        //this.listenTo(MPDisco.vent, 'select:library', this.select);
     },
 
     render: function() {
@@ -35,8 +27,8 @@ var Library = React.createClass({
                 <div className="content">
                     <ul className="artists tree">
                         {this.state.artists.map(function(artist) {
-                            return <LibraryArtistItem key={artist.name} artist={artist} />;
-                        })}
+                            return <LibraryArtistItem key={artist.name} artist={artist} library={this.props.model} />;
+                        }.bind(this))}
                     </ul>
                     <ul className="upload"></ul>
                     <input type="file" id="fileupload" nameName="files[]" data-url="upload" multiple="multiple" />

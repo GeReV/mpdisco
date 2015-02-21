@@ -1,4 +1,4 @@
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 
 var PlaylistItem = React.createClass({
     render: function() {

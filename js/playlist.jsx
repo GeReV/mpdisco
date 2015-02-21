@@ -1,4 +1,4 @@
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 
 var PlaylistItem = require('./playlist_item.jsx');
 
@@ -23,9 +23,6 @@ var Playlist = React.createClass({
     },
 
     componentWillMount: function() {
-        MPDisco.network.on('playlistinfo', function() {
-            console.log(arguments);
-        });
         MPDisco.network.command('playlistinfo');
     },
 

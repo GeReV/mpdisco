@@ -126,26 +126,6 @@ section {
     border: 0;
   }
 }
-.name:before {
-  @extend .icon;
-  @extend .icon-caret-right:before;
-  
-  margin-right: 2px;
-  text-align: center;
-  width: 18px;
-}
-.name.open:before {
-  @extend .icon;
-  @extend .icon-caret-down:before;
-  
-  width: 18px;
-}
-.songs .name:before {
-  counter-increment: album;
-  content: counter(album) ". ";
-  display: inline;
-  text-align: left;
-}
 
 .collapsed {
   height: 0;
@@ -638,7 +618,11 @@ section {
       border: 0;
     }
   }
-  
+
+  &.open > .name::before {
+    @extend .icon-caret-down:before;
+  }
+
   .name {
     color: #a0acbf;
     line-height: 32px;
@@ -646,6 +630,15 @@ section {
     text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &::before {
+      @extend .icon;
+      @extend .icon-caret-right:before;
+
+      margin-right: 2px;
+      text-align: center;
+      width: 18px;
+    }
     
     img {
       background: #fff;
@@ -674,6 +667,13 @@ section {
     .name {
       padding-left: 40px;
       line-height: 20px;
+
+      &::before {
+        counter-increment: album;
+        content: counter(album) ". ";
+        display: inline;
+        text-align: left;
+      }
     }
   }
 }

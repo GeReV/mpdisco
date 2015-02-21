@@ -61,7 +61,8 @@ module.exports = function(grunt) {
       install: {
         options: {
           targetDir: './js/vendor',
-          cleanBowerDir: true
+          cleanBowerDir: true,
+          verbose: true
         }
       }
     },

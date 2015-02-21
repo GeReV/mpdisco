@@ -1,6 +1,8 @@
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 
 var LibrarySongItem = require('./library_song_item.jsx');
+
+var cx = React.addons.classSet;
 
 var LibraryAlbumItem = React.createClass({
     events: {
@@ -12,18 +14,34 @@ var LibraryAlbumItem = React.createClass({
 
     getInitialState: function() {
         return {
-            songs: []
+            songs: this.props.album.songs || [],
+            loaded: false,
+            collapsed: true
         };
     },
 
     render: function() {
+        var classes = cx({
+            'library-item': true,
+            'album': true,
+            'open': !this.state.collapsed
+        });
+
+        var treeClasses = cx({
+            'songs': true,
+            'tree': true,
+            'collapsed': this.state.collapsed
+        });
+
+        var songs = this.state.songs.map(function(song) {
+            return <LibrarySongItem key={song.name} song={song} />;
+        });
+
         return (
-            <li className="library-item album">
-                <a className="name" href="#" data-id={this.props.album.name} title={this.props.album.name}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</a>
-                <ol class="songs tree collapsed">
-                    {this.props.album.songs.map(function(song) {
-                        return <LibrarySongItem song={song} />;
-                    })}
+            <li className={classes}>
+                <a className="name" href="#" title={this.props.album.name} onClick={this.toggleSongs}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</a>
+                <ol className={treeClasses}>
+                    {songs}
                 </ol>
             </li>
         );
@@ -46,26 +64,27 @@ var LibraryAlbumItem = React.createClass({
         });
     },
 
-    loaded: false,
-
     toggleSongs: function(e) {
-        var albumEl = $(e.currentTarget).toggleClass('open'),
-            artistEl = albumEl.closest('.artist').find('.name'),
-            album = albumEl.data('id'),
-            artist = artistEl.data('id');
+        if (!this.state.loaded) {
 
-        this.ui.songs.toggleClass('collapsed');
+            var album = this.props.album;
 
-        if (!this.loaded) {
+            var promise = this.props.library.fetchSongs(album.artist.name, album.name);
 
-            this.collection.filter = artist + ' ' + album;
-
-            MPDisco.command('find', ['artist', artist, 'album', album]);
-
-            this.loaded = true;
+            promise.done(function(songs) {
+                this.setState({
+                    songs: songs,
+                    loaded: true,
+                    collapsed: false
+                })
+            }.bind(this));
+        } else {
+            this.setState({
+                collapsed: !this.state.collapsed
+            });
         }
 
-        return false;
+        e.preventDefault();
     },
     select: function(e) {
         MPDisco.vent.trigger('select:library', this);

@@ -1,5 +1,5 @@
 var _ = require('./vendor/underscore/underscore.js');
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 var Network = require('./network.js');
 var MPDisco = require('./mpdisco.jsx');
 

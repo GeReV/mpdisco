@@ -1,4 +1,4 @@
-var React = require('./vendor/react/react.js');
+var React = require('./vendor/react/react-with-addons.js');
 
 var LibrarySongItem = React.createClass({
     events: {
@@ -10,7 +10,7 @@ var LibrarySongItem = React.createClass({
     render: function() {
         return (
             <li className="library-item song">
-                <a className="name" href="#" data-id={this.props.song.name} title={this.song.props.name}>{this.props.song.name}</a>
+                <a className="name" href="#" title={this.props.song.title}>{this.props.song.title}</a>
             </li>
         );
     },

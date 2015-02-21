@@ -17,11 +17,11 @@
   specialCommands = {
     list: function emitSpecializedEvent(command, args, response, client) {
       if (args.length) {
-        //console.log('Emitting:', command);
+        console.log('Emitting:', command);
         
         client.emit(command, response);
         
-        //console.log('Emitting:', command + ':' + args[0].toLowerCase());
+        console.log('Emitting:', command + ':' + args[0].toLowerCase());
         
         client.emit(command + ':' + args[0].toLowerCase(), {
           args: args.slice(1),
@@ -193,7 +193,7 @@
         var response = getParser(command, args).parse(result),
             special = specialCommands[command];
         
-        //console.log('Result for command', command, ': ', result);
+        console.log('Result for command', command, ': ', result);
         
         if (special) {
           
@@ -203,7 +203,7 @@
           
         }
         
-        //console.log('Emitting:', command);
+        console.log('Emitting:', command);
           
         client.emit(command, response);
       });
