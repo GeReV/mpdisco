@@ -286,42 +286,51 @@ section {
   header {
     background: #efefef;
     border-bottom: 1px solid #d7d7d7;
-    height: 32px;
-    
+    display: flex;
+
+    > span {
+      flex: 1 0 auto;
+    }
+  }
+
+  .playlist-tools {
+    flex: 0 0 auto;
+
     a {
       color: #666;
       display: inline-block;
       text-align: center;
       width: 30px;
-      
+
       &:hover {
         text-decoration: none;
       }
-      
+
       &.disabled {
         color: #ccc;
       }
     }
-    
+
     .separator {
       border-left: 1px solid #c6c6c6;
       display: inline;
       height: 15px;
       margin: 0 5px;
     }
-    
+
     .remove {
       margin: 0 5px;
     }
-    
+
     input[type="text"] {
       padding-right: 20px;
       vertical-align: middle;
-      
+      line-height: 18px;
+
       &:after {
         @extend .icon;
         @extend .icon-plus:before;
-        
+
         color: #989898;
         line-height: 24px;
         height: 24px;
@@ -565,9 +574,8 @@ section {
   }
   
   menu {
-    height: 32px;
-    line-height: 32px;
-    padding: 0 5px;
+    padding: 5px;
+    position: relative;
     
     .search {
       background: rgba(0, 0, 0, 0.1);
@@ -592,7 +600,7 @@ section {
       color: #000; //rgba(255, 255, 255, 0.2);
     }
   
-    &:after {
+    &::after {
       @extend .icon;
       @extend .icon-search:before;
       
@@ -600,8 +608,8 @@ section {
       line-height: 24px;
       height: 24px;
       position: absolute;
-      top: 14px;
-      right: 18px;
+      top: 4px;
+      right: 12px;
     }
   }
 }

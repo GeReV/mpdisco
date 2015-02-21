@@ -37,7 +37,8 @@ var Playlist = React.createClass({
         return (
             <div className="playlist">
                 <header>
-                    <div className="button-group pull-right">
+                    <span>Playlist</span>
+                    <div className="playlist-tools button-group">
                         <input type="text" id="url" name="url" placeholder="Add a link" />
                         <span className="separator"></span>
                         <a className="shuffle" href="#" onclick={this.toggleShuffle}><i className="icon-random"></i></a>
@@ -45,7 +46,6 @@ var Playlist = React.createClass({
                         <span className="separator"></span>
                         <a className="remove disabled" href="#" onclick={this.remove}><i className="icon-trash"></i></a>
                     </div>
-                    <span>Playlist</span>
                 </header>
                 <div className="content"></div>
                 <ul className="list">
