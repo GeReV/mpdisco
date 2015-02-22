@@ -10,11 +10,12 @@ var Library = React.createClass({
     },
 
     componentWillMount: function() {
-        this.props.model.on('artists', function(artists) {
-            this.setState({
-                artists: artists
-            });
-        }.bind(this));
+        this.props.model.fetchArtists()
+            .done(function(artists) {
+                this.setState({
+                    artists: artists
+                });
+            }.bind(this));
     },
 
     render: function() {

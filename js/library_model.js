@@ -8,27 +8,31 @@ var LibraryModel = function(network) {
     this.network = network;
 
     this.artists = [];
-
-    this.bindCallbacks();
-
-    this.fetchArtists();
 };
 
 util.inherits(LibraryModel, EventEmitter);
 
 _.extend(LibraryModel.prototype, {
-    bindCallbacks: function() {
-        this.network.on('list:artist', function(res) {
-            this.artists = res.data.map(function(item) {
-                return { name: item.artist };
-            });
-
-            this.emit('artists', this.artists);
-        }.bind(this));
-    },
-
     fetchArtists: function() {
+        var network = this.network;
+
+        var promise = new Promise(function(resolve, reject) {
+            var handler = function(res) {
+                this.artists = res.data.map(function(item) {
+                    return { name: item.artist };
+                });
+
+                network.off(handler);
+
+                resolve(this.artists);
+            }.bind(this);
+
+            network.on('list:artist', handler);
+        }.bind(this));
+
         this.network.command('list', 'artist');
+
+        return promise;
     },
 
     fetchAlbums: function(artist) {
