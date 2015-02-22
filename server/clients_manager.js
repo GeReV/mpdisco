@@ -51,19 +51,16 @@
       
       //When this client disconnects
       client.on('disconnect', function() {
-    
-        that.disconnected.call(that, client);
-    
-      });
-      //client.on disconnect
-      
+        this.disconnected(client);
+      }.bind(this));
+
       client.on('identify', function(name) {
-        that.performIdentification.call(that, client, name);
-      });
-      
-      client.on('clientslist', function(name) {
-        client.emit('clientslist', that.clientsInfo());
-      });
+        this.performIdentification(client, name);
+      }.bind(this));
+
+      client.on('clientslist', function() {
+        this.sendClientsList(client);
+      }.bind(this));
       
       if (client.handshake.name) {
         this.performIdentification(client, client.handshake.name);
@@ -79,12 +76,14 @@
       
       this.disconnectionTimeouts[client.info.userid] = setTimeout(function() {
         
-        client.broadcast.emit('clientdisconnected', client.info/*, this.clientsInfo*/);
-        
         this.dropClient(client);
         
+        this.sendClientsList(client.broadcast);
+
+        client.broadcast.emit('clientdisconnected', client.info/*, this.clientsInfo*/);
+
         this.emit('disconnected', client);
-        
+
       }.bind(this), 5000);
       
     },
@@ -122,7 +121,7 @@
         info = info.entry[0];
       }
       
-      client.info = _.extend(client.info, info);
+      client.info = _.extend({ logged: true }, client.info, info);
       
       index = _.findIndex(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
       
@@ -133,10 +132,16 @@
       }
       
       client.emit('identify', client.info);
+
+      this.sendClientsList(client.broadcast);
       
       client.broadcast.emit('clientconnected', client.info/*, this.clientsInfo*/);
        
       this.emit('identified', client);
+    },
+
+    sendClientsList: function(client) {
+      client.emit('clientslist', this.clientsInfo());
     },
     
     get: function(userid) {
@@ -158,7 +163,9 @@
     },
     
     clientsInfo: function() {
-      return _.map(this.loggedClients, function(v) { return v.info; });
+      return _.map(this.clientsHash, function(v) {
+        return v.info;
+      });
     }
   }));
   

@@ -20,7 +20,7 @@ var Library = React.createClass({
 
     render: function() {
         return (
-            <div id="library">
+            <section id="library">
                 <header>Library</header>
                 <menu>
                     <input type="text" id="search" className="search" placeholder="Search" />
@@ -35,7 +35,7 @@ var Library = React.createClass({
                     <input type="file" id="fileupload" nameName="files[]" data-url="upload" multiple="multiple" />
                 </div>
                 <div id="overlay" />
-            </div>
+            </section>
         );
     },
 

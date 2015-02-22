@@ -35,7 +35,7 @@ var Playlist = React.createClass({
         });
 
         return (
-            <div className="playlist">
+            <section className="playlist">
                 <header>
                     <span>Playlist</span>
                     <div className="playlist-tools button-group">
@@ -47,11 +47,10 @@ var Playlist = React.createClass({
                         <a className="remove disabled" href="#" onclick={this.remove}><i className="icon-trash"></i></a>
                     </div>
                 </header>
-                <div className="content"></div>
-                <ul className="list">
+                <ul className="list content">
                     {items}
                 </ul>
-            </div>
+            </section>
         );
     },
 

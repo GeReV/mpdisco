@@ -13,8 +13,8 @@ define(['mpdisco', 'jquery.cookie'], function(MPDisco) {
       initialize : function() {
         this.listenTo(MPDisco.vent, 'networkready', function(data) {
           if (data.master) {
-            this.set(data.master);            
-          } 
+            this.set(data.master);
+          }
         });
       },
 
