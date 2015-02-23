@@ -97,16 +97,14 @@
     },
     
     performIdentification: function(client, name) {
-       var that = this;
-       
        if (!name) {
          return;
        }
        
        if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
          Gravatar.profile(name, false, function(profile) {
-           that.identifyClient.call(that, client, profile);
-         });
+           this.identifyClient(client, profile);
+         }.bind(this));
        }else{
          this.identifyClient(client, {
            displayName: name

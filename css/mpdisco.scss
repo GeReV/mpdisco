@@ -10,15 +10,14 @@ body {
   background: transparent;
 }
 
+.left-column {
+  flex: 0 0 280px;
+}
+
 #container {
   height: 100vh;
   display: flex;
-  
-  > div {
-    display: flex;
-    flex: 1 1 auto;
-    flex-direction: column;
-  }
+  flex-direction: column;
 }
 
 header {
@@ -30,14 +29,34 @@ header + menu {
 }
 
 #player-head {
-  background: url('../img/noise.png') #434343;
-  height: 160px;
-  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  height: 120px;
+}
+
+#logo {
+  @extend .left-column;
+
+  background: #354052;
+  display: flex;
+  align-items: center;
+
+  h1 {
+    color: #fff;
+    flex: 1 0 auto;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+  }
 }
 
 #main {
   display: flex;
   flex: 1 1 auto;
+  flex-direction: row;
 }
 
 #player-body {
@@ -152,12 +171,13 @@ input[type="text"] {
   left: 0;
 }
 
-.player {
+#player {
   color: #cccbcd;
-  height: 150px;
-  position: relative;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
-  
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+
   .image {
     background: #cccbcd;
     background-size: cover;
@@ -201,8 +221,8 @@ input[type="text"] {
   }
   
   .info {
-    overflow: hidden;
-    padding: 26px 32px;
+    padding: 10px 20px;
+    flex: 1 0 auto;
     
     h1, h2 {
       overflow: hidden;
@@ -220,14 +240,13 @@ input[type="text"] {
       font-size: 16px;
       font-weight: normal;
       line-height: 18px;
-      margin: 5px 0;
+      min-height: 18px;
+      margin: 5px 0 0 0;
     }
     
     .duration {
       color: #666;
       font-size: 32px;
-      margin-bottom: 0;
-      margin-top: 12px;
       line-height: 26px;
     }
     
@@ -248,7 +267,7 @@ input[type="text"] {
   }
 }
 
-.scrubber {
+#scrubber {
   background: #121212;
   cursor: pointer;
   height: 10px;
@@ -464,9 +483,10 @@ input[type="text"] {
 
 #library {
 
+  @extend .left-column;
+
   background: #354052;
   display: flex;
-  flex: 0 0 280px;
   flex-direction: column;
   
   &.library-drop {
