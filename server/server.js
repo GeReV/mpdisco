@@ -7,7 +7,6 @@ var
     cookie = require('cookie'),
     io = require('socket.io'),
     express = require('express'),
-    engines = require('consolidate'),
     UUID = require('node-uuid'),
     mpd = require('mpd'),
     commandProcessors = require('./command_processors.js'),
