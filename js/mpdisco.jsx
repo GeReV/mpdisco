@@ -21,7 +21,7 @@ var MPDisco = React.createClass({
     return (
       <div id="container" role="main">
         <header id="player-head">
-          <Logo />
+          <Logo model={player} />
           <Player model={player} />
         </header>
         <div id="main">

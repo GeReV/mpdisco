@@ -13,7 +13,11 @@ var PlayerModel = function(network) {
 
     this.network.on('currentsong', function(song) {
         this.emit('song', song);
-    });
+    }.bind(this));
+
+    this.network.on('coverart', function(res) {
+        this.emit('cover', res.url);
+    }.bind(this));
 
     this.network.command('currentsong');
 };
