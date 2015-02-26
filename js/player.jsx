@@ -2,13 +2,21 @@ var React = require('./vendor/react/react-with-addons.js');
 
 var Scrubber = require('./scrubber.jsx');
 
+function formatTime(seconds) {
+    function zeroPad(n) {
+        return n < 10 ? '0' + n : n;
+    }
+    return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
+}
+
 var Player = React.createClass({
     getInitialState: function() {
         return {
             song: {
                 title: '',
                 artist: '',
-                album: ''
+                album: '',
+                time: 0
             },
             time: 0
         };
@@ -16,18 +24,29 @@ var Player = React.createClass({
 
     componentWillMount: function() {
         this.props.model.on('song', function(song) {
-            console.log('song', song);
-
             this.setState({
                 song: song
             });
         }.bind(this));
 
         this.props.model.on('state', function(state) {
-            console.log('state', state);
+            var time = state.time.split(':');
+
+            console.log(state);
+
+            var interval = this.state.interval;
+            if (interval) {
+                clearInterval(interval);
+            }
+
+            if (state.state === 'play') {
+                interval = setInterval(this.timeCounter, 1000);
+            }
 
             this.setState({
-                state: state
+                state: state,
+                time: +time[0],
+                interval: interval
             });
         }.bind(this));
 
@@ -37,7 +56,7 @@ var Player = React.createClass({
     render: function() {
         var song = this.state.song;
 
-        var time = this.state.time || '00:00';
+        var time = formatTime(this.state.time || 0);
 
         var title = song.title || 'Idle';
 
@@ -53,6 +72,12 @@ var Player = React.createClass({
                 <Scrubber model={this.props.model} />
             </div>
         );
+    },
+
+    timeCounter: function() {
+        this.setState({
+            time: this.state.time + 1
+        });
     }
 });
 

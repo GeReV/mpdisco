@@ -9,6 +9,7 @@ var Listeners = require('./listeners.jsx');
 //var Error = require('error');
 
 var PlayerModel = require('./player_model.js');
+var PlaylistModel = require('./playlist_model.js');
 var LibraryModel = require('./library_model.js');
 var ListenersModel = require('./listeners_model.js');
 
@@ -17,6 +18,7 @@ var MPDisco = React.createClass({
     var library = new LibraryModel(window.MPDisco.network);
     var listeners = new ListenersModel(window.MPDisco.network);
     var player = new PlayerModel(window.MPDisco.network);
+    var playlist = new PlaylistModel(window.MPDisco.network);
 
     return (
       <div id="container" role="main">
@@ -27,7 +29,7 @@ var MPDisco = React.createClass({
         <div id="main">
           <Library model={library} />
           <div id="player-body">
-            <Playlist />
+            <Playlist model={playlist} player={player} />
             <Listeners model={listeners} />
           </div>
         </div>

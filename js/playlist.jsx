@@ -1,4 +1,5 @@
 var React = require('./vendor/react/react-with-addons.js');
+var _ = require('underscore');
 
 var PlaylistItem = require('./playlist_item.jsx');
 
@@ -14,16 +15,28 @@ var Playlist = React.createClass({
         'drop': 'drop'
     },
 
-    selectedSongs: [],
-
     getInitialState: function() {
         return {
-            items: []
+            items: [],
+            selectedItems: [],
+            playingItem: null
         };
     },
 
     componentWillMount: function() {
-        MPDisco.network.command('playlistinfo');
+        this.props.player.on('song', function(song) {
+            this.setState({
+                playingItemId: song.id
+            });
+        }.bind(this));
+
+        this.props.model.on('playlist', function(playlist) {
+            this.setState({
+                items: playlist
+            });
+        }.bind(this));
+
+        this.props.model.fetchPlaylist();
     },
 
     render: function() {
@@ -31,8 +44,11 @@ var Playlist = React.createClass({
         var items = this.state.items;
 
         items = items.map(function(item) {
-            return <PlaylistItem key={item.id} item={item} />;
-        });
+            var selected = (this.state.selectedItems.indexOf(item) >= 0);
+            var playing  = (this.state.playingItemId === item.id);
+
+            return <PlaylistItem key={item.id} item={item} selected={selected} playing={playing} onItemClick={this.itemSelected} onItemDblClick={this.itemPlayed} />;
+        }.bind(this));
 
         return (
             <section className="playlist">
@@ -54,8 +70,14 @@ var Playlist = React.createClass({
         );
     },
 
-    onRender: function() {
-        this.pluginsInitialized = false;
+    itemSelected: function(e, item) {
+        this.setState({
+            selectedItems: [item]
+        });
+    },
+
+    itemPlayed: function(e, item) {
+        MPDisco.network.command('playid', item.id);
     },
 
     onCompositeCollectionRendered: function() {
@@ -179,14 +201,6 @@ var Playlist = React.createClass({
     //    if (args.length) {
     //        MPDisco.command('findadd', args);
     //    }
-    //},
-
-    //play: function(e) {
-    //    var item = (e && e.currentTarget) ? $(e.currentTarget) : this.selectedItems.first();
-    //
-    //    MPDisco.network.command('playid', item.data('songid'));
-    //
-    //    return false;
     //},
 
     remove: function() {

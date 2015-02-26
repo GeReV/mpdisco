@@ -19,12 +19,20 @@ var PlayerModel = function(network) {
         this.emit('cover', res.url);
     }.bind(this));
 
-    this.network.command('currentsong');
+    this.network.on('playid', function() {
+        this.update();
+    }.bind(this));
+
+    this.network.on('update:player', this.update.bind(this));
 };
 
 util.inherits(PlayerModel, EventEmitter);
 
 _.extend(PlayerModel.prototype, {
+    update: function() {
+        this.network.command('currentsong');
+        this.network.command('status');
+    },
     fetchSong: function() {
         var network = this.network;
 
