@@ -1,5 +1,5 @@
 var BasicMode = require('./basic_mode.js'),
-    ClientsManager = require('../clients_manager.js')(),
+    ClientsManager = require('../clients_manager.js'),
     config = require('../../config.json'),
     _ = require('underscore');
 
@@ -11,45 +11,47 @@ var MasterMode = BasicMode.extend({
 
     this.master = null;
 
-    ClientsManager.on('disconnected', this.disconnected.bind(this));
+    var clientsManager = this.clientsManager = ClientsManager.instance();
 
-    ClientsManager.on('connected', this.connected.bind(this));
+    clientsManager.on('disconnected', this.disconnected.bind(this));
 
-    ClientsManager.on('identified', this.identified.bind(this));
+    clientsManager.on('connected', this.connected.bind(this));
+
+    clientsManager.on('identified', this.identified.bind(this));
   },
 
   connected: function(client) {
     client.emit('connected', {
       id: client.info.userid,
       info: client.info,
-      clients: ClientsManager.clientsInfo(),
+      clients: this.clientsManager.clientsInfo(),
       mode: this.type,
-      master: this.master && ClientsManager.get(this.master).info
+      master: this.master && this.clientsManager.get(this.master).info
     });
   },
 
   disconnected: function(client) {
-    if (ClientsManager.isEmpty()) {
+    if (this.clientsManager.isEmpty()) {
       this.clearMaster();
-    } else if (!this.isMaster(ClientsManager.first())) {
-      this.setMaster(ClientsManager.first());
+    } else if (!this.isMaster(this.clientsManager.first())) {
+      this.setMaster(this.clientsManager.first());
     }
   },
 
   identified: function(client) {
-    if (!this.master && !ClientsManager.isEmpty()) {
-      this.setMaster(ClientsManager.first());
+    if (!this.master && !this.clientsManager.isEmpty()) {
+      this.setMaster(this.clientsManager.first());
     }
   },
 
   rotate: function() {
-    if (Clients.isEmpty()) {
+    if (this.clientsManager.isEmpty()) {
       return;
     }
 
-    ClientsManager.rotate();
+    this.clientsManager.rotate();
 
-    this.setMaster(ClientsManager.first());
+    this.setMaster(this.clientsManager.first());
   },
 
   canExecute: function(command, client) {
@@ -94,9 +96,9 @@ var MasterMode = BasicMode.extend({
     this.masterTimeout = setTimeout(function() {
       console.log('rotating master');
 
-      ClientsManager.rotate();
+      this.clientsManager.rotate();
 
-      this.setMaster(ClientsManager.first());
+      this.setMaster(this.clientsManager.first());
 
       clearTimeout(this.masterTimeout);
     }.bind(this), +config.master_time * 60 * 1000);

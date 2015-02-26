@@ -1,6 +1,7 @@
 var Class = require('clah'),
     EventEmitter = require('events').EventEmitter,
     Gravatar = require('./gravatar.js'),
+    uuid = require('node-uuid'),
     _ = require('underscore');
 
 _.findIndex = function(obj, iterator, context) {
@@ -24,28 +25,28 @@ var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
   },
 
   connected: function(client) {
-    client.info = {
-      userid: client.request.sessionID // TODO: UUID here instead?
+    var info = client.info = {
+      userid: uuid.v4()
     };
 
-    var that = this,
-        prevClient = this.clientsHash[client.info.userid],
-        index;
+
+
+    var prevClient = this.clientsHash[info.userid];
 
     //Useful to know when someone connects
-    console.log('\t socket.io:: client ' + client.info.userid + ' connected');
+    console.log('\t socket.io:: client ' + info.userid + ' connected');
 
     if (prevClient) {
       client.info = prevClient.info;
 
-      console.log('client returned ' + client.info.userid);
+      console.log('client returned ' + info.userid);
 
     }
 
-    this.clientsHash[client.info.userid] = client;
+    this.clientsHash[info.userid] = client;
 
-    if (this.disconnectionTimeouts[client.info.userid]) {
-      clearTimeout(this.disconnectionTimeouts[client.info.userid]);
+    if (this.disconnectionTimeouts[info.userid]) {
+      clearTimeout(this.disconnectionTimeouts[info.userid]);
     }
 
     //When this client disconnects
@@ -70,16 +71,18 @@ var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
 
   disconnected: function(client) {
 
-    console.log('\t socket.io:: client disconnected ' + client.info.userid);
+    var info = client.info;
+
+    console.log('\t socket.io:: client disconnected ' + info.userid);
     console.log('client has 5 seconds to return');
 
-    this.disconnectionTimeouts[client.info.userid] = setTimeout(function() {
+    this.disconnectionTimeouts[info.userid] = setTimeout(function() {
 
       this.dropClient(client);
 
       this.sendClientsList(client.broadcast);
 
-      client.broadcast.emit('clientdisconnected', client.info/*, this.clientsInfo*/);
+      client.broadcast.emit('clientdisconnected', info/*, this.clientsInfo*/);
 
       this.emit('disconnected', client);
 
@@ -88,11 +91,13 @@ var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
   },
 
   dropClient: function(client) {
-    console.log('Dropped client ' + client.info.userid);
+    var info = client.info;
 
-    this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
+    console.log('Dropped client ' + info.userid);
 
-    delete this.clientsHash[client.info.userid];
+    this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === info.userid; });
+
+    delete this.clientsHash[info.userid];
   },
 
   performIdentification: function(client, name) {
@@ -176,4 +181,6 @@ var ClientsManagerSingleton = function() {
   return ClientsManagerSingleton.prototype._singletonInstance;
 };
   
-module.exports = ClientsManagerSingleton;
+module.exports = {
+  instance: ClientsManagerSingleton
+};

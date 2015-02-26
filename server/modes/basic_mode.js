@@ -1,7 +1,7 @@
 var Class = require('clah'),
     mpd = require('mpd'),
     _ = require('underscore'),
-    ClientsManager = require('../clients_manager.js')(),
+    ClientsManager = require('../clients_manager.js'),
 
     ObjectListParser = require('../response_parsers/object_list_parser.js'),
     SimpleParser = require('../response_parsers/simple_parser.js'),
@@ -11,6 +11,8 @@ var Class = require('clah'),
 
     specialCommands,
     parsers;
+
+var clientsManager = ClientsManager.instance();
 
 
 specialCommands = {
@@ -99,7 +101,7 @@ var BasicMode = Class.extend({
     client.emit('connected', {
       id: client.info.userid,
       info: client.info,
-      clients: ClientsManager.clientsInfo(),
+      clients: clientsManager.clientsInfo(),
       mode: this.type
     });
   },
@@ -180,7 +182,7 @@ var BasicMode = Class.extend({
     }
   },
   canExecute: function(command, client) {
-    return !!ClientsManager.get(client.info.userid);
+    return !!clientsManager.get(client.info.userid);
   },
   execute: function(command, args, client) {
     var cmd;

@@ -7,10 +7,11 @@ var
     cookie = require('cookie'),
     io = require('socket.io'),
     express = require('express'),
-    UUID = require('node-uuid'),
     mpd = require('mpd'),
     commandProcessors = require('./command_processors.js'),
     upload = require('./file_upload.js');
+
+var ClientsManager = require('./clients_manager.js');
 
 var __pwd = path.join(__dirname, '..');
 
@@ -108,8 +109,7 @@ var MPDisco = Class.extend({
         this.mode = new mode(this.mpd, commandProcessors);
     },
     startSocketIO: function (sio) {
-        var that = this,
-            config = this.config;
+        var config = this.config;
 
         //Configure the socket.io connection settings.
         //See http://socket.io/
@@ -136,27 +136,28 @@ var MPDisco = Class.extend({
         //So we can send that client a unique ID we use so we can
         //maintain the list of players.
         sio.sockets.on('connection', function (client) {
-            var ClientsManager = require('./clients_manager.js')();
+            var clientsManager = ClientsManager.instance();
 
-            ClientsManager.connected(client);
+            clientsManager.connected(client);
 
             client.on('command', function (cmd) {
 
-                that.mode.command(cmd.command, cmd.args, client);
+                this.mode.command(cmd.command, cmd.args, client);
 
-            });
+            }.bind(this));
 
             client.on('commands', function (cmds) {
 
-                that.mode.commands(cmds, client);
+                this.mode.commands(cmds, client);
 
-            });
+            }.bind(this));
 
-            that.mpd.on('system', function (system) {
+            this.mpd.on('system', function (system) {
                 client.emit('update', system);
+                client.emit('update:' + system);
             });
 
-        });
+        }.bind(this));
         //sio.sockets.on connection
     }
 });
