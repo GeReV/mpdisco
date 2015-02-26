@@ -69,7 +69,7 @@ var Player = React.createClass({
                     <h2>{song.artist} {album}</h2>
                     <h2 className="duration">{time}</h2>
                 </div>
-                <Scrubber model={this.props.model} />
+                <Scrubber progress={this.state.time} total={song.time} />
             </div>
         );
     },
