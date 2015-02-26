@@ -24,6 +24,8 @@ var PlayerModel = function(network) {
     }.bind(this));
 
     this.network.on('update:player', this.update.bind(this));
+    this.network.on('repeat', this.update.bind(this));
+    this.network.on('random', this.update.bind(this));
 };
 
 util.inherits(PlayerModel, EventEmitter);
@@ -49,6 +51,13 @@ _.extend(PlayerModel.prototype, {
         network.command('currentsong');
 
         return promise;
+    },
+    toggleShuffle: function(random) {
+        this.network.command('random', random.toString());
+    },
+    toggleRepeat: function(repeat, single) {
+        this.network.command('repeat', repeat.toString());
+        this.network.command('single', single.toString());
     }
 });
 

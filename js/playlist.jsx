@@ -1,12 +1,15 @@
 var React = require('./vendor/react/react-with-addons.js');
 var _ = require('underscore');
 
+var cx = React.addons.classSet;
+
 var PlaylistItem = require('./playlist_item.jsx');
 
+var SelectableListMixin = require('./selectable_list.js');
+
 var Playlist = React.createClass({
-    modelEvents: {
-        change: 'updatePlaylist'
-    },
+
+    mixins: [SelectableListMixin],
 
     events: {
         'keyup #url': 'add',
@@ -17,8 +20,14 @@ var Playlist = React.createClass({
 
     getInitialState: function() {
         return {
+            state: {
+                random: 0,
+                repeat: 0,
+                single: 0
+            },
             items: [],
             selectedItems: [],
+            focusedItemIndex: 0,
             playingItem: null
         };
     },
@@ -30,25 +39,54 @@ var Playlist = React.createClass({
             });
         }.bind(this));
 
+        this.props.player.on('state', function(state) {
+            this.setState({
+                state: state
+            });
+        }.bind(this));
+
         this.props.model.on('playlist', function(playlist) {
             this.setState({
-                items: playlist
+                items: playlist || []
             });
         }.bind(this));
 
         this.props.model.fetchPlaylist();
+
+        document.addEventListener('keydown', this.handleKeyboard, false);
+    },
+
+    componentWillUnmount: function() {
+        document.removeEventListener('keydown', this.handleKeyboard, false);
     },
 
     render: function() {
 
         var items = this.state.items;
 
-        items = items.map(function(item) {
+        items = items.map(function(item, i) {
+            var focused  = (this.state.focusedItemIndex === i);
             var selected = (this.state.selectedItems.indexOf(item) >= 0);
             var playing  = (this.state.playingItemId === item.id);
 
-            return <PlaylistItem key={item.id} item={item} selected={selected} playing={playing} onItemClick={this.itemSelected} onItemDblClick={this.itemPlayed} />;
+            return <PlaylistItem key={item.id} item={item} selected={selected} playing={playing} focused={focused} onItemClick={this.itemSelected} onItemDblClick={this.itemPlayed} />;
         }.bind(this));
+
+        var shuffleClasses = cx({
+            shuffle: true,
+            active: +this.state.state.random
+        });
+
+        var repeatClasses = cx({
+            repeat: true,
+            active: +this.state.state.repeat,
+            single: +this.state.state.single
+        });
+
+        var removeClasses = cx({
+            remove: true,
+            disabled: (this.state.selectedItems.length <= 0)
+        });
 
         return (
             <section className="playlist">
@@ -57,10 +95,10 @@ var Playlist = React.createClass({
                     <div className="playlist-tools button-group">
                         <input type="text" id="url" name="url" placeholder="Add a link" />
                         <span className="separator"></span>
-                        <a className="shuffle" href="#" onclick={this.toggleShuffle}><i className="icon-random"></i></a>
-                        <a className="repeat" href="#" onclick={this.toggleRepeat}><i className="icon-refresh"></i></a>
+                        <a className={shuffleClasses} href="#" onClick={this.toggleShuffle}><i className="icon-random"></i></a>
+                        <a className={repeatClasses} href="#" onClick={this.toggleRepeat}><i className="icon-refresh"></i></a>
                         <span className="separator"></span>
-                        <a className="remove disabled" href="#" onclick={this.remove}><i className="icon-trash"></i></a>
+                        <a className={removeClasses} href="#" onClick={this.remove}><i className="icon-trash"></i></a>
                     </div>
                 </header>
                 <ul className="list content">
@@ -68,12 +106,6 @@ var Playlist = React.createClass({
                 </ul>
             </section>
         );
-    },
-
-    itemSelected: function(e, item) {
-        this.setState({
-            selectedItems: [item]
-        });
     },
 
     itemPlayed: function(e, item) {
@@ -148,32 +180,6 @@ var Playlist = React.createClass({
         this.pluginsInitialized = true;
     },
 
-    //onShow: function() {
-    //    $(document).on('keydown.playlist', this.handleKeyboard.bind(this));
-    //},
-    //
-    //onClose: function() {
-    //    $(document).off('keydown.playlist');
-    //},
-
-    //updatePlaylist: function(model) {
-    //    model = model || this.model;
-    //
-    //    var songid = model.get('songid') || model.id;
-    //
-    //    if (songid) {
-    //        this.ui.playlist
-    //            .find('[data-songid="' + songid + '"]').addClass('current')
-    //            .siblings().removeClass('current');
-    //    }else{
-    //        this.ui.playlist.children().removeClass('current');
-    //    }
-    //
-    //    this.ui.shuffle.toggleClass('active', model.get('random') === '1');
-    //    this.ui.repeat.toggleClass('active', model.get('repeat') === '1');
-    //    this.ui.repeat.toggleClass('single', model.get('single') === '1');
-    //},
-
     add: function(e) {
         var value = $.trim(this.ui.url.val());
 
@@ -184,6 +190,12 @@ var Playlist = React.createClass({
         }
 
         return false;
+    },
+
+    remove: function(e) {
+        this.props.model.removeItems(this.state.selectedItems);
+
+        e.preventDefault();
     },
 
     //drop: function(e, ui) {
@@ -203,173 +215,34 @@ var Playlist = React.createClass({
     //    }
     //},
 
-    remove: function() {
-        var commands = this.ui.playlist.find('.selected').map(function(i, v) {
-            return {
-                command: 'deleteid',
-                args: [ $(v).data('songid') ]
-            };
-        }).toArray();
+    toggleShuffle: function(e) {
+        var random = (~this.state.state.random & 1);
 
-        MPDisco.commands(commands);
+        this.props.player.toggleShuffle(random);
 
-        return false;
+        e.preventDefault();
     },
 
-    toggleShuffle: function() {
-        //var state = (~MPDisco.state.get('random') & 1);
-        //
-        //this.ui.shuffle.toggleClass('active', state);
-        //
-        //MPDisco.command('random', state);
-        //
-        //return false;
-    },
-    toggleRepeat: function() {
-        //var repeat = +MPDisco.state.get('repeat'),
-        //    single = +MPDisco.state.get('single');
-        //
-        //if (repeat && single) {
-        //    this.ui.repeat.removeClass('active single');
-        //
-        //    MPDisco.commands([
-        //        { command: 'repeat', args: 0 },
-        //        { command: 'single', args: 0 }
-        //    ]);
-        //} else if (repeat) {
-        //    this.ui.repeat.addClass('single');
-        //
-        //    MPDisco.command('single', 1);
-        //}else {
-        //    this.ui.repeat.addClass('active');
-        //
-        //    MPDisco.command('repeat', 1);
-        //}
-        //
-        //return false;
+    toggleRepeat: function(e) {
+        var repeat = +this.state.state.repeat,
+            single = +this.state.state.single;
+
+        // Note single cannot be on without repeat.
+
+        if (repeat && single) {
+            // Both on, turn both off.
+            this.props.player.toggleRepeat(0, 0);
+        } else if (repeat) {
+            // Repeat on, turn single on.
+            this.props.player.toggleRepeat(1, 1);
+        } else {
+            // Both off, turn repeat on.
+            this.props.player.toggleRepeat(1, 0);
+        }
+
+        e.preventDefault();
     },
 
-    selectClick: function(e) {
-        this.ui.url.trigger('blur');
-
-        this.select( e, $(e.currentTarget) );
-    },
-
-    select: function(e, item) {
-        var itemTop, height, scrollTop;
-
-        if (!item) {
-            item = e;
-        }
-
-        if (e.currentTarget) {
-            item = $(e.currentTarget);
-        }
-
-        if (!item.size()) {
-            return;
-        }
-
-        if (e.ctrlKey || e.metaKey) {
-            this.selectToggle(item);
-        } else if (e.shiftKey) {
-            this.selectRange(this.$('.selected').last(), item);
-        } else if (!item.hasClass('selected')) {
-            this.selectOne(item);
-        }
-
-        this.scrollIntoView(item);
-
-        this.setRemoveButton();
-
-        this.selectedSongs = this.$('.selected').map(function(i, v) {
-            return $(v).data('songid');
-        }).toArray();
-    },
-    selectAll: function() {
-        var items = this.$('.playlist-item');
-
-        this.selectRange(items.first(), items.last());
-
-        this.setRemoveButton();
-    },
-    selectNone: function() {
-        this.$('.selected').removeClass('selected');
-
-        this.setRemoveButton();
-    },
-    selectOne: function(item) {
-        item.addClass('selected')
-            .siblings().removeClass('selected');
-
-        this.setRemoveButton();
-    },
-    selectToggle: function(item) {
-        item.toggleClass('selected');
-
-        this.setRemoveButton();
-    },
-    selectRange: function(from, to) {
-        var itemTop, height, scrollTop;
-
-        if (!from && !to) {
-            return;
-        }
-
-        if (!from.size()) {
-            this.selectOne(to);
-
-            return;
-        }
-
-        var selectedItems = (from.index() >= to.index()) ? from.prevUntil(to) : from.nextUntil(to);
-
-        this.ui.playlist.children().removeClass('selected');
-
-        selectedItems.addBack().add(to).addClass('selected');
-
-        this.scrollIntoView(to);
-
-        this.setRemoveButton();
-    },
-    selectPrev: function() {
-        var item, itemTop;
-
-        if (this.selectedSongs) {
-            item = this.$('.selected').last().prev();
-        }
-
-        if (!item) {
-            item = this.ui.playlist.children().first();
-        }
-
-        if (!item.size()) {
-            item = this.ui.playlist.children().first();
-        }
-
-        this.select(item);
-
-        return false;
-    },
-    selectNext: function() {
-        var item, itemTop, height;
-
-        if (this.selectedSongs) {
-            item = this.$('.selected').last().next();
-        }
-
-        if (!item) {
-            item = this.ui.playlist.children().first();
-        }
-
-        if (!item.size()) {
-            item = this.ui.playlist.children().last();
-        }
-
-        this.select(item);
-
-        return false;
-    },
     scrollIntoView: function(item) {
         var scrollTop = this.ui.playlist.prop('scrollTop'),
             height = this.ui.playlist.height(),
@@ -385,13 +258,15 @@ var Playlist = React.createClass({
         this.ui.playlist.prop('scrollTop', scrollTop);
     },
 
-    setRemoveButton: function() {
-        this.ui.remove.toggleClass('disabled', (this.$('.selected').length <= 0));
-    },
-
     handleKeyboard: function(e) {
         var funcs = {
-                0x0d: this.play,
+                0x0d: function(e) {
+                    var item = _.first(this.state.selectedItems);
+
+                    if (item) {
+                        this.itemPlayed(e, item);
+                    }
+                },
                 0x23: function(e) {
                     if (e.shiftKey) {
                         this.selectRange(this.$('.selected').last(), this.$('.playlist-item').last());
@@ -399,7 +274,7 @@ var Playlist = React.createClass({
                         this.select(this.$('.playlist-item').last());
                     }
 
-                    return false;
+                    e.preventDefault();
                 },
                 0x24: function(e) {
                     if (e.shiftKey) {
@@ -408,23 +283,23 @@ var Playlist = React.createClass({
                         this.select(this.$('.playlist-item').first());
                     }
 
-                    return false;
+                    e.preventDefault();
                 },
-                0x26: this.selectPrev,
-                0x28: this.selectNext,
+                0x26: this.itemSelectPrev,
+                0x28: this.itemSelectNext,
                 0x2e: this.remove,
                 0x41: function(e) {
                     if (e.ctrlKey) {
-                        this.selectAll();
+                        this.itemSelectAll();
 
-                        return false;
+                        e.preventDefault();
                     }
                 },
                 0x44: function(e) {
                     if (e.ctrlKey) {
-                        this.selectNone();
+                        this.itemSelectNone();
 
-                        return false;
+                        e.preventDefault();
                     }
                 }
             },

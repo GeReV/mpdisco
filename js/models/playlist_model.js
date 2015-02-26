@@ -20,6 +20,7 @@ _.extend(PlaylistModel.prototype, {
     update: function() {
         this.network.command('playlistinfo');
     },
+
     fetchPlaylist: function() {
         var network = this.network;
 
@@ -36,6 +37,17 @@ _.extend(PlaylistModel.prototype, {
         network.command('playlistinfo');
 
         return promise;
+    },
+
+    removeItems: function(items) {
+        var commands = items.map(function(item) {
+            return {
+                command: 'deleteid',
+                args: [item.id]
+            };
+        });
+
+        this.network.commands(commands);
     }
 });
 

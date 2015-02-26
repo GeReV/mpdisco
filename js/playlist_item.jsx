@@ -55,7 +55,8 @@ var PlaylistItem = React.createClass({
         var classes = cx({
             'playlist-item': true,
             'playlist-item-selected': this.props.selected,
-            'playlist-item-playing': this.props.playing
+            'playlist-item-playing': this.props.playing,
+            'playlist-item-focus': this.props.focused
         });
 
         return (

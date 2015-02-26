@@ -30,7 +30,7 @@ var ObjectListParser = AbstractParser.extend({
 
     json.push(obj);
 
-    return (json.length == 1 ? json[0] : json);
+    return json;
   }
 });
 

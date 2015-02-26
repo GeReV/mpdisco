@@ -18,7 +18,7 @@ var Scrubber = React.createClass({
 
         return (
             <div id="scrubber">
-                <div className="progress" style={style}></div>
+                <div className="progress" style={style} />
             </div>
         );
     }

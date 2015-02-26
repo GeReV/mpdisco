@@ -30,7 +30,11 @@ var Player = React.createClass({
         }.bind(this));
 
         this.props.model.on('state', function(state) {
-            var time = state.time.split(':');
+            var time = 0;
+            if (state.time) {
+                time = state.time.split(':');
+                time = +time[0];
+            }
 
             console.log(state);
 
@@ -45,7 +49,7 @@ var Player = React.createClass({
 
             this.setState({
                 state: state,
-                time: +time[0],
+                time: time,
                 interval: interval
             });
         }.bind(this));
