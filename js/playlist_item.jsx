@@ -2,6 +2,13 @@ var React = require('./vendor/react/react-with-addons.js');
 
 var cx = React.addons.classSet;
 
+function formatTime(seconds) {
+    function zeroPad(n) {
+        return n < 10 ? '0' + n : n;
+    }
+    return Math.floor(seconds / 60) + ':' + zeroPad(seconds % 60);
+}
+
 var PlaylistItem = React.createClass({
     render: function() {
 
@@ -43,6 +50,8 @@ var PlaylistItem = React.createClass({
             details = <span className="url">{item.file}</span>
         }
 
+        var time = formatTime(+this.props.item.time);
+
         var classes = cx({
             'playlist-item': true,
             'playlist-item-selected': this.props.selected,
@@ -51,8 +60,8 @@ var PlaylistItem = React.createClass({
 
         return (
             <li className={classes} onMouseDown={this.itemClick} onDoubleClick={this.itemDblClick}>
-                {this.props.time}
-                <div className="image"></div>
+                <span className="time">{time}</span>
+                <div className="image" />
                 {details}
             </li>
         );
