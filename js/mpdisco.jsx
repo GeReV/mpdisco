@@ -8,10 +8,10 @@ var Listeners = require('./listeners.jsx');
 
 //var Error = require('error');
 
-var PlayerModel = require('./player_model.js');
-var PlaylistModel = require('./playlist_model.js');
-var LibraryModel = require('./library_model.js');
-var ListenersModel = require('./listeners_model.js');
+var PlayerModel = require('./models/player_model.js');
+var PlaylistModel = require('./models/playlist_model.js');
+var LibraryModel = require('./models/library_model.js');
+var ListenersModel = require('./models/listeners_model.js');
 
 var MPDisco = React.createClass({
   render: function () {
