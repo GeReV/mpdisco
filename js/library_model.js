@@ -8,6 +8,13 @@ var LibraryModel = function(network) {
     this.network = network;
 
     this.artists = [];
+
+    this.network.on('update:database', function() {
+        this.fetchArtists()
+            .done(function() {
+                this.emit('update');
+            }.bind(this));
+    }.bind(this));
 };
 
 util.inherits(LibraryModel, EventEmitter);
