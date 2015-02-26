@@ -73,7 +73,7 @@ var Player = React.createClass({
                     <h2>{song.artist} {album}</h2>
                     <h2 className="duration">{time}</h2>
                 </div>
-                <Scrubber progress={this.state.time} total={song.time} />
+                <Scrubber progress={this.state.time} total={song.time} onScrub={this.scrub} />
             </div>
         );
     },
@@ -82,6 +82,14 @@ var Player = React.createClass({
         this.setState({
             time: this.state.time + 1
         });
+    },
+
+    scrub: function(percent) {
+        var song = this.state.song;
+
+        var seconds = Math.floor(+song.time * percent);
+
+        this.props.model.seek(song.id, seconds);
     }
 });
 

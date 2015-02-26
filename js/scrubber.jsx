@@ -17,10 +17,18 @@ var Scrubber = React.createClass({
         };
 
         return (
-            <div id="scrubber">
+            <div id="scrubber" onClick={this.scrub}>
                 <div className="progress" style={style} />
             </div>
         );
+    },
+
+    scrub: function(e) {
+        var percent = (e.nativeEvent.offsetX / this.getDOMNode().offsetWidth);
+
+        if (this.props.onScrub) {
+            this.props.onScrub(percent);
+        }
     }
 });
 

@@ -58,6 +58,9 @@ _.extend(PlayerModel.prototype, {
     toggleRepeat: function(repeat, single) {
         this.network.command('repeat', repeat.toString());
         this.network.command('single', single.toString());
+    },
+    seek: function(id, seconds) {
+        this.network.command('seekid', [id.toString(), seconds.toString()]);
     }
 });
 

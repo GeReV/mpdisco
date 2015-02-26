@@ -210,13 +210,13 @@ define(['mpdisco', 'handlebars'], function(MPDisco, Handlebars) {
         var percent = (e.offsetX / this.$el.width()),
             time = this.model.get('time').split(':'),
             length = +(time[1]);
-        
+
         if (length) {
           MPDisco.command('seekid', [ this.model.id, Math.floor(length * percent) ]);
         }
       }
     });
   });
-  
+
   return Player;
 });
