@@ -38,7 +38,9 @@ header + menu {
 #logo {
   @extend .left-column;
 
-  background: #354052;
+  background-color: #354052;
+  background-size: cover;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
 
@@ -120,7 +122,7 @@ input[type="text"] {
 
   > .content {
     overflow: auto;
-    flex: 1 0 auto;
+    flex: 1 1 auto;
   }
 }
 
@@ -232,14 +234,12 @@ input[type="text"] {
     
     h1 {
       font-size: 32px;
-      line-height: 32px;
       margin: 0;
     }
     
     h2 {
       font-size: 16px;
       font-weight: normal;
-      line-height: 18px;
       min-height: 18px;
       margin: 8px 0 0 0;
     }
@@ -365,10 +365,6 @@ input[type="text"] {
     }
   }
   
-  > .list {
-    flex: 1 1 auto;
-  }
-  
   .playlist-item-placeholder {
     /* This makes sure all elements stay in place while displaying the placeholder. I honestly have no idea why this works. */
     border: 2px solid #333;
@@ -429,11 +425,11 @@ input[type="text"] {
     float: left;
   }
   
-  &.current {
+  &.playlist-item-playing {
     color: #3a87ad;
   }
   
-  &.selected {
+  &.playlist-item-selected {
     background: #fcf8e3;
   }
   
