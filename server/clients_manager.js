@@ -1,8 +1,10 @@
 var Class = require('clah'),
     EventEmitter = require('events').EventEmitter,
-    Gravatar = require('./gravatar.js'),
     uuid = require('node-uuid'),
+    util = require('util'),
     _ = require('underscore');
+
+var Gravatar = require('./gravatar.js');
 
 _.findIndex = function(obj, iterator, context) {
   var result = -1;
@@ -15,7 +17,7 @@ _.findIndex = function(obj, iterator, context) {
   return result;
 };
 
-var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
+var ClientsManager = Class.extend({
   init: function() {
     this.loggedClients = [];
 
@@ -28,8 +30,6 @@ var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
     var info = client.info = {
       userid: uuid.v4()
     };
-
-
 
     var prevClient = this.clientsHash[info.userid];
 
@@ -169,7 +169,9 @@ var ClientsManager = Class.extend(_.extend(EventEmitter.prototype, {
       return v.info;
     });
   }
-}));
+});
+
+_.extend(ClientsManager.prototype, EventEmitter.prototype);
   
 var ClientsManagerSingleton = function() {
   if ( ClientsManagerSingleton.prototype._singletonInstance ) {

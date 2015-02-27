@@ -1,78 +1,59 @@
 var
     Class = require('clah'),
     path = require('path'),
-    _ = require('underscore'),
     http = require('http'),
-    connect = require('connect'),
+    express = require('express'),
+    compression = require('compression'),
+    cookieParser = require('cookie-parser'),
+    session = require('express-session'),
     cookie = require('cookie'),
     io = require('socket.io'),
-    express = require('express'),
-    mpd = require('mpd'),
-    commandProcessors = require('./command_processors.js'),
-    upload = require('./file_upload.js');
-
-var ClientsManager = require('./clients_manager.js');
+    _ = require('underscore');
 
 var __pwd = path.join(__dirname, '..');
 
-var MPDisco = Class.extend({
-    config: require('../config.json'),
-    init: function (options) {
-        var config = this.config;
+var upload = require('./file_upload.js');
+var ClientsManager = require('./clients_manager.js');
 
-        this.options = _.extend(options || {}, {
-            mpdPort: 6600,
-            mpdHost: 'localhost',
-            serverPort: process.env.PORT || 3000
-        });
+var Server = Class.extend({
+    defaults: {
+        serverPort: 3000
+    },
+    init: function(mpd, mode, options) {
+        this.options = _.defaults(this.defaults, options);
+
+        this.mpd = mpd;
+        this.mode = mode;
 
         this.app = express();
+        this._initApp(this.app, this.options);
 
-        this.initApp(this.app);
+        this.server = http.Server(this.app);
 
-        this.server = http.createServer(this.app);
+        this.socket = io(this.server);
+        this._initSocketIO(this.socket, this.options.config);
 
-        upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
-        upload.uploadPath = function (file, callback) {
-            var metadata = require('./meta_data.js');
-
-            metadata.forFile(file, function (data) {
-
-                var parts = _.compact([
-                    config.music_directory.replace(/^~/, process.env.HOME),
-
-                    metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
-
-                    metadata.safeName(data.album)
-                ]);
-
-                callback(path.join.apply(this, parts));
-            });
-        };
+        this.clientsManager = ClientsManager.instance();
     },
-    initApp: function (app) {
-        var config = this.config;
 
-        var bodyParser = require('body-parser');
-        var methodOverride = require('method-override');
-        var compression = require('compression');
-        var cookieParser = require('cookie-parser');
+    _initApp: function (app, options) {
 
-        //app.use(express.logger());
+        var config = options.config;
+
         app.use(compression());
-        app.use(methodOverride());
-        app.use(bodyParser());
         app.use(cookieParser());
 
-        app.use(express.session({
-            secret: this.config.secret,
-            key: this.config.session_key
+        app.use(session({
+            name: config.session_key,
+            secret: config.secret,
+            resave: false,
+            saveUninitialized: true
         }));
 
         app.use(express.static(__pwd + '/public'));
 
         app.get('/', function (req, res) {
-            res.sendfile('views/index.html');
+            res.sendFile(__pwd + '/views/index.html');
         });
 
         app.get('/covers/:artist/:album', function (req, res) {
@@ -84,32 +65,37 @@ var MPDisco = Class.extend({
             res.sendfile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
         });
 
-        app.all('/upload', upload.action);
+        //app.all('/upload', upload.action);
+
+        //upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
+        //upload.uploadPath = function (file, callback) {
+        //    var metadata = require('./meta_data.js');
+        //
+        //    metadata.forFile(file, function (data) {
+        //
+        //        var parts = _.compact([
+        //            config.music_directory.replace(/^~/, process.env.HOME),
+        //
+        //            metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
+        //
+        //            metadata.safeName(data.album)
+        //        ]);
+        //
+        //        callback(path.join.apply(this, parts));
+        //    });
+        //};
     },
-    start: function (mode) {
-        var port = this.options.serverPort;
+
+    start: function() {
+        var options = this.options;
+        var port = options.serverPort;
 
         this.server.listen(port, function () {
-            console.log('\t MPDisco :: Listening on port ' + port);
+            console.log('MPDisco Server :: Listening on port ' + port);
         });
-
-        this.socket = io(this.server);
-
-        this.startSocketIO(this.socket);
-
-        this.mpd = mpd.connect({
-            port: this.options.mpdPort,
-            host: this.options.mpdHost
-        });
-
-        this.mpd.on('ready', function () {
-            console.log('\t :: MPD :: connection established');
-        });
-
-        this.mode = new mode(this.mpd, commandProcessors);
     },
-    startSocketIO: function (sio) {
-        var config = this.config;
+
+    _initSocketIO: function (sio, config) {
 
         //Configure the socket.io connection settings.
         //See http://socket.io/
@@ -119,6 +105,7 @@ var MPDisco = Class.extend({
             if (data.headers.cookie) {
                 // if there is, parse the cookie
                 data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
+
                 // note that you will need to use the same key to grad the
                 // session id, as you specified in the Express setup.
                 data.sessionID = data.cookie[config.session_key];
@@ -136,9 +123,8 @@ var MPDisco = Class.extend({
         //So we can send that client a unique ID we use so we can
         //maintain the list of players.
         sio.sockets.on('connection', function (client) {
-            var clientsManager = ClientsManager.instance();
 
-            clientsManager.connected(client);
+            this.clientsManager.connected(client);
 
             client.on('command', function (cmd) {
 
@@ -158,14 +144,7 @@ var MPDisco = Class.extend({
             });
 
         }.bind(this));
-        //sio.sockets.on connection
     }
 });
 
-MPDisco.Modes = {
-    Basic: require('./modes/basic_mode.js'),
-    Master: require('./modes/master_mode.js')
-};
-
-// Publish as node.js module
-module.exports = MPDisco;
+module.exports = Server;
