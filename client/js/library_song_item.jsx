@@ -1,36 +1,41 @@
 var React = require('./vendor/react/react-with-addons.js');
 
+var DraggableMixin = require('./mixins/draggable_mixin.js');
+
 var LibrarySongItem = React.createClass({
-    events: {
-        'mousedown > .name': 'select',
-        'dblclick > .name': 'add',
-        'dragstart': 'dragstart'
+
+    mixins: [DraggableMixin],
+
+    statics: {
+        getDragType: function() {
+            return 'song';
+        },
+
+        configureDragDrop: function(register) {
+            register(this.getDragType(), {
+                dragSource: {
+                    beginDrag: function(component) {
+                        return {
+                            item: component.getDragItem()
+                        };
+                    }
+                }
+            });
+        }
+    },
+
+    getDragItem: function() {
+        return this.props.song;
     },
 
     render: function() {
         return (
-            <li className="library-item song">
-                <a className="name" href="#" title={this.props.song.title}>{this.props.song.title}</a>
+            <li className="library-item song" {...this.dragSourceFor('song')}>
+                <span className="name" title={this.props.song.title}>{this.props.song.title}</span>
             </li>
         );
     },
 
-    onDomRefresh: function() {
-        this.$el.attr('data-id', this.model.get('title'));
-
-        this.$el.draggable({
-            appendTo: '.library',
-            distance: 2,
-            scope: 'media',
-            helper: function(e) {
-                var item = $(e.currentTarget);
-
-                return $('<div/>', {
-                    'class': item.attr('class')
-                }).html(item.html()).eq(0);
-            }
-        });
-    },
     select: function(e) {
         MPDisco.vent.trigger('select:library', this);
     },
@@ -38,11 +43,6 @@ var LibrarySongItem = React.createClass({
         MPDisco.command('add', this.model.get('file'));
 
         return false;
-    },
-    dragstart: function(e, ui) {
-        ui.helper.data('model', this.model.toJSON());
-
-        e.stopPropagation();
     }
 });
 

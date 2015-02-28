@@ -14,53 +14,6 @@ _.findIndex = function(obj, iterator, context) {
     return result;
 };
 
-/*var buildSocketEventsMixinFor = function(type) {
-
-    return {
-        constructor: function () {
-            if (this.socketEvents && _.size(this.socketEvents) > 0) {
-                this.delegateSocketEvents(this.socketEvents);
-
-                // Gives a way to remove these callbacks.
-                this.socketOff = function(key) {
-                    var method = this.socketEvents[key];
-
-                    if (!_.isFunction(method)) {
-                        method = this[this.socketEvents[key]];
-                    }
-
-                    if (!method) {
-                        throw new Error('Method "' + this.socketEvents[key] + '" does not exist');
-                    }
-
-                    MPDisco.network.off(key, method);
-                }.bind(this);
-            }
-
-            var args = Array.prototype.slice.apply(arguments);
-
-            type.prototype.constructor.apply(this, args);
-        },
-        delegateSocketEvents: function (events) {
-            for (var key in events) {
-                var method = events[key];
-                if (!_.isFunction(method)) {
-                    method = this[events[key]];
-                }
-
-                if (!method) {
-                    throw new Error('Method "' + events[key] + '" does not exist');
-                }
-
-                method = _.bind(method, this);
-
-                MPDisco.network.on(key, method);
-            }
-        }
-    };
-
-};*/
-
 var host = window.location.hostname;
 
 MPDisco.network = new Network(host, 3000);

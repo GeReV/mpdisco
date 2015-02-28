@@ -5,17 +5,27 @@ var cx = React.addons.classSet;
 
 var PlaylistItem = require('./playlist_item.jsx');
 
-var SelectableListMixin = require('./selectable_list.js');
+var SelectableListMixin = require('./mixins/selectable_list_mixin.js');
+var DragDropMixin = require('./vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+
+var accepts = ['artist', 'album', 'song'];
 
 var Playlist = React.createClass({
 
-    mixins: [SelectableListMixin],
+    mixins: [SelectableListMixin, DragDropMixin],
 
-    events: {
-        'keyup #url': 'add',
-        'dblclick li': 'play',
-        'click li': 'selectClick',
-        'drop': 'drop'
+    statics: {
+        configureDragDrop: function(register) {
+            accepts.forEach(function(itemType) {
+                register(itemType, {
+                    dropTarget: {
+                        acceptDrop: function(component, item) {
+                            component.props.model.add(itemType, item);
+                        }
+                    }
+                });
+            });
+        }
     },
 
     getInitialState: function() {
@@ -88,8 +98,17 @@ var Playlist = React.createClass({
             disabled: (this.state.selectedItems.length <= 0)
         });
 
+        var dropStates = accepts.map(this.getDropState);
+
+        var playlistClasses = cx({
+            'playlist': true,
+            'playlist-drop': _.any(dropStates, function (state) {
+                return state.isDragging || state.isHovering;
+            })
+        });
+
         return (
-            <section className="playlist">
+            <section className={playlistClasses} {...this.dropTargetFor.apply(this, accepts)}>
                 <header>
                     <span>Playlist</span>
                     <div className="playlist-tools button-group">

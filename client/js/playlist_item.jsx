@@ -21,20 +21,20 @@ var PlaylistItem = React.createClass({
 
             if (item.artist) {
                 details.push(
-                    <span className="artist">{item.artist}</span>
+                    <span className="artist" key="artist">{item.artist}</span>
                 );
 
                 if (item.album) {
-                    details.push(<span>,&nbsp;</span>);
+                    details.push(<span key="sep-album">,&nbsp;</span>);
                     details.push(
-                        <span className="album">{item.album}</span>
+                        <span className="album" key="album">{item.album}</span>
                     );
                 }
 
                 if (item.date) {
-                    details.push(<span>,&nbsp;</span>);
+                    details.push(<span key="sep-date">,&nbsp;</span>);
                     details.push(
-                        <span className="year">{item.date}</span>
+                        <span className="year" key="year">{item.date}</span>
                     );
                 }
             }

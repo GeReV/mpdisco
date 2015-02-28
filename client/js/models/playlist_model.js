@@ -48,6 +48,22 @@ _.extend(PlaylistModel.prototype, {
         });
 
         this.network.commands(commands);
+    },
+
+    add: function(itemType, item) {
+        var network = this.network;
+
+        switch (itemType) {
+            case 'artist':
+                network.command('findadd', 'artist', item.name);
+                break;
+            case 'album':
+                network.command('findadd', 'artist', item.artist.name, 'album', item.name);
+                break;
+            case 'song':
+                network.command('findadd', 'artist', item.artist.name, 'album', item.album.name, 'title', item.title);
+                break;
+        }
     }
 });
 

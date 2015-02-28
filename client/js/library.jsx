@@ -3,6 +3,7 @@ var React = require('./vendor/react/react-with-addons.js');
 var LibraryArtistItem = require('./library_artist_item.jsx');
 
 var Library = React.createClass({
+
     getInitialState: function() {
         return {
             artists: this.props.model.artists || []

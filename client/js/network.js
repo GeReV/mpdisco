@@ -12,10 +12,14 @@ _.extend(Network.prototype, {
   send: function (name, data) {
     this.socket.emit(name, data);
   },
-  command: function (command, args) {
+  command: function (command) {
 
-    if (args === undefined || args === null) {
-      args = [];
+    var args = [];
+
+    if (arguments.length === 2 && _.isArray(arguments[1])) {
+      args = arguments[1];
+    } else if (arguments.length > 1) {
+      args = _.rest(arguments);
     }
 
     this.socket.emit('command', {

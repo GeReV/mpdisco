@@ -1,15 +1,35 @@
 var React = require('./vendor/react/react-with-addons.js');
 
+var DraggableMixin = require('./mixins/draggable_mixin.js');
+
 var LibrarySongItem = require('./library_song_item.jsx');
 
 var cx = React.addons.classSet;
 
 var LibraryAlbumItem = React.createClass({
-    events: {
-        'click > .name': 'toggleSongs',
-        'mousedown > .name': 'select',
-        'dblclick > .name': 'add',
-        'dragstart': 'dragstart'
+
+    mixins: [DraggableMixin],
+
+    statics: {
+        getDragType: function() {
+            return 'album';
+        },
+
+        configureDragDrop: function(register) {
+            register(this.getDragType(), {
+                dragSource: {
+                    beginDrag: function(component) {
+                        return {
+                            item: component.getDragItem()
+                        };
+                    }
+                }
+            });
+        }
+    },
+
+    getDragItem: function() {
+        return this.props.album;
     },
 
     getInitialState: function() {
@@ -34,34 +54,17 @@ var LibraryAlbumItem = React.createClass({
         });
 
         var songs = this.state.songs.map(function(song) {
-            return <LibrarySongItem key={song.name} song={song} />;
+            return <LibrarySongItem key={song.title} song={song} />;
         });
 
         return (
-            <li className={classes}>
-                <a className="name" href="#" title={this.props.album.name} onClick={this.toggleSongs}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</a>
+            <li className={classes} {...this.dragSourceFor('album')}>
+                <span className="name" title={this.props.album.name} onClick={this.toggleSongs}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</span>
                 <ol className={treeClasses}>
                     {songs}
                 </ol>
             </li>
         );
-    },
-
-    onDomRefresh: function() {
-        this.$el.attr('data-id', this.model.get('album'));
-
-        this.$el.draggable({
-            appendTo: '.library',
-            distance: 2,
-            scope: 'media',
-            helper: function(e) {
-                var item = $(e.currentTarget);
-
-                return $('<div/>', {
-                    'class': item.attr('class')
-                }).html(item.html()).eq(0);
-            }
-        });
     },
 
     toggleSongs: function(e) {
@@ -98,18 +101,6 @@ var LibraryAlbumItem = React.createClass({
         MPDisco.command('findadd', ['artist', artist, 'album', album]);
 
         return false;
-    },
-
-    dragstart: function(e, ui) {
-        var album = this.model.get('album'),
-            artist = this.$el.closest('.artist').data('id');
-
-        $(ui.helper).data('model', {
-            album: album,
-            artist: artist
-        });
-
-        e.stopPropagation();
     }
 });
 
