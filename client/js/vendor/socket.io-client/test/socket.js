@@ -1,5 +1,5 @@
 var expect = require('expect.js');
-var io = require('../');
+var io = require('../index');
 
 describe('socket', function(){
   it('should have an accessible socket id equal to the engine.io socket id', function(done) {

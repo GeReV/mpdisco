@@ -1,5 +1,5 @@
 var expect = require('expect.js');
-var io = require('../');
+var io = require('../index');
 var hasCORS = require('has-cors');
 var textBlobBuilder = require('text-blob-builder');
 

@@ -20,7 +20,7 @@
             'jquery',
             'tmpl',
             './jquery.fileupload-image',
-            './jquery.fileupload-audio',
+            './jquery.fileupload-audio.js',
             './jquery.fileupload-video',
             './jquery.fileupload-validate'
         ], factory);

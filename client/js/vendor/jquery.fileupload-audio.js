@@ -19,7 +19,7 @@
         define([
             'jquery',
             'load-image',
-            './jquery.fileupload-process'
+            './jquery.fileupload-process.js'
         ], factory);
     } else {
         // Browser globals:

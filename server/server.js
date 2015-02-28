@@ -50,10 +50,10 @@ var Server = Class.extend({
             saveUninitialized: true
         }));
 
-        app.use(express.static(__pwd + '/public'));
+        app.use(express.static(path.join(__pwd, '/public')));
 
         app.get('/', function (req, res) {
-            res.sendFile(__pwd + '/views/index.html');
+            res.sendFile(path.join(__pwd, 'server', 'views', 'index.html'));
         });
 
         app.get('/covers/:artist/:album', function (req, res) {
