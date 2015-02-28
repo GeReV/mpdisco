@@ -11,6 +11,16 @@ body {
   background: transparent;
 }
 
+.icon {
+  display: inline-block;
+  font-family: 'FontAwesome';
+  font-weight: normal;
+  font-style: normal;
+  text-decoration: inherit;
+  -webkit-font-smoothing: antialiased;
+  *margin-right: .3em;
+}
+
 .left-column {
   flex: 0 0 280px;
 }
@@ -327,9 +337,7 @@ input[type="text"] {
       text-align: center;
       width: 30px;
 
-      &:hover {
-        text-decoration: none;
-      }
+      text-decoration: none;
 
       &.disabled {
         color: #ccc;
