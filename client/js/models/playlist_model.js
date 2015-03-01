@@ -30,7 +30,6 @@ _.extend(PlaylistModel.prototype, {
 
                 resolve(res);
             };
-
             network.on('playlistinfo', handler);
         });
 
@@ -64,6 +63,17 @@ _.extend(PlaylistModel.prototype, {
                 network.command('findadd', 'artist', item.artist.name, 'album', item.album.name, 'title', item.title);
                 break;
         }
+    },
+
+    reorderItems: function(items) {
+        var commands = items.map(function(item, i) {
+            return {
+                command: 'moveid',
+                args: [item.id.toString(), i.toString()]
+            };
+        });
+
+        this.network.commands(commands);
     }
 });
 

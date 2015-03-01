@@ -2,6 +2,10 @@ var React = require('./vendor/react/react-with-addons.js');
 
 var cx = React.addons.classSet;
 
+var PropTypes = React.PropTypes;
+
+var DragDropMixin = require('./vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+
 function formatTime(seconds) {
     function zeroPad(n) {
         return n < 10 ? '0' + n : n;
@@ -10,7 +14,43 @@ function formatTime(seconds) {
 }
 
 var PlaylistItem = React.createClass({
+    mixins: [DragDropMixin],
+
+    propTypes: {
+        onReorder: PropTypes.func.isRequired,
+        onDidReorder: PropTypes.func.isRequired
+    },
+
+    statics: {
+        getDragType: function() {
+            return 'playlist-item';
+        },
+
+        configureDragDrop: function(register) {
+            register(this.getDragType(), {
+                dragSource: {
+                    beginDrag: function(component) {
+                        return {
+                            item: component.props.item
+                        };
+                    },
+                    endDrag: function(component) {
+                        component.props.onDidReorder();
+                    }
+                },
+
+                dropTarget: {
+                    over: function(component, item) {
+                        component.props.onReorder(item, component.props.item);
+                    }
+                }
+            });
+        }
+    },
+
     render: function() {
+
+        var dragType = this.constructor.getDragType();
 
         var item = this.props.item;
 
@@ -56,11 +96,18 @@ var PlaylistItem = React.createClass({
             'playlist-item': true,
             'playlist-item-selected': this.props.selected,
             'playlist-item-playing': this.props.playing,
-            'playlist-item-focus': this.props.focused
+            'playlist-item-focus': this.props.focused,
+            'playlist-item-dragging': this.getDragState(dragType).isDragging
         });
 
         return (
-            <li className={classes} onMouseDown={this.itemClick} onDoubleClick={this.itemDblClick}>
+            <li
+                className={classes}
+                onMouseDown={this.itemClick}
+                onDoubleClick={this.itemDblClick}
+                {...this.dragSourceFor(dragType)}
+                {...this.dropTargetFor(dragType)}
+            >
                 <span className="time">{time}</span>
                 <div className="image" />
                 {details}

@@ -16,8 +16,6 @@ var SelectableListMixin = {
             selectedItems: selected,
             focusedItemIndex: this.state.items.indexOf(item)
         });
-
-        e.preventDefault();
     },
 
     itemSelectAll: function() {

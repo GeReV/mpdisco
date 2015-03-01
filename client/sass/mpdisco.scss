@@ -372,14 +372,6 @@ input[type="text"] {
     }
   }
   
-  .playlist-item-placeholder {
-    /* This makes sure all elements stay in place while displaying the placeholder. I honestly have no idea why this works. */
-    border: 2px solid #333;
-    height: 0;
-    margin: -2px 0;
-    padding: 0;
-  }
-  
   .active {
     text-shadow: 0 0 3px #00b6e4;
   }
@@ -433,7 +425,11 @@ input[type="text"] {
     content: counter(playlist);
     float: left;
   }
-  
+
+  &.playlist-item-dragging {
+    visibility: hidden;
+  }
+
   &.playlist-item-playing {
     color: #3a87ad;
   }
@@ -445,7 +441,7 @@ input[type="text"] {
   &.playlist-item-focus {
     outline: 1px dotted #333;
   }
-  
+
   p {
     margin: 0;
   }

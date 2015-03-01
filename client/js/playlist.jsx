@@ -7,12 +7,13 @@ var PlaylistItem = require('./playlist_item.jsx');
 
 var SelectableListMixin = require('./mixins/selectable_list_mixin.js');
 var DragDropMixin = require('./vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+var SortableMixin = require('./mixins/sortable_mixin.js');
 
 var accepts = ['artist', 'album', 'song'];
 
 var Playlist = React.createClass({
 
-    mixins: [SelectableListMixin, DragDropMixin],
+    mixins: [SelectableListMixin, DragDropMixin, SortableMixin],
 
     statics: {
         configureDragDrop: function(register) {
@@ -72,16 +73,6 @@ var Playlist = React.createClass({
 
     render: function() {
 
-        var items = this.state.items;
-
-        items = items.map(function(item, i) {
-            var focused  = (this.state.focusedItemIndex === i);
-            var selected = (this.state.selectedItems.indexOf(item) >= 0);
-            var playing  = (this.state.playingItemId === item.id);
-
-            return <PlaylistItem key={item.id} item={item} selected={selected} playing={playing} focused={focused} onItemClick={this.itemSelected} onItemDblClick={this.itemPlayed} />;
-        }.bind(this));
-
         var shuffleClasses = cx({
             shuffle: true,
             active: +this.state.state.random
@@ -107,6 +98,27 @@ var Playlist = React.createClass({
             })
         });
 
+        var items = this.state.items;
+
+        items = items.map(function(item, i) {
+            var focused  = (this.state.focusedItemIndex === i);
+            var selected = (this.state.selectedItems.indexOf(item) >= 0);
+            var playing  = (this.state.playingItemId === item.id);
+
+            return (
+                <PlaylistItem key={item.id}
+                    item={item}
+                    selected={selected}
+                    playing={playing}
+                    focused={focused}
+                    onItemClick={this.itemSelected}
+                    onItemDblClick={this.itemPlayed}
+                    onReorder={this.reorder}
+                    onDidReorder={this.reordered}
+                    />
+            );
+        }.bind(this));
+
         return (
             <section className={playlistClasses} {...this.dropTargetFor.apply(this, accepts)}>
                 <header>
@@ -127,88 +139,12 @@ var Playlist = React.createClass({
         );
     },
 
+    reordered: function(from, to) {
+        this.props.model.reorderItems(this.state.items);
+    },
+
     itemPlayed: function(e, item) {
         MPDisco.network.command('playid', item.id);
-    },
-
-    onCompositeCollectionRendered: function() {
-        var that = this;
-
-        this.ui.playlist.droppable({
-            hoverClass: 'playlist-drop',
-            scope: 'media'
-        });
-
-        this.ui.playlist.sortable({
-            appendTo: this.$el,
-            helper: function() {
-                return document.createElement('ul');
-            },
-            placeholder: 'playlist-item-placeholder',
-            opacity: 0.8,
-            start: function(e, ui) {
-                if (!ui.item.hasClass('selected')) {
-                    that.select(ui.item);
-                }
-
-                var elements = ui.item.parent().children('.selected').not('.ui-sortable-placeholder');
-
-                if (!elements.size()) {
-                    elements = ui.item;
-                }
-
-                ui.helper.append(elements.clone(true).show());
-
-                elements.hide();
-
-                ui.item.data('multidrag', elements);
-            },
-            stop: function(e, ui) {
-                var elements = ui.item.data('multidrag'),
-                    i = elements.index(ui.item),
-                    playlist = this.ui.playlist;
-
-                ui.item.before(elements.slice(0, i));
-                ui.item.after(elements.slice(i + 1));
-
-                elements.show();
-
-                commands = playlist.children().map(function(i, v) {
-                    var el = $(v),
-                        songid = el.data('songid');
-
-                    return {
-                        command: 'moveid',
-                        args: [ songid, playlist.find('[data-songid="' + songid + '"]').index() ]
-                    };
-                }).toArray();
-
-                MPDisco.commands(commands);
-
-            }.bind(this)
-        });
-
-        this.ui.playlist.disableSelection();
-
-        this.updatePlaylist();
-
-        $.each(this.selectedSongs, function(i, v) {
-            that.ui.playlist.find('[data-songid="' + v + '"]').addClass('selected');
-        });
-
-        this.pluginsInitialized = true;
-    },
-
-    add: function(e) {
-        var value = $.trim(this.ui.url.val());
-
-        if (e.which === 0x0d && value) {
-            MPDisco.command('add', value);
-
-            this.ui.url.addClass('disabled loading');
-        }
-
-        return false;
     },
 
     remove: function(e) {
