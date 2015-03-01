@@ -20,7 +20,7 @@ var Playlist = React.createClass({
                 register(itemType, {
                     dropTarget: {
                         acceptDrop: function(component, item) {
-                            component.props.model.add(itemType, item);
+                            component.props.model.addItem(itemType, item);
                         }
                     }
                 });

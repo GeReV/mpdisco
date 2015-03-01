@@ -30,7 +30,7 @@ var LibrarySongItem = React.createClass({
 
     render: function() {
         return (
-            <li className="library-item song" {...this.dragSourceFor('song')}>
+            <li className="library-item song" {...this.dragSourceFor(this.constructor.getDragType())}>
                 <span className="name" title={this.props.song.title}>{this.props.song.title}</span>
             </li>
         );

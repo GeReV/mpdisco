@@ -58,7 +58,7 @@ var LibraryAlbumItem = React.createClass({
         });
 
         return (
-            <li className={classes} {...this.dragSourceFor('album')}>
+            <li className={classes} {...this.dragSourceFor(this.constructor.getDragType())}>
                 <span className="name" title={this.props.album.name} onClick={this.toggleSongs}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</span>
                 <ol className={treeClasses}>
                     {songs}

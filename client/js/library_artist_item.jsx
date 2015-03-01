@@ -62,7 +62,7 @@ var LibraryArtistItem = React.createClass({
         }.bind(this));
 
         return (
-            <li className={classes} {...this.dragSourceFor('artist')}>
+            <li className={classes} {...this.dragSourceFor(this.constructor.getDragType())}>
                 <span className="name" title={this.props.artist.name} onClick={this.toggleAlbums}>{this.props.artist.name}</span>
                 <ul className={treeClasses}>
                     {albums}

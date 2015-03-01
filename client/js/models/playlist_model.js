@@ -50,7 +50,7 @@ _.extend(PlaylistModel.prototype, {
         this.network.commands(commands);
     },
 
-    add: function(itemType, item) {
+    addItem: function(itemType, item) {
         var network = this.network;
 
         switch (itemType) {
