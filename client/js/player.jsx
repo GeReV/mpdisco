@@ -29,32 +29,36 @@ var Player = React.createClass({
             });
         }.bind(this));
 
-        this.props.model.on('state', function(state) {
+        this.props.model.on('state', function(status) {
             var time = 0;
-            if (state.time) {
-                time = state.time.split(':');
+            if (status.time) {
+                time = status.time.split(':');
                 time = +time[0];
             }
-
-            console.log(state);
 
             var interval = this.state.interval;
             if (interval) {
                 clearInterval(interval);
             }
 
-            if (state.state === 'play') {
+            if (status.state === 'play') {
                 interval = setInterval(this.timeCounter, 1000);
             }
 
             this.setState({
-                state: state,
+                status: status,
                 time: time,
                 interval: interval
             });
         }.bind(this));
 
         this.props.model.fetchSong();
+
+        document.addEventListener('keydown', this.handleKeyboard, false);
+    },
+
+    componentWillUnmount: function() {
+        document.removeEventListener('keydown', this.handleKeyboard, false);
     },
 
     render: function() {
@@ -90,6 +94,48 @@ var Player = React.createClass({
         var seconds = Math.floor(+song.time * percent);
 
         this.props.model.seek(song.id, seconds);
+    },
+
+    handleKeyboard: function(e) {
+        var shift = e.shiftKey;
+        var key = e.keyCode || e.which;
+
+        if (key === 0x20) {
+            return this.togglePlay();
+        }
+
+        if (shift) {
+            if (key === 0x5a) { // KeyZ
+                return this.props.model.previous();
+            }
+
+            if (key === 0x43) { // KeyC
+                return this.togglePlay();
+            }
+
+            if (key === 0x56) { // KeyV
+                return this.props.model.stop();
+            }
+
+            if (key === 0x58) { // KeyX
+                return this.props.model.play();
+            }
+
+            if (key === 0x42) { // KeyB
+                return this.props.model.next();
+            }
+        }
+    },
+
+    togglePlay: function() {
+        var model = this.props.model;
+        var state = this.state.status.state;
+
+        if (state === 'play') {
+            model.pause(true);
+        } else if (state === 'pause' || state === 'stop') {
+            model.play();
+        }
     }
 });
 

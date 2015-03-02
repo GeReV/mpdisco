@@ -60,7 +60,25 @@ _.extend(PlayerModel.prototype, {
         this.network.command('single', single.toString());
     },
     seek: function(id, seconds) {
-        this.network.command('seekid', [id.toString(), seconds.toString()]);
+        this.network.command('seekid', id.toString(), seconds.toString());
+    },
+    play: function() {
+        this.network.command('play');
+    },
+    stop: function() {
+        this.network.command('stop');
+    },
+    pause: function(pause) {
+        if (pause === undefined) {
+            pause = true;
+        }
+        this.network.command('pause', (pause ? 1 : 0).toString());
+    },
+    next: function() {
+        this.network.command('next');
+    },
+    previous: function() {
+        this.network.command('previous');
     }
 });
 
