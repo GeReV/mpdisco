@@ -210,38 +210,35 @@ input[type="text"] {
     height: 150px;
   }
   
-  .play {
-    .indicator {
-      background: rgba(0, 0, 0, 0.05);
-      border: 2px solid #fff;
-      border-radius: 50%;
-      box-shadow: 0 0 1px #000;
-      margin: -20px 0 0 -20px;
-      text-align: center;
-      width: 40px;
-      height: 40px;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      
-      &:before {
-        @extend .icon;
-        @extend .icon-play:before;
-        
-        color: #fff;
-        font-size: 120%;
-        margin: 10px 0 0 4px;
-        text-shadow: 0 0 1px #000;
-      }
+  .indicator {
+    $indicator-size: 120px;
+
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10%;
+    margin: -($indicator-size / 2) 0 0 -($indicator-size / 2);
+    opacity: 0;
+    width: $indicator-size;
+    height: $indicator-size;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transition: opacity 0.5s;
+
+    &.appear {
+      opacity: 1;
+      transition: none;
     }
-    
-    &.pause .indicator:before {
-        @extend .icon-pause:before;
-        
-        margin: 10px 0 0 1px;
-      }
+
+    &::before {
+      color: #fff;
+      text-align: center;
+      font-size: $indicator-size * 0.75;
+      width: 100%;
+      height: 100%;
+      line-height: $indicator-size;
+    }
   }
-  
+
   .info {
     padding: 15px 20px;
     flex: 1 0 auto;

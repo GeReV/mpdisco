@@ -1,5 +1,7 @@
 var React = require('./vendor/react/react-with-addons.js');
 
+var cx = React.addons.classSet;
+
 var Scrubber = require('./scrubber.jsx');
 
 function formatTime(seconds) {
@@ -18,7 +20,9 @@ var Player = React.createClass({
                 album: '',
                 time: 0
             },
-            time: 0
+            time: 0,
+            indicatorAppear: false,
+            indicatorState: null
         };
     },
 
@@ -70,6 +74,16 @@ var Player = React.createClass({
 
         var album = song.album ? ('- ' + song.album) : '';
 
+        var indicatorClasses = cx({
+            'indicator': true,
+            'appear': this.state.indicatorAppear,
+            'icon-play': (this.state.indicatorState === 'play'),
+            'icon-pause': (this.state.indicatorState === 'pause'),
+            'icon-stop': (this.state.indicatorState === 'stop'),
+            'icon-step-forward': (this.state.indicatorState === 'next'),
+            'icon-step-backward': (this.state.indicatorState === 'previous')
+        });
+
         return (
             <div id="player">
                 <div className="info">
@@ -78,6 +92,7 @@ var Player = React.createClass({
                     <h2 className="duration">{time}</h2>
                 </div>
                 <Scrubber progress={this.state.time} total={song.time} onScrub={this.scrub} />
+                <div className={indicatorClasses} />
             </div>
         );
     },
@@ -106,7 +121,7 @@ var Player = React.createClass({
 
         if (shift) {
             if (key === 0x5a) { // KeyZ
-                return this.props.model.previous();
+                return this.previous();
             }
 
             if (key === 0x43) { // KeyC
@@ -114,28 +129,73 @@ var Player = React.createClass({
             }
 
             if (key === 0x56) { // KeyV
-                return this.props.model.stop();
+                return this.stop();
             }
 
             if (key === 0x58) { // KeyX
-                return this.props.model.play();
+                return this.play();
             }
 
             if (key === 0x42) { // KeyB
-                return this.props.model.next();
+                return this.next();
             }
         }
     },
 
     togglePlay: function() {
-        var model = this.props.model;
         var state = this.state.status.state;
 
         if (state === 'play') {
-            model.pause(true);
+            this.pause();
         } else if (state === 'pause' || state === 'stop') {
-            model.play();
+            this.play();
         }
+    },
+    play: function() {
+        this.props.model.play();
+
+        this.updateIndicator('play');
+    },
+    stop: function() {
+        this.props.model.stop();
+
+        this.updateIndicator('stop');
+    },
+    pause: function() {
+        this.props.model.pause(true);
+
+        this.updateIndicator('pause');
+    },
+    next: function() {
+        this.props.model.next();
+
+        this.updateIndicator('next');
+    },
+    previous: function() {
+        this.props.model.previous();
+
+        this.updateIndicator('previous');
+    },
+    updateIndicator: function(state) {
+        // Clear any pending timeout, so it trigger and hide our indicator prematurely.
+        if (this.state.indicatorAppearTimeout) {
+            clearTimeout(this.state.indicatorAppearTimeout);
+        }
+
+        // Once the clear is finished, show the updated indicator.
+        this.setState({
+            indicatorState: state,
+            indicatorAppear: true,
+            indicatorAppearTimeout: setTimeout(this.clearIndicator, 400)
+        });
+    },
+
+    clearIndicator: function() {
+        // Clear the indicator from screen.
+        this.setState({
+            indicatorAppear: false,
+            indicatorAppearTimeout: null
+        });
     }
 });
 
