@@ -92,7 +92,6 @@ var Playlist = React.createClass({
         var dropStates = accepts.map(this.getDropState);
 
         var playlistClasses = cx({
-            'playlist': true,
             'playlist-drop': _.any(dropStates, function (state) {
                 return state.isDragging || state.isHovering;
             })
@@ -106,7 +105,8 @@ var Playlist = React.createClass({
             var playing  = (this.state.playingItemId === item.id);
 
             return (
-                <PlaylistItem key={item.id}
+                <PlaylistItem
+                    key={item.id}
                     item={item}
                     selected={selected}
                     playing={playing}
@@ -120,7 +120,7 @@ var Playlist = React.createClass({
         }.bind(this));
 
         return (
-            <section className={playlistClasses} {...this.dropTargetFor.apply(this, accepts)}>
+            <section id="playlist" className={playlistClasses} {...this.dropTargetFor.apply(this, accepts)}>
                 <header>
                     <span>Playlist</span>
                     <div className="playlist-tools button-group">

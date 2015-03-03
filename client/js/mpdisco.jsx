@@ -28,10 +28,8 @@ var MPDisco = React.createClass({
         </header>
         <div id="main">
           <Library model={library} />
-          <div id="player-body">
-            <Playlist model={playlist} player={player} />
-            <Listeners model={listeners} />
-          </div>
+          <Playlist model={playlist} player={player} />
+          <Listeners model={listeners} />
         </div>
       </div>
     );
