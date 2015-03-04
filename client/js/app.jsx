@@ -1,5 +1,5 @@
-var _ = require('./vendor/underscore/underscore.js');
-var React = require('./vendor/react/react-with-addons.js');
+var _ = require('underscore');
+var React = require('react/addons');
 var Network = require('./network.js');
 var MPDisco = require('./mpdisco.jsx');
 
@@ -65,37 +65,7 @@ MPDisco.Utils = {
 //  }
 //});
 
-//MPDisco.State = MPDisco.Model.extend({
-//    socketEvents: {
-//        status: 'set'
-//    }
-//});
-//
-//MPDisco.state = new MPDisco.State();
-
-//if (Backbone.history) {
-//    Backbone.history.start();
-//}
-
 //MPDisco.mode = MPDisco.module('MasterMode').Mode;
-
-//this.layout = new MPDisco.Layout();
-//
-//this.container.show(this.layout);
-//
-//this.layout.player.show(new MPDisco.mode.player());
-//
-//this.layout.user.show(new MPDisco.mode.user());
-//
-//this.layout.scrubber.show(new MPDisco.mode.scrubber());
-//
-//this.layout.playlist.show(new MPDisco.mode.playlist());
-//
-//this.layout.listeners.show(new MPDisco.mode.listeners());
-//
-//this.layout.library.show(new MPDisco.mode.library());
-//
-//this.layout.error.show(new MPDisco.ErrorView());
 
 MPDisco.network.command('status');
 

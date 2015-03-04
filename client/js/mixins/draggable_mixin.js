@@ -1,6 +1,6 @@
 var _ = require('underscore');
 
-var DragDropMixin = require('../vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+var DragDropMixin = require('react-dnd').DragDropMixin;
 
 var DraggableMixin = _.extend({}, DragDropMixin, {
 

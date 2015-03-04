@@ -1,5 +1,5 @@
-var io = require('./vendor/socket.io-client/socket.io.js');
-var _ = require('./vendor/underscore/underscore.js');
+var io = require('socket.io-client');
+var _ = require('underscore');
 
 var Network = function(host, port) {
   this.url = "ws://" + host + ":" + port + "/";

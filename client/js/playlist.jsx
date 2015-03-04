@@ -1,4 +1,4 @@
-var React = require('./vendor/react/react-with-addons.js');
+var React = require('react/addons');
 var _ = require('underscore');
 
 var cx = React.addons.classSet;
@@ -6,7 +6,7 @@ var cx = React.addons.classSet;
 var PlaylistItem = require('./playlist_item.jsx');
 
 var SelectableListMixin = require('./mixins/selectable_list_mixin.js');
-var DragDropMixin = require('./vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+var DragDropMixin = require('react-dnd').DragDropMixin;
 var SortableMixin = require('./mixins/sortable_mixin.js');
 
 var accepts = ['artist', 'album', 'song'];

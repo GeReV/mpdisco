@@ -1,4 +1,4 @@
-var React = require('./vendor/react/react-with-addons.js');
+var React = require('react/addons');
 
 var DraggableMixin = require('./mixins/draggable_mixin.js');
 

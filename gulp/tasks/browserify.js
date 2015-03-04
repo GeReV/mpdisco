@@ -94,7 +94,7 @@ var browserifyTask = function(callback, devMode) {
   config.bundleConfigs.forEach(browserifyThis);
 };
 
-gulp.task('browserify', ['bower'], browserifyTask);
+gulp.task('browserify', browserifyTask);
 
 // Exporting the task so we can call it directly in our watch task, with the 'devMode' option
 module.exports = browserifyTask;

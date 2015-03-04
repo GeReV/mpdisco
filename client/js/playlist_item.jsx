@@ -1,10 +1,10 @@
-var React = require('./vendor/react/react-with-addons.js');
+var React = require('react/addons');
 
 var cx = React.addons.classSet;
 
 var PropTypes = React.PropTypes;
 
-var DragDropMixin = require('./vendor/react-dnd/dist/ReactDND.min.js').DragDropMixin;
+var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
     function zeroPad(n) {
