@@ -96,6 +96,25 @@ var SelectableListMixin = {
         if (item) {
             this.itemSelected(e, item);
         }
+    },
+    itemSelectFirst: function(e) {
+        var items = this.state.items;
+
+        var item = _.first(items);
+
+        if (item) {
+            this.itemSelected(e, item);
+        }
+    },
+
+    itemSelectLast: function(e) {
+        var items = this.state.items;
+
+        var item = _.last(items);
+
+        if (item) {
+            this.itemSelected(e, item);
+        }
     }
 };
 

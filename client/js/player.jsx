@@ -1,8 +1,11 @@
 var React = require('react/addons');
+var HotKey = require('react-hotkey');
 
 var cx = React.addons.classSet;
 
 var Scrubber = require('./scrubber.jsx');
+
+HotKey.activate('keydown');
 
 function formatTime(seconds) {
     function zeroPad(n) {
@@ -12,6 +15,8 @@ function formatTime(seconds) {
 }
 
 var Player = React.createClass({
+    mixins: [HotKey.Mixin('handleKeyboard')],
+
     getInitialState: function() {
         return {
             song: {
@@ -19,6 +24,9 @@ var Player = React.createClass({
                 artist: '',
                 album: '',
                 time: 0
+            },
+            status: {
+                state: ''
             },
             time: 0,
             indicatorAppear: false,
@@ -56,13 +64,7 @@ var Player = React.createClass({
             });
         }.bind(this));
 
-        this.props.model.fetchSong();
-
-        document.addEventListener('keydown', this.handleKeyboard, false);
-    },
-
-    componentWillUnmount: function() {
-        document.removeEventListener('keydown', this.handleKeyboard, false);
+        this.props.model.update();
     },
 
     render: function() {
@@ -113,30 +115,34 @@ var Player = React.createClass({
 
     handleKeyboard: function(e) {
         var shift = e.shiftKey;
-        var key = e.keyCode || e.which;
+        var key = e.key;
 
-        if (key === 0x20) {
+        if (key === 'Unidentified') {
+            key = e.keyCode;
+        }
+
+        if (key === ' ') {
             return this.togglePlay();
         }
 
         if (shift) {
-            if (key === 0x5a) { // KeyZ
+            if (key === 91) { // KeyZ
                 return this.previous();
             }
 
-            if (key === 0x43) { // KeyC
+            if (key === 67) { // KeyC
                 return this.togglePlay();
             }
 
-            if (key === 0x56) { // KeyV
+            if (key === 86) { // KeyV
                 return this.stop();
             }
 
-            if (key === 0x58) { // KeyX
+            if (key === 88) { // KeyX
                 return this.play();
             }
 
-            if (key === 0x42) { // KeyB
+            if (key === 66) { // KeyB
                 return this.next();
             }
         }

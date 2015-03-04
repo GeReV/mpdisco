@@ -1,4 +1,5 @@
 var React = require('react/addons');
+var HotKey = require('react-hotkey');
 var _ = require('underscore');
 
 var cx = React.addons.classSet;
@@ -11,9 +12,16 @@ var SortableMixin = require('./mixins/sortable_mixin.js');
 
 var accepts = ['artist', 'album', 'song'];
 
+HotKey.activate('keydown');
+
 var Playlist = React.createClass({
 
-    mixins: [SelectableListMixin, DragDropMixin, SortableMixin],
+    mixins: [
+        SelectableListMixin,
+        DragDropMixin,
+        SortableMixin,
+        HotKey.Mixin('handleKeyboard')
+    ],
 
     statics: {
         configureDragDrop: function(register) {
@@ -63,12 +71,6 @@ var Playlist = React.createClass({
         }.bind(this));
 
         this.props.model.fetchPlaylist();
-
-        document.addEventListener('keydown', this.handleKeyboard, false);
-    },
-
-    componentWillUnmount: function() {
-        document.removeEventListener('keydown', this.handleKeyboard, false);
     },
 
     render: function() {
@@ -153,23 +155,6 @@ var Playlist = React.createClass({
         e.preventDefault();
     },
 
-    //drop: function(e, ui) {
-    //    var model = ui.helper.data('model'),
-    //        args = [];
-    //
-    //    _.each(['artist', 'album', 'title'], function(key) {
-    //        var value = model[key];
-    //        if (value) {
-    //            args.push(key);
-    //            args.push(value);
-    //        }
-    //    });
-    //
-    //    if (args.length) {
-    //        MPDisco.command('findadd', args);
-    //    }
-    //},
-
     toggleShuffle: function(e) {
         var random = (~this.state.state.random & 1);
 
@@ -215,50 +200,44 @@ var Playlist = React.createClass({
 
     handleKeyboard: function(e) {
         var funcs = {
-                0x0d: function(e) {
-                    var item = _.first(this.state.selectedItems);
+            'Delete': this.remove,
+            'Enter': function(e) {
+                var item = _.first(this.state.selectedItems);
 
-                    if (item) {
-                        this.itemPlayed(e, item);
-                    }
-                },
-                0x23: function(e) {
-                    if (e.shiftKey) {
-                        this.selectRange(this.$('.selected').last(), this.$('.playlist-item').last());
-                    }else{
-                        this.select(this.$('.playlist-item').last());
-                    }
-
-                    e.preventDefault();
-                },
-                0x24: function(e) {
-                    if (e.shiftKey) {
-                        this.selectRange(this.$('.selected').last(), this.$('.playlist-item').first());
-                    }else{
-                        this.select(this.$('.playlist-item').first());
-                    }
-
-                    e.preventDefault();
-                },
-                0x26: this.itemSelectPrev,
-                0x28: this.itemSelectNext,
-                0x2e: this.remove,
-                0x41: function(e) {
-                    if (e.ctrlKey) {
-                        this.itemSelectAll();
-
-                        e.preventDefault();
-                    }
-                },
-                0x44: function(e) {
-                    if (e.ctrlKey) {
-                        this.itemSelectNone();
-
-                        e.preventDefault();
-                    }
+                if (item) {
+                    this.itemPlayed(e, item);
                 }
             },
-            fn = funcs[e.which];
+            'Home': function(e) {
+                this.itemSelectFirst(e);
+
+                e.preventDefault();
+            },
+            'End': function(e) {
+                this.itemSelectLast(e);
+
+                e.preventDefault();
+            },
+            'ArrowUp': this.itemSelectPrev,
+            'ArrowDown': this.itemSelectNext,
+
+            65: function(e) { // Ctrl+A
+                if (e.ctrlKey) {
+                    this.itemSelectAll();
+
+                    e.preventDefault();
+                }
+            },
+            68: function(e) { // Ctrl+D
+                if (e.ctrlKey) {
+                    this.itemSelectNone();
+
+                    e.preventDefault();
+                }
+            }
+        };
+
+        var fn = funcs[e.key] || funcs[e.keyCode];
 
         if (fn) {
             return fn.call(this, e);
