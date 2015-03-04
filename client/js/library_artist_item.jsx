@@ -13,18 +13,6 @@ var LibraryArtistItem = React.createClass({
     statics: {
         getDragType: function() {
             return 'artist';
-        },
-
-        configureDragDrop: function(register) {
-            register(this.getDragType(), {
-                dragSource: {
-                    beginDrag: function(component) {
-                        return {
-                            item: component.getDragItem()
-                        };
-                    }
-                }
-            });
         }
     },
 
@@ -62,7 +50,7 @@ var LibraryArtistItem = React.createClass({
         }.bind(this));
 
         return (
-            <li className={classes} {...this.dragSourceFor(this.constructor.getDragType())}>
+            <li className={classes} {...this.dragSource()}>
                 <span className="name" title={this.props.artist.name} onClick={this.toggleAlbums}>{this.props.artist.name}</span>
                 <ul className={treeClasses}>
                     {albums}
@@ -91,19 +79,6 @@ var LibraryArtistItem = React.createClass({
         }
 
         e.preventDefault();
-    },
-
-    select: function(e) {
-        MPDisco.vent.trigger('select:library', this);
-    },
-
-    add: function(e) {
-        var artistEl = $(e.currentTarget),
-            artist = artistEl.data('id');
-
-        MPDisco.command('findadd', ['artist', artist]);
-
-        return false;
     }
 });
 

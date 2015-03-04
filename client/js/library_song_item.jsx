@@ -9,18 +9,6 @@ var LibrarySongItem = React.createClass({
     statics: {
         getDragType: function() {
             return 'song';
-        },
-
-        configureDragDrop: function(register) {
-            register(this.getDragType(), {
-                dragSource: {
-                    beginDrag: function(component) {
-                        return {
-                            item: component.getDragItem()
-                        };
-                    }
-                }
-            });
         }
     },
 
@@ -30,19 +18,10 @@ var LibrarySongItem = React.createClass({
 
     render: function() {
         return (
-            <li className="library-item song" {...this.dragSourceFor(this.constructor.getDragType())}>
+            <li className="library-item song" {...this.dragSource()}>
                 <span className="name" title={this.props.song.title}>{this.props.song.title}</span>
             </li>
         );
-    },
-
-    select: function(e) {
-        MPDisco.vent.trigger('select:library', this);
-    },
-    add: function(e) {
-        MPDisco.command('add', this.model.get('file'));
-
-        return false;
     }
 });
 

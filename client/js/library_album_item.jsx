@@ -13,18 +13,6 @@ var LibraryAlbumItem = React.createClass({
     statics: {
         getDragType: function() {
             return 'album';
-        },
-
-        configureDragDrop: function(register) {
-            register(this.getDragType(), {
-                dragSource: {
-                    beginDrag: function(component) {
-                        return {
-                            item: component.getDragItem()
-                        };
-                    }
-                }
-            });
         }
     },
 
@@ -58,7 +46,7 @@ var LibraryAlbumItem = React.createClass({
         });
 
         return (
-            <li className={classes} {...this.dragSourceFor(this.constructor.getDragType())}>
+            <li className={classes} {...this.dragSource()}>
                 <span className="name" title={this.props.album.name} onClick={this.toggleSongs}><img src={this.props.album.cover} alt="Cover" className="cover" /> {this.props.album.name}</span>
                 <ol className={treeClasses}>
                     {songs}
@@ -79,7 +67,7 @@ var LibraryAlbumItem = React.createClass({
                     songs: songs,
                     loaded: true,
                     collapsed: false
-                })
+                });
             }.bind(this));
         } else {
             this.setState({
@@ -88,19 +76,6 @@ var LibraryAlbumItem = React.createClass({
         }
 
         e.preventDefault();
-    },
-    select: function(e) {
-        MPDisco.vent.trigger('select:library', this);
-    },
-    add: function(e) {
-        var albumEl = $(e.currentTarget),
-            artistEl = albumEl.closest('.artist').find('.name'),
-            album = albumEl.data('id'),
-            artist = artistEl.data('id');
-
-        MPDisco.command('findadd', ['artist', artist, 'album', album]);
-
-        return false;
     }
 });
 
