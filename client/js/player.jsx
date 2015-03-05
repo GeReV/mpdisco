@@ -114,7 +114,6 @@ var Player = React.createClass({
     },
 
     handleKeyboard: function(e) {
-        var shift = e.shiftKey;
         var key = e.key;
 
         if (key === 'Unidentified') {
