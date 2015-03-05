@@ -9,10 +9,14 @@ var LibraryModel = function(network) {
 
     this.artists = [];
 
+    this.network.on('update:update', function() {
+        this.emit('updating');
+    }.bind(this));
+
     this.network.on('update:database', function() {
         this.fetchArtists()
             .done(function() {
-                this.emit('update');
+                this.emit('update', this.artists);
             }.bind(this));
     }.bind(this));
 };
@@ -24,22 +28,50 @@ _.extend(LibraryModel.prototype, {
         var network = this.network;
 
         var promise = Q.promise(function(resolve, reject) {
-            var handler = function(res) {
-                this.artists = res.data.map(function(item) {
-                    return { name: item.artist };
-                });
-
-                network.off(handler);
+            network.once('list:artist', function(res) {
+                this.handleArtistsResponse(res);
 
                 resolve(this.artists);
-            }.bind(this);
+            }.bind(this));
 
-            network.on('list:artist', handler);
+            network.command('list', 'artist');
         }.bind(this));
 
-        this.network.command('list', 'artist');
-
         return promise;
+    },
+
+    handleArtistsResponse: function(res) {
+        // Process the response first.
+        var nextArtists = res.data.map(function(item) {
+            return { name: item.artist };
+        });
+
+        this.artists = this.diffArtists(this.artists, nextArtists);
+    },
+
+    diffArtists: function(currentArtists, nextArtists) {
+        var nextArtistNames = nextArtists.map(function(item) {
+            return item.name;
+        });
+
+        // Remove the artists we do not have in both, we just need to keep the ones we already have.
+        // The others were removed.
+        var filteredArists = currentArtists.filter(function(item) {
+            return nextArtistNames.indexOf(item.name) >= 0;
+        });
+
+        // Create a lookup for the artists we save.
+        var filteredArtistNames = filteredArists.map(function(item) {
+            return item.name;
+        });
+
+        // Use the above lookup to keep just the completely new artists
+        // (those who are in the next list, but not in the previous).
+        var newArtists = nextArtists.filter(function(item) {
+            return filteredArtistNames.indexOf(item.name) < 0;
+        });
+
+        return filteredArists.concat(newArtists);
     },
 
     fetchAlbums: function(artist) {
@@ -73,9 +105,9 @@ _.extend(LibraryModel.prototype, {
             };
 
             network.on('list:album', handler);
-        });
 
-        this.network.command('list', ['album', artist.name]);
+            network.command('list', ['album', artist.name]);
+        });
 
         return promise;
     },
@@ -119,9 +151,9 @@ _.extend(LibraryModel.prototype, {
             };
 
             network.on('find', handler);
-        });
 
-        this.network.command('find', ['artist', artist.name, 'album', album.name]);
+            network.command('find', ['artist', artist.name, 'album', album.name]);
+        });
 
         return promise;
     }

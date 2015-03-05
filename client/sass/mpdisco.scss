@@ -489,10 +489,6 @@ input[type="text"] {
   background: $library-background;
   display: flex;
   flex-direction: column;
-
-  .content {
-    position: relative;
-  }
   
   &.library-drop .content {
     box-shadow: 0 0 5px lighten($library-background, 50%) inset;
@@ -500,6 +496,18 @@ input[type="text"] {
 
   &.library-drop-hover .content {
     box-shadow: 0 0 5px lighten($library-background, 70%) inset;
+  }
+
+  &.library-updating header::before {
+    @extend .icon;
+    @extend .icon-spin;
+    @extend .icon-refresh:before;
+
+    float: right;
+  }
+
+  .content {
+    position: relative;
   }
   
   header {

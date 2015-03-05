@@ -29,6 +29,9 @@ _.extend(Network.prototype, {
   commands: function (commands) {
     this.send('commands', commands);
   },
+  once: function (name, callback) {
+    this.socket.once(name, callback);
+  },
   on: function (name, callback) {
     this.socket.on(name, callback);
   },

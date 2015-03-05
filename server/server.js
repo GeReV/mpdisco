@@ -26,6 +26,8 @@ var Server = Class.extend({
         this.mpd = mpd;
         this.mode = mode;
 
+        this.uploadHandler = this._initUploadHandler(this.mpd, this.options.config);
+
         this.app = express();
         this._initApp(this.app, this.options);
 
@@ -63,34 +65,10 @@ var Server = Class.extend({
                 album = mm.safeName(req.params.album),
                 file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
 
-            res.sendfile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
+            res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
         });
 
-        app.all('/upload', upload.action);
-
-        upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
-        upload.options.tmpDir = '/tmp';
-        upload.uploadPath = function (file, callback) {
-            metadata.forFile(file)
-                .then(function(data) {
-                    var parts = _.compact([
-                        config.music_directory.replace(/^~/, process.env.HOME),
-
-                        metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
-
-                        metadata.safeName(data.album)
-                    ]);
-
-                    var filename = path.join.apply(this, parts);
-
-                    console.log('Saving to', filename);
-
-                    callback(filename);
-                })
-                .fail(function(err) {
-                    console.log(err);
-                });
-        };
+        app.all('/upload', this.uploadHandler);
     },
 
     start: function() {
@@ -151,6 +129,41 @@ var Server = Class.extend({
             });
 
         }.bind(this));
+    },
+
+    _initUploadHandler: function(mpd, config) {
+        var handler = upload({
+            acceptFileTypes: /\.(mp3|ogg|flac|mp4)/i,
+            tmpDir: '/tmp',
+            uploadPath: function (file, callback) {
+                metadata.forFile(file)
+                    .then(function(data) {
+                        var parts = _.compact([
+                            config.music_directory.replace(/^~/, process.env.HOME),
+
+                            metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
+
+                            metadata.safeName(data.album)
+                        ]);
+
+                        var filename = path.join.apply(this, parts);
+
+                        console.log('Saving to', filename);
+
+                        callback(filename);
+                    })
+                    .fail(function(err) {
+                        console.log(err);
+                    });
+            }
+        });
+
+        handler.on('end', _.debounce(function(result) {
+            console.log('Updating database...');
+            mpd.sendCommand('update');
+        }.bind(this), 5000));
+
+        return handler;
     }
 });
 

@@ -46,12 +46,40 @@ var Library = React.createClass({
     },
 
     componentWillMount: function() {
-        this.props.model.fetchArtists()
-            .done(function(artists) {
-                this.setState({
-                    artists: artists
-                });
-            }.bind(this));
+        this.props.model.on('updating', this.setUpdatingState);
+
+        this.props.model.on('update', this.setArtists);
+
+        this.props.model.fetchArtists().done(this.setArtists);
+    },
+
+    setArtists: function(artists) {
+        this.setState({
+            artists: artists
+        });
+    },
+
+    setUpdatingState: function() {
+        // MPD sends the same event when an update starts and finishes, without any other arguments.
+        var updating = !this.state.updating;
+
+        if (this.state.updatingTimeout) {
+            clearTimeout(this.state.updatingTimeout);
+        }
+
+        // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
+        var updatingTimeout = setTimeout(function() {
+            this.setState({
+                updating: false,
+                updatingTimeout: null
+            });
+        }.bind(this), 5000);
+
+        // Set updating state.
+        this.setState({
+            updating: updating,
+            updatingTimeout: updatingTimeout
+        });
     },
 
     render: function() {
@@ -59,6 +87,7 @@ var Library = React.createClass({
         var dropState = this.getDropState(NativeDragItemTypes.FILE);
 
         var classes = cx({
+            'library-updating': this.state.updating,
             'library-drop': dropState.isDragging,
             'library-drop-hover': dropState.isHovering
         });
