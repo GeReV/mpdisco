@@ -12,6 +12,7 @@ var
 
 var __pwd = path.join(__dirname, '..');
 
+var metadata = require('./meta_data.js');
 var upload = require('./file_upload.js');
 var ClientsManager = require('./clients_manager.js');
 
@@ -70,22 +71,25 @@ var Server = Class.extend({
         upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
         upload.options.tmpDir = '/tmp';
         upload.uploadPath = function (file, callback) {
-            //var metadata = require('./meta_data.js');
+            metadata.forFile(file)
+                .then(function(data) {
+                    var parts = _.compact([
+                        config.music_directory.replace(/^~/, process.env.HOME),
 
-            callback(path.join(config.music_directory.replace(/^~/, process.env.HOME), 'tmp'));
+                        metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
 
-            //metadata.forFile(file, function (data) {
-            //
-            //    var parts = _.compact([
-            //        config.music_directory.replace(/^~/, process.env.HOME),
-            //
-            //        metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
-            //
-            //        metadata.safeName(data.album)
-            //    ]);
-            //
-            //    callback(path.join.apply(this, parts));
-            //});
+                        metadata.safeName(data.album)
+                    ]);
+
+                    var filename = path.join.apply(this, parts);
+
+                    console.log('Saving to', filename);
+
+                    callback(filename);
+                })
+                .fail(function(err) {
+                    console.log(err);
+                });
         };
     },
 

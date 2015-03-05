@@ -62,6 +62,10 @@ var LibraryAlbumItem = React.createClass({
 
             var promise = this.props.library.fetchSongs(album.artist.name, album.name);
 
+            if (!promise) {
+                return;
+            }
+
             promise.done(function(songs) {
                 this.setState({
                     songs: songs,
