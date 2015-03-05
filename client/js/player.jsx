@@ -125,7 +125,7 @@ var Player = React.createClass({
             return this.togglePlay();
         }
 
-        if (key === 91) { // KeyZ
+        if (key === 90) { // KeyZ
             return this.previous();
         }
 
