@@ -29,6 +29,7 @@
     "musicmetadata": "^1.0.0",
     "node-uuid": "^1.4.2",
     "promise": "^6.1.0",
+    "q": "^1.2.0",
     "react": "^0.12.2",
     "react-dnd": "^0.9.3",
     "react-hotkey": "^0.3.0",

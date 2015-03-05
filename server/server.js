@@ -65,25 +65,28 @@ var Server = Class.extend({
             res.sendfile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
         });
 
-        //app.all('/upload', upload.action);
+        app.all('/upload', upload.action);
 
-        //upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
-        //upload.uploadPath = function (file, callback) {
-        //    var metadata = require('./meta_data.js');
-        //
-        //    metadata.forFile(file, function (data) {
-        //
-        //        var parts = _.compact([
-        //            config.music_directory.replace(/^~/, process.env.HOME),
-        //
-        //            metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
-        //
-        //            metadata.safeName(data.album)
-        //        ]);
-        //
-        //        callback(path.join.apply(this, parts));
-        //    });
-        //};
+        upload.options.acceptFileTypes = /\.(mp3|ogg|flac|mp4)/i;
+        upload.options.tmpDir = '/tmp';
+        upload.uploadPath = function (file, callback) {
+            //var metadata = require('./meta_data.js');
+
+            callback(path.join(config.music_directory.replace(/^~/, process.env.HOME), 'tmp'));
+
+            //metadata.forFile(file, function (data) {
+            //
+            //    var parts = _.compact([
+            //        config.music_directory.replace(/^~/, process.env.HOME),
+            //
+            //        metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
+            //
+            //        metadata.safeName(data.album)
+            //    ]);
+            //
+            //    callback(path.join.apply(this, parts));
+            //});
+        };
     },
 
     start: function() {

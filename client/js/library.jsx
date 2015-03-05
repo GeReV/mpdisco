@@ -1,12 +1,47 @@
 var React = require('react/addons');
+var _ = require('underscore');
+
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
+var cx = React.addons.classSet;
+var update = React.addons.update;
+
+var DragDropMixin = require('react-dnd').DragDropMixin;
+var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
 
 var LibraryArtistItem = require('./library_artist_item.jsx');
+var LibraryFileUpload = require('./library_file_upload.jsx');
 
 var Library = React.createClass({
 
+    mixins: [DragDropMixin],
+
+    statics: {
+        configureDragDrop: function(register) {
+            register(NativeDragItemTypes.FILE, {
+                dropTarget: {
+                    acceptDrop: function(component, item) {
+                        if (!item) {
+                            return;
+                        }
+
+                        if (_.isArray(item.files)) {
+                            component.setState({
+                                uploads: item.files,    // These will be rendered.
+                                uploading: item.files   // These will be used to keep track of progress.
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    },
+
     getInitialState: function() {
         return {
-            artists: this.props.model.artists || []
+            artists: this.props.model.artists || [],
+            uploads: [],
+            uploading: []
         };
     },
 
@@ -20,92 +55,90 @@ var Library = React.createClass({
     },
 
     render: function() {
+
+        var dropState = this.getDropState(NativeDragItemTypes.FILE);
+
+        var classes = cx({
+            'library-drop': dropState.isDragging,
+            'library-drop-hover': dropState.isHovering
+        });
+
+        var uploads;
+        if (this.state.uploads.length) {
+            uploads = (
+                <ul className="library-upload">
+                    {this.state.uploads.map(function(file) {
+                        var key = file.name;
+
+                        return (
+                            <LibraryFileUpload
+                                key={key}
+                                file={file}
+                                onUploadComplete={this.uploadComplete}
+                                onUploadFail={this.uploadFail}
+                            />
+                        );
+                    }.bind(this))}
+                </ul>
+            );
+        }
+
         return (
-            <section id="library">
+            <section id="library" className={classes} {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
                 <header>Library</header>
-                <menu>
-                    <input type="text" id="search" className="search" placeholder="Search" />
-                </menu>
                 <div className="content">
+                    <menu>
+                        <input type="text" id="search" className="search" placeholder="Search" />
+                    </menu>
                     <ul className="artists tree">
                         {this.state.artists.map(function(artist) {
-                            return <LibraryArtistItem key={artist.name} artist={artist} library={this.props.model} />;
+                            return (
+                                <LibraryArtistItem
+                                    key={artist.name}
+                                    artist={artist}
+                                    library={this.props.model}
+                                    />
+                            );
                         }.bind(this))}
                     </ul>
-                    <ul className="upload"></ul>
-                    <input type="file" id="fileupload" nameName="files[]" data-url="upload" multiple="multiple" />
+                    <ReactCSSTransitionGroup component="div" transitionName="upload">
+                        {uploads}
+                    </ReactCSSTransitionGroup>
                 </div>
                 <div id="overlay" />
             </section>
         );
     },
 
-    //onRender: function() {
-    //    var that = this;
-    //
-    //    this.ui.files.fileupload({
-    //        autoUpload: true,
-    //        sequentialUploads: true
-    //    });
-    //},
+    uploadComplete: function(file) {
+        var index = this.state.uploading.indexOf(file);
 
-    select: function(view) {
-        this.$('li').removeClass('selected');
+        if (index >= 0) {
+            var stateUpdate = {
+                uploading: {
+                    $splice: [
+                        [index, 1]
+                    ]
+                }
+            };
 
-        view.$el.addClass('selected');
+            this.setState(update(this.state, stateUpdate));
+        }
+
+        if (this.state.uploading.length <= 0) {
+            this.uploadAllComplete();
+        }
     },
 
-    onShow: function() {
-        var that = this;
-
-        $(document).on('dragenter.library', function() {
-            that.$el.addClass('library-drop');
+    uploadAllComplete: function() {
+        this.setState({
+            uploads: [],
+            uploading: []
         });
     },
-    onClose: function() {
-        $(document).off('dragover.library');
-    },
-    drop: function() {
-        this.clearDrop();
-    },
-    clearDrop: function() {
-        this.$el.removeClass('library-drop');
-    },
-    startProgress: function() {
-        this.$el.addClass('uploading');
-    },
-    finishProgress: function(e, data) {
-        data.context.addClass('finished');
 
-        if (!this.ui.upload.children().not('.finished').length) {
-            // Finished upload batch.
-
-            this.ui.upload.empty();
-
-            this.$el.removeClass('library-drop uploading');
-
-            MPDisco.command('update');
-        }
-    },
-    createProgress: function(e, data) {
-        if (data.files.length) {
-            data.context = $('<li><span class="filename">' + data.files[0].name + '</span><span class="progress-bar"><span class="progress"></span></span></li>').appendTo(this.ui.upload);
-        }
-    },
-    showProgress: function(e, data) {
-        var progress = parseInt(data.loaded / data.total * 100, 10),
-            itemTop = data.context.position().top,
-            itemHeight = data.context.height(),
-            height = this.ui.upload.height();
-
-        if (itemTop > height) {
-            this.ui.upload.prop('scrollTop', itemTop + itemHeight - height);
-        }
-
-        data.context.find('.progress').css('width', progress + '%');
-    },
-    failProgress: function(e, data) {
-        data.context.addClass('failed');
+    uploadFail: function(file) {
+        console.log('Failed:', upload);
     }
 });
 
