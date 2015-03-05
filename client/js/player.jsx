@@ -125,26 +125,24 @@ var Player = React.createClass({
             return this.togglePlay();
         }
 
-        if (shift) {
-            if (key === 91) { // KeyZ
-                return this.previous();
-            }
+        if (key === 91) { // KeyZ
+            return this.previous();
+        }
 
-            if (key === 67) { // KeyC
-                return this.togglePlay();
-            }
+        if (key === 67) { // KeyC
+            return this.togglePlay();
+        }
 
-            if (key === 86) { // KeyV
-                return this.stop();
-            }
+        if (key === 86) { // KeyV
+            return this.stop();
+        }
 
-            if (key === 88) { // KeyX
-                return this.play();
-            }
+        if (key === 88) { // KeyX
+            return this.play();
+        }
 
-            if (key === 66) { // KeyB
-                return this.next();
-            }
+        if (key === 66) { // KeyB
+            return this.next();
         }
     },
 
