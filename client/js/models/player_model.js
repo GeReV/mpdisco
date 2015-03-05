@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var Promise = require('promise');
+var Q = require('q');
 
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
@@ -38,7 +38,7 @@ _.extend(PlayerModel.prototype, {
     fetchSong: function() {
         var network = this.network;
 
-        var promise = new Promise(function(resolve, reject) {
+        var promise = Q.promise(function(resolve, reject) {
             var handler = function(res) {
                 network.off(handler);
 

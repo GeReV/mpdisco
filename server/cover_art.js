@@ -5,14 +5,14 @@ var Class = require('clah'),
     httpFollower = require('./helpers/http_follower.js'),
     path = require('path'),
     fs = require('fs'),
-    Promise = require('promise'),
+    Q = require('q'),
     _ = require('underscore');
   
 var CoverArt = Class.extend({
   getCover: function(options) {
     var output = this._outputPath(options);
 
-    var promise = new Promise(function(resolve, reject) {
+    var promise = Q.promise(function(resolve, reject) {
 
       var urlName = function(s) {
         return mm.safeName(s).replace(/_/g, '-').toLowerCase();
@@ -40,7 +40,7 @@ var CoverArt = Class.extend({
   },
 
   _findRelease: function(options) {
-    return new Promise(function(resolve, reject) {
+    return Q.promise(function(resolve, reject) {
 
       var host = 'musicbrainz.org',
           path = '/ws/2/release/?fmt=json&query=',
@@ -101,7 +101,7 @@ var CoverArt = Class.extend({
   },
 
   _retrieveCover: function(urls) {
-    return new Promise(function(resolve, reject) {
+    return Q.promise(function(resolve, reject) {
       function getCover(url) {
         if (urls.length <= 0) {
           reject('No covers found.');
@@ -127,7 +127,7 @@ var CoverArt = Class.extend({
   _downloadCover: function(url, output) {
     var file = fs.createWriteStream(output);
 
-    var promise = new Promise(function(resolve, reject) {
+    var promise = Q.promise(function(resolve, reject) {
       httpFollower.get(url, function followRedirects(res) {
         res.pipe(file);
 

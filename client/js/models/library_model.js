@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var Promise = require('promise');
+var Q = require('q');
 
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
@@ -23,7 +23,7 @@ _.extend(LibraryModel.prototype, {
     fetchArtists: function() {
         var network = this.network;
 
-        var promise = new Promise(function(resolve, reject) {
+        var promise = Q.promise(function(resolve, reject) {
             var handler = function(res) {
                 this.artists = res.data.map(function(item) {
                     return { name: item.artist };
@@ -51,7 +51,7 @@ _.extend(LibraryModel.prototype, {
 
         var network = this.network;
 
-        var promise = new Promise(function(resolve, reject) {
+        var promise = Q.promise(function(resolve, reject) {
             var handler = function(res) {
                 if (res.args[0] !== artist.name) {
                     return;
@@ -95,7 +95,7 @@ _.extend(LibraryModel.prototype, {
 
         var network = this.network;
 
-        var promise = new Promise(function(resolve, reject) {
+        var promise = Q.promise(function(resolve, reject) {
             var handler = function(res) {
                 if (res.args[0] !== artist.name || res.args[1] !== album.name) {
                     return;

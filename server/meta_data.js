@@ -1,15 +1,21 @@
-var fs = require('fs'),
+var Q = require('q'),
+    fs = require('fs'),
     mm = require('musicmetadata');
 
 var MetaData = {
-  forFile: function(path, callback) {
-    var stream = fs.createReadStream(path),
-        parser = new mm(stream);
+  forFile: function(path) {
+    return Q.promise(function(resolve, reject) {
+      var stream = fs.createReadStream(path);
 
-    parser.once('metadata', function(data) {
-      stream.destroy();
+      var parser = new mm(stream, function(err, metadata) {
+        stream.destroy();
 
-      callback(data);
+        if (err) {
+          reject(err);
+        } else {
+          resolve(metadata);
+        }
+      });
     });
   },
   safeName: function(s) {
