@@ -2,17 +2,19 @@ var React = require('react/addons');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var LOGO_EMPTY = "images/noise.png";
+
 var Logo = React.createClass({
     getInitialState: function() {
         return {
-            cover: "images/noise.png"
+            cover: LOGO_EMPTY
         };
     },
 
     componentDidMount: function() {
         this.props.model.on('cover', function(url) {
             this.setState({
-                cover: url
+                cover: url || LOGO_EMPTY
             });
         }.bind(this));
     },
