@@ -65,14 +65,14 @@ var PlaylistItem = React.createClass({
                 );
 
                 if (item.album) {
-                    details.push(<span key="sep-album">,&nbsp;</span>);
+                    details.push(<span className="sep" key="sep-album">,&nbsp;</span>);
                     details.push(
                         <span className="album" key="album">{item.album}</span>
                     );
                 }
 
                 if (item.date) {
-                    details.push(<span key="sep-date">,&nbsp;</span>);
+                    details.push(<span className="sep" key="sep-date">,&nbsp;</span>);
                     details.push(
                         <span className="year" key="year">{item.date}</span>
                     );
@@ -80,7 +80,7 @@ var PlaylistItem = React.createClass({
             }
 
             details =
-                <div>
+                <div className="song">
                     <p className="title">{item.title}</p>
                     <p className="details">
                         {details}
@@ -108,9 +108,9 @@ var PlaylistItem = React.createClass({
                 {...this.dragSourceFor(dragType)}
                 {...this.dropTargetFor(dragType)}
             >
-                <span className="time">{time}</span>
                 <div className="image" />
                 {details}
+                <span className="time">{time}</span>
             </li>
         );
     },

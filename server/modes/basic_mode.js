@@ -58,6 +58,9 @@ specialCommands = {
           },
           function(error) {
             console.log('Cover retrieval failed.', error);
+            client.emit('coverart', {
+              url: null
+            });
           });
     }
   }

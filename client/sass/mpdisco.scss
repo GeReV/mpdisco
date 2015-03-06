@@ -33,8 +33,15 @@ body {
   flex: 0 0 280px;
 }
 
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 #container {
   height: 100vh;
+  min-width: 960px;
   display: flex;
   flex-direction: column;
 }
@@ -261,9 +268,7 @@ input[type="text"] {
     flex: 1 0 auto;
     
     h1, h2 {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      @extend .ellipsis;
     }
     
     h1 {
@@ -419,25 +424,25 @@ input[type="text"] {
   clear: both;
   color: #666;
   counter-increment: playlist;
+  display: flex;
   font-size: 12px;
   height: 36px;
   line-height: 13px;
   list-style-type: none;
   padding: 3px;
   
-  &:before, .time {
+  &::before, .time {
     color: #d1d1d1;
     font-size: 20px;
     font-weight: bold;
     line-height: 30px;
     text-align: center;
-    width: 55px;
     height: 30px;
+    flex: 0 0 55px;
   }
   
-  &:before {
+  &::before {
     content: counter(playlist);
-    float: left;
   }
 
   &.playlist-item-dragging {
@@ -457,15 +462,9 @@ input[type="text"] {
   }
 
   p {
+    @extend .ellipsis;
+
     margin: 0;
-  }
-  
-  p, span {
-    display: inline-block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
   
   span {
@@ -474,10 +473,13 @@ input[type="text"] {
   
   .image {
     background: #666;
-    float: left;
     margin-right: 10px;
-    width: 30px;
     height: 30px;
+    flex: 0 0 30px;
+  }
+
+  .song {
+    flex: 1 1 auto;
   }
   
   .title, .url {
@@ -492,11 +494,9 @@ input[type="text"] {
   }
   
   .details {
+    @extend .ellipsis;
+
     margin-top: 5px;
-  }
-  
-  .time {
-    float: right;
   }
 }
 
@@ -573,10 +573,9 @@ input[type="text"] {
     }
 
     .filename {
+      @extend .ellipsis;
+
       flex: 1 1 70%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
     }
 
     .progress-bar {
