@@ -2,28 +2,53 @@ var React = require('react/addons');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var stackblur = require('./vendor/StackBlur');
+
 var LOGO_EMPTY = "images/noise.png";
 
 var Logo = React.createClass({
     getInitialState: function() {
         return {
-            cover: LOGO_EMPTY
+            cover: null
         };
     },
 
     componentDidMount: function() {
         this.props.model.on('cover', function(url) {
-            this.setState({
-                cover: url || LOGO_EMPTY
-            });
+            var blurCanvas = function() {
+                var canvas = this.refs.cover.getDOMNode();
+
+                stackblur(this.state.cover, canvas, +this.props.blurRadius);
+            }.bind(this);
+
+            var onload = function() {
+                this.setState({
+                    cover: image,
+                    coverKey: url
+                }, blurCanvas);
+            }.bind(this);
+
+            var image = new Image();
+            image.src = url;
+            image.onload = image.load = onload;
         }.bind(this));
     },
 
     render: function() {
+
+        var image;
+        if (this.state.cover) {
+            image = (
+                <canvas ref="cover" key={this.state.coverKey} />
+            );
+        } else {
+            image = (<img src={LOGO_EMPTY} alt="No Cover" key={LOGO_EMPTY} />);
+        }
+
         return (
             <hgroup id="logo">
                 <ReactCSSTransitionGroup component="div" className="logo-cover" transitionName="fade">
-                    <img src={this.state.cover} alt="Cover" key={this.state.cover} />
+                    {image}
                 </ReactCSSTransitionGroup>
                 <h1>mpdisco</h1>
             </hgroup>

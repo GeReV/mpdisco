@@ -23,7 +23,7 @@ var MPDisco = React.createClass({
     return (
       <div id="container" role="main">
         <header id="player-head">
-          <Logo model={player} />
+          <Logo model={player} blurRadius={10} />
           <Player model={player} />
         </header>
         <div id="main">

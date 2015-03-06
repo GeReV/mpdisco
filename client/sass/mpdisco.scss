@@ -4,6 +4,8 @@
 
 $library-background: #354052;
 
+$left-column-width: 280px;
+
 html {
   background: #956dc6;
 }
@@ -30,7 +32,7 @@ body {
 }
 
 .left-column {
-  flex: 0 0 280px;
+  flex: 0 0 $left-column-width;
 }
 
 .ellipsis {
@@ -78,11 +80,12 @@ header + menu {
     left: 0;
     right: 0;
 
-    img {
+    canvas {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
+      width: $left-column-width;
+      height: $left-column-width;
     }
   }
 
