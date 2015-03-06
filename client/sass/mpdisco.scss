@@ -55,7 +55,6 @@ header + menu {
 }
 
 #player-head {
-  background: #fff;
   display: flex;
   flex-direction: row;
   height: 140px;
@@ -103,11 +102,6 @@ header + menu {
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
-}
-
-#player-body {
-  display: flex;
-  flex: 1 1 auto;
 }
 
 #playlist {
@@ -159,6 +153,7 @@ input[type="text"] {
   > header {
     box-sizing: border-box;
     font-weight: bold;
+    height: 44px;
     line-height: 44px;
     padding: 0 11px;
     text-transform: uppercase;
@@ -218,6 +213,7 @@ input[type="text"] {
 }
 
 #player {
+  background: url('/images/noise.png') $library-background repeat top left;
   color: #cccbcd;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
   display: flex;
@@ -284,7 +280,7 @@ input[type="text"] {
     }
     
     .duration {
-      color: #666;
+      color: #a0acbf;
       font-size: 32px;
       line-height: 26px;
     }
