@@ -126,8 +126,6 @@ var Playlist = React.createClass({
                 <header>
                     <span>Playlist</span>
                     <div className="playlist-tools button-group">
-                        <input type="text" id="url" name="url" placeholder="Add a link" />
-                        <span className="separator"></span>
                         <a className={shuffleClasses} href="#" onClick={this.toggleShuffle}><i className="icon-random"></i></a>
                         <a className={repeatClasses} href="#" onClick={this.toggleRepeat}><i className="icon-refresh"></i></a>
                         <span className="separator"></span>
