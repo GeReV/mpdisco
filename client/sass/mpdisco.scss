@@ -62,6 +62,23 @@ header + menu {
   background-repeat: no-repeat;
   display: flex;
   align-items: center;
+  position: relative;
+
+  .logo-cover {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+    }
+  }
 
   h1 {
     color: #fff;
@@ -71,6 +88,7 @@ header + menu {
     text-align: center;
     text-shadow: 0 0 9px rgba(0, 0, 0, 0.6);
     text-transform: uppercase;
+    z-index: 0;
   }
 }
 
@@ -882,4 +900,22 @@ input[type="text"] {
       height: 30px;
     }
   }
+}
+
+.fade-enter {
+  opacity: 0.01;
+  transition: opacity 1s ease-in-out;
+}
+
+.fade-enter.fade-enter-active {
+  opacity: 1;
+}
+
+.fade-leave {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
+}
+
+.fade-leave.fade-leave-active {
+  opacity: 0.01;
 }

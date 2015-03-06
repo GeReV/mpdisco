@@ -1,13 +1,15 @@
 var React = require('react/addons');
 
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+
 var Logo = React.createClass({
     getInitialState: function() {
         return {
-            cover: null
+            cover: "images/noise.png"
         };
     },
 
-    componentWillMount: function() {
+    componentDidMount: function() {
         this.props.model.on('cover', function(url) {
             this.setState({
                 cover: url
@@ -16,14 +18,11 @@ var Logo = React.createClass({
     },
 
     render: function() {
-        var style = {};
-
-        if (this.state.cover) {
-            style.backgroundImage = 'url(' + this.state.cover + ')';
-        }
-
         return (
-            <hgroup id="logo" style={style}>
+            <hgroup id="logo">
+                <ReactCSSTransitionGroup component="div" className="logo-cover" transitionName="fade">
+                    <img src={this.state.cover} alt="Cover" key={this.state.cover} />
+                </ReactCSSTransitionGroup>
                 <h1>mpdisco</h1>
             </hgroup>
         );
