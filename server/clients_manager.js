@@ -29,8 +29,13 @@ var ClientsManager = Class.extend({
   },
 
   connected: function(client) {
+    if (!client.handshake.session.userid) {
+      client.handshake.session.userid = uuid.v4();
+      client.handshake.session.save();
+    }
+
     var info = client.info = {
-      userid: uuid.v4()
+      userid: client.handshake.session.userid
     };
 
     var prevClient = this.clientsHash[info.userid];

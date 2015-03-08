@@ -6,7 +6,6 @@ var
     compression = require('compression'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
-    cookie = require('cookie'),
     io = require('socket.io'),
     _ = require('underscore');
 
@@ -28,30 +27,32 @@ var Server = Class.extend({
 
         this.uploadHandler = this._initUploadHandler(this.mpd, this.options.config);
 
+        var sessionStore = session({
+            name: this.options.config.session_key,
+            secret: this.options.config.secret,
+            resave: false,
+            saveUninitialized: true
+        });
+
         this.app = express();
-        this._initApp(this.app, this.options);
+        this._initApp(this.app, this.options, sessionStore);
 
         this.server = http.Server(this.app);
 
         this.socket = io(this.server);
-        this._initSocketIO(this.socket, this.options.config);
+        this._initSocketIO(this.socket, this.options.config, sessionStore);
 
         this.clientsManager = ClientsManager.instance();
     },
 
-    _initApp: function (app, options) {
+    _initApp: function (app, options, session) {
 
         var config = options.config;
 
         app.use(compression());
         app.use(cookieParser());
 
-        app.use(session({
-            name: config.session_key,
-            secret: config.secret,
-            resave: false,
-            saveUninitialized: true
-        }));
+        app.use(session);
 
         app.use(express.static(path.join(__pwd, '/public')));
 
@@ -80,53 +81,35 @@ var Server = Class.extend({
         });
     },
 
-    _initSocketIO: function (sio, config) {
-
-        //Configure the socket.io connection settings.
-        //See http://socket.io/
-        sio.use(function (socket, next) {
-            var data = socket.request;
-            // check if there's a cookie header
-            if (data.headers.cookie) {
-                // if there is, parse the cookie
-                data.cookie = cookie.parse(decodeURIComponent(data.headers.cookie));
-
-                // note that you will need to use the same key to grad the
-                // session id, as you specified in the Express setup.
-                data.sessionID = data.cookie[config.session_key];
-                data.name = data.cookie['mpdisco.name'];
-            } else {
-                // if there isn't, turn down the connection with a message
-                // and leave the function.
-                return next(new Error('No cookie transmitted.'));
-            }
-            // accept the incoming connection
-            next();
-        });
+    _initSocketIO: function (sio, session) {
 
         //Socket.io will call this function when a client connects,
         //So we can send that client a unique ID we use so we can
         //maintain the list of players.
-        sio.sockets.on('connection', function (client) {
+        sio.on('connection', function (client) {
 
-            this.clientsManager.connected(client);
+            // Embed the session in the client's handshake.
+            session(client.handshake, {}, function() {
 
-            client.on('command', function (cmd) {
+                this.clientsManager.connected(client);
 
-                this.mode.command(cmd.command, cmd.args, client);
+                client.on('command', function (cmd) {
 
+                    this.mode.command(cmd.command, cmd.args, client);
+
+                }.bind(this));
+
+                client.on('commands', function (cmds) {
+
+                    this.mode.commands(cmds, client);
+
+                }.bind(this));
+
+                this.mpd.on('system', function (system) {
+                    client.emit('update', system);
+                    client.emit('update:' + system);
+                });
             }.bind(this));
-
-            client.on('commands', function (cmds) {
-
-                this.mode.commands(cmds, client);
-
-            }.bind(this));
-
-            this.mpd.on('system', function (system) {
-                client.emit('update', system);
-                client.emit('update:' + system);
-            });
 
         }.bind(this));
     },
