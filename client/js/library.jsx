@@ -39,18 +39,28 @@ var Library = React.createClass({
 
     getInitialState: function() {
         return {
-            artists: this.props.model.artists || [],
+            animations: false,
+            artists: null,
             uploads: [],
             uploading: []
         };
     },
 
-    componentWillMount: function() {
+    componentDidMount: function() {
         this.props.model.on('updating', this.setUpdatingState);
 
         this.props.model.on('update', this.setArtists);
 
         this.props.model.fetchArtists().done(this.setArtists);
+    },
+
+    componentDidUpdate: function() {
+        if (this.state.artists && !this.state.animations) {
+            // Turn library update animations on.
+            this.setState({
+                animations: true
+            });
+        }
     },
 
     setArtists: function(artists) {
@@ -112,6 +122,8 @@ var Library = React.createClass({
             );
         }
 
+        var artists = this.state.artists || [];
+
         return (
             <section id="library" className={classes} {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
                 <header>Library</header>
@@ -119,8 +131,8 @@ var Library = React.createClass({
                     <menu>
                         <input type="text" id="search" className="search" placeholder="Search" />
                     </menu>
-                    <ul className="artists tree">
-                        {this.state.artists.map(function(artist) {
+                    <ReactCSSTransitionGroup component="ul" className="artists tree" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
+                        {artists.map(function(artist) {
                             return (
                                 <LibraryArtistItem
                                     key={artist.name}
@@ -129,7 +141,7 @@ var Library = React.createClass({
                                     />
                             );
                         }.bind(this))}
-                    </ul>
+                    </ReactCSSTransitionGroup>
                     <ReactCSSTransitionGroup component="div" transitionName="upload">
                         {uploads}
                     </ReactCSSTransitionGroup>

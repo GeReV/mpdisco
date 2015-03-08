@@ -2,6 +2,7 @@ var React = require('react/addons');
 var HotKey = require('react-hotkey');
 
 var cx = React.addons.classSet;
+var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var Scrubber = require('./scrubber.jsx');
 
@@ -19,6 +20,7 @@ var Player = React.createClass({
 
     getInitialState: function() {
         return {
+            animations: false,
             song: {
                 title: '',
                 artist: '',
@@ -34,7 +36,7 @@ var Player = React.createClass({
         };
     },
 
-    componentWillMount: function() {
+    componentDidMount: function() {
         this.props.model.on('song', function(song) {
             this.setState({
                 song: song
@@ -67,6 +69,14 @@ var Player = React.createClass({
         this.props.model.update();
     },
 
+    componentDidUpdate: function() {
+        if (this.state.song && !this.state.animations) {
+            this.setState({
+                animations: true
+            });
+        }
+    },
+
     render: function() {
         var song = this.state.song;
 
@@ -89,8 +99,12 @@ var Player = React.createClass({
         return (
             <div id="player">
                 <div className="info">
-                    <h1>{title}</h1>
-                    <h2>{song.artist} {album}</h2>
+                    <ReactCSSTransitionGroup component="h1" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
+                        <span key={'title_' + song.id}>{title}</span>
+                    </ReactCSSTransitionGroup>
+                    <ReactCSSTransitionGroup component="h2" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
+                        <span key={'artist_album_' + song.id}>{song.artist} {album}</span>
+                    </ReactCSSTransitionGroup>
                     <h2 className="duration">{time}</h2>
                 </div>
                 <Scrubber progress={this.state.time} total={song.time} onScrub={this.scrub} />

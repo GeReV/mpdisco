@@ -3,8 +3,33 @@
 @import 'font-awesome';
 
 $library-background: #354052;
+$library-color: #a0acbf;
 
 $left-column-width: 280px;
+
+@mixin slide($slide-offset, $slide-duration: 0.3s, $slide-delay: $slide-duration / 2) {
+  .slide-enter {
+    opacity: 0.01;
+    transform: translate(-$slide-offset, 0);
+    transition: transform $slide-duration ease-in-out, opacity $slide-duration ease-in-out;
+  }
+
+  .slide-enter.slide-enter-active {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  .slide-leave {
+    opacity: 1;
+    transform: translate(0, 0);
+    transition: transform $slide-duration ease-in-out $slide-delay, opacity $slide-duration ease-in-out $slide-delay;
+  }
+
+  .slide-leave.slide-leave-active {
+    opacity: 0.01;
+    transform: translate($slide-offset, 0);
+  }
+}
 
 html {
   background: #956dc6;
@@ -267,7 +292,13 @@ input[type="text"] {
     flex: 1 0 auto;
     
     h1, h2 {
-      @extend .ellipsis;
+      @extend .slide-over;
+
+      @include slide(200px);
+
+      span {
+        @extend .ellipsis;
+      }
     }
     
     h1 {
@@ -503,7 +534,27 @@ input[type="text"] {
 
   @extend .left-column;
 
+  /* Update animation */
+  $anim-duration: 0.3s;
+
+  @include slide(100%, $anim-duration);
+
+  /* React removes the classes as soon as the first slide finishes.
+     Need to rethink this one. */
+  /*.slide-enter {
+    color: #e0ecff;
+
+    .name {
+      transition: color 1.5s ease-out $anim-duration;
+    }
+  }
+  .slide-enter.slide-enter-active {
+    color: $library-color;
+  }*/
+  /* end */
+
   background: $library-background;
+  color: $library-color;
   display: flex;
   flex-direction: column;
   
@@ -675,7 +726,6 @@ input[type="text"] {
   }
 
   .name {
-    color: #a0acbf;
     display: block;
     line-height: 32px;
     overflow: hidden;
@@ -900,6 +950,8 @@ input[type="text"] {
   }
 }
 
+/* Transitions */
+
 .fade-enter {
   opacity: 0.01;
   transition: opacity 1s ease-in-out;
@@ -916,4 +968,12 @@ input[type="text"] {
 
 .fade-leave.fade-leave-active {
   opacity: 0.01;
+}
+
+.slide-over {
+  position: relative;
+
+  .slide-leave {
+    position: absolute;
+  }
 }

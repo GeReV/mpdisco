@@ -39,6 +39,7 @@ var Playlist = React.createClass({
 
     getInitialState: function() {
         return {
+            animations: false,
             state: {
                 random: 0,
                 repeat: 0,
@@ -71,6 +72,13 @@ var Playlist = React.createClass({
         }.bind(this));
 
         this.props.model.fetchPlaylist();
+    },
+
+    componentDidMount: function() {
+        // Turn library update animations on.
+        this.setState({
+            animations: true
+        });
     },
 
     render: function() {
