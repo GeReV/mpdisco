@@ -15,10 +15,12 @@ var ListenersModel = require('./models/listeners_model.js');
 
 var MPDisco = React.createClass({
   render: function () {
-    var library = new LibraryModel(window.MPDisco.network);
-    var listeners = new ListenersModel(window.MPDisco.network);
-    var player = new PlayerModel(window.MPDisco.network);
-    var playlist = new PlaylistModel(window.MPDisco.network);
+    var network = this.props.network;
+
+    var library = new LibraryModel(network);
+    var listeners = new ListenersModel(network);
+    var player = new PlayerModel(network);
+    var playlist = new PlaylistModel(network);
 
     return (
       <div id="container" role="main">

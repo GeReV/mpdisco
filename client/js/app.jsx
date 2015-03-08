@@ -1,7 +1,7 @@
-var _ = require('underscore');
 var React = require('react/addons');
 var Network = require('./network.js');
 var MPDisco = require('./mpdisco.jsx');
+var _ = require('underscore');
 
 _.findIndex = function(obj, iterator, context) {
     var result = -1;
@@ -16,12 +16,8 @@ _.findIndex = function(obj, iterator, context) {
 
 var host = window.location.hostname;
 
-MPDisco.network = new Network(host, 3000);
-
-MPDisco.command = MPDisco.network.command.bind(MPDisco.network);
-
-MPDisco.commands = MPDisco.network.commands.bind(MPDisco.network);
+var network = new Network(host, 3000);
 
 window.MPDisco = MPDisco;
 
-React.render(<MPDisco />, document.body);
+React.render(<MPDisco network={network} />, document.body);
