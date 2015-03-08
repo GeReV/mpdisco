@@ -17,10 +17,10 @@ var MPDisco = React.createClass({
   render: function () {
     var network = this.props.network;
 
-    var library = new LibraryModel(network);
+    var library   = new LibraryModel(network);
     var listeners = new ListenersModel(network);
-    var player = new PlayerModel(network);
-    var playlist = new PlaylistModel(network);
+    var player    = new PlayerModel(network);
+    var playlist  = new PlaylistModel(network);
 
     return (
       <div id="container" role="main">
@@ -28,11 +28,11 @@ var MPDisco = React.createClass({
           <Logo model={player} blurRadius={10} />
           <Player model={player} />
         </header>
-        <div id="main">
+        <main>
           <Library model={library} />
           <Playlist model={playlist} player={player} />
           <Listeners model={listeners} />
-        </div>
+        </main>
       </div>
     );
   }

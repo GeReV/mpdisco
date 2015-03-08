@@ -6,6 +6,8 @@ var Class = require('clah'),
 
 var Gravatar = require('./gravatar.js');
 
+var EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+
 _.findIndex = function(obj, iterator, context) {
   var result = -1;
   _.any(obj, function(value, index, list) {
@@ -80,8 +82,6 @@ var ClientsManager = Class.extend({
 
       this.dropClient(client);
 
-      this.sendClientsList(client.broadcast);
-
       client.broadcast.emit('clientdisconnected', info/*, this.clientsInfo*/);
 
       this.emit('disconnected', client);
@@ -105,7 +105,7 @@ var ClientsManager = Class.extend({
        return;
      }
 
-     if (/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(name.trim())) {
+     if (EMAIL_REGEX.test(name.trim())) {
        Gravatar.profile(name, false, function(profile) {
          this.identifyClient(client, profile);
        }.bind(this));
@@ -143,7 +143,7 @@ var ClientsManager = Class.extend({
   },
 
   sendClientsList: function(client) {
-    client.emit('clientslist', this.clientsInfo());
+    client.emit('clientslist', this.clientsInfo(), client.info);
   },
 
   get: function(userid) {

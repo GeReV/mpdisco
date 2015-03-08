@@ -1,13 +1,25 @@
 var React = require('react/addons');
 
+var cx = React.addons.classSet;
+
 var Listener = React.createClass({
     render: function() {
         var listener = this.props.listener;
 
+        var classes = cx({
+            listener: true,
+            anonymous: !listener.logged,
+            you: this.props.you
+        });
+
         if (!listener.logged) {
+            var name = this.props.you ?
+                <span>You <a href="#">Login?</a></span> :
+                <span>Anonymous Listener</span>;
+
             return (
-                <li className="listener anonymous">
-                    <span>Anonymous Listener</span>
+                <li className={classes}>
+                    {name}
                 </li>
             );
         }
@@ -20,7 +32,7 @@ var Listener = React.createClass({
             displayName;
 
         return (
-            <li className="listener">
+            <li className={classes}>
                 <img src={thumbnailUrl} alt={displayName} />
                 <span>{name}</span>
             </li>

@@ -9,9 +9,11 @@ var ListenersModel = function(network) {
 
     this.listeners = [];
 
-    this.network.on('clientslist', function(clients) {
-        this.emit('clientslist', clients);
+    this.network.on('clientslist', function(clients, me) {
+        this.emit('clientslist', clients, me);
     }.bind(this));
+
+    this.network.on('clientdisconnected', this.fetchListeners.bind(this));
 };
 
 util.inherits(ListenersModel, EventEmitter);
@@ -24,12 +26,10 @@ _.extend(ListenersModel.prototype, {
             var handler = function(clients) {
                 this.listeners = clients;
 
-                network.off(handler);
-
                 resolve(this.listeners);
             }.bind(this);
 
-            network.on('clientslist', handler);
+            network.once('clientslist', handler);
         }.bind(this));
 
         this.network.send('clientslist');

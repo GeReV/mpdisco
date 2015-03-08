@@ -77,6 +77,12 @@ header {
   flex: 0 0 auto;
 }
 
+main {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+}
+
 header + menu {
   flex: 0 0 auto;
 }
@@ -124,12 +130,6 @@ header + menu {
     text-transform: uppercase;
     z-index: 0;
   }
-}
-
-#main {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: row;
 }
 
 #playlist {

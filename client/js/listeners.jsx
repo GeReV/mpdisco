@@ -9,10 +9,11 @@ var Listeners = React.createClass({
         }
     },
 
-    componentWillMount: function() {
-        var updateList = function(listeners) {
+    componentDidMount: function() {
+        var updateList = function(listeners, me) {
             this.setState({
-                listeners: listeners
+                listeners: listeners,
+                me: me
             });
         }.bind(this);
 
@@ -22,9 +23,12 @@ var Listeners = React.createClass({
     },
 
     render: function() {
+        var me = this.state.me;
         var listeners = this.state.listeners.map(function(listener) {
+            var isMe = (listener.userid === me.userid);
+
             return (
-                <Listener key={listener.userid} listener={listener} />
+                <Listener key={listener.userid} listener={listener} you={isMe} />
             );
         });
 
