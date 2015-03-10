@@ -96,9 +96,7 @@ header + menu {
 #logo {
   @extend .left-column;
 
-  background-color: #354052;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: url('/images/noise.png') #354052 repeat top left;
   display: flex;
   align-items: center;
   position: relative;

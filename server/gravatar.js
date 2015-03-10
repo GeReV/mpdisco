@@ -26,7 +26,7 @@ var Gravatar = {
   },
   profile: function(email, https, callback, error) {
     var that = this,
-        options = url.parse(gravatar.profileUrl(email, 'json', https));
+        options = url.parse(Gravatar.profileUrl(email, 'json', https));
 
     options.headers = {
       'User-Agent': 'Mozilla/5.0 (compatible; MPDisco node.js client)'

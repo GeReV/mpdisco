@@ -1,5 +1,6 @@
 var Class = require('clah'),
     EventEmitter = require('events').EventEmitter,
+    debug = require('debug')('clients_manager'),
     uuid = require('node-uuid'),
     util = require('util'),
     _ = require('underscore');
@@ -29,9 +30,11 @@ var ClientsManager = Class.extend({
   },
 
   connected: function(client) {
-    if (!client.handshake.session.userid) {
-      client.handshake.session.userid = uuid.v4();
-      client.handshake.session.save();
+    var session = client.handshake.session;
+
+    if (!session.userid) {
+      session.userid = uuid.v4();
+      session.save();
     }
 
     var info = client.info = {
@@ -41,12 +44,12 @@ var ClientsManager = Class.extend({
     var prevClient = this.clientsHash[info.userid];
 
     //Useful to know when someone connects
-    console.log('\t socket.io:: client ' + info.userid + ' connected');
+    debug('Client connected:', info.userid);
 
     if (prevClient) {
       client.info = prevClient.info;
 
-      console.log('client returned ' + info.userid);
+      debug('Client returned:', info.userid);
 
     }
 
@@ -80,8 +83,9 @@ var ClientsManager = Class.extend({
 
     var info = client.info;
 
-    console.log('\t socket.io:: client disconnected ' + info.userid);
-    console.log('client has 5 seconds to return');
+    debug('Client disconnected:', info.userid);
+
+    debug('Client has 5 seconds to return before dropping...');
 
     this.disconnectionTimeouts[info.userid] = setTimeout(function() {
 
@@ -98,7 +102,7 @@ var ClientsManager = Class.extend({
   dropClient: function(client) {
     var info = client.info;
 
-    console.log('Dropped client ' + info.userid);
+    debug('Dropped client:', info.userid);
 
     this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === info.userid; });
 
@@ -121,14 +125,14 @@ var ClientsManager = Class.extend({
      }
   },
 
-  identifyClient: function(client, info) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
+  identifyClient: function(client, profile) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
     var index;
 
-    if (info.entry && info.entry.length) {
-      info = info.entry[0];
+    if (profile.entry && profile.entry.length) {
+      profile = profile.entry[0];
     }
 
-    client.info = _.extend({ logged: true }, client.info, info);
+    client.info = _.extend({ logged: true }, client.info, profile);
 
     index = _.findIndex(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
 
@@ -139,10 +143,10 @@ var ClientsManager = Class.extend({
     }
 
     client.emit('identify', client.info);
+    client.broadcast.emit('clientidentified', client.info/*, this.clientsInfo*/);
 
     this.sendClientsList(client.broadcast);
-
-    client.broadcast.emit('clientconnected', client.info/*, this.clientsInfo*/);
+    this.sendClientsList(client);
 
     this.emit('identified', client);
   },

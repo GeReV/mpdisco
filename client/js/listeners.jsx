@@ -28,9 +28,9 @@ var Listeners = React.createClass({
             var isMe = (listener.userid === me.userid);
 
             return (
-                <Listener key={listener.userid} listener={listener} you={isMe} />
+                <Listener key={listener.userid} listener={listener} you={isMe} onIdentify={this.handleIdentify} />
             );
-        });
+        }, this);
 
         return (
             <section id="listeners">
@@ -40,6 +40,10 @@ var Listeners = React.createClass({
                 </ul>
             </section>
         );
+    },
+
+    handleIdentify: function(name) {
+        this.props.model.identify(name);
     }
 });
 

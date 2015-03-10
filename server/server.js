@@ -1,4 +1,5 @@
 var
+    debug = require('debug')('server'),
     Class = require('clah'),
     path = require('path'),
     http = require('http'),
@@ -39,10 +40,10 @@ var Server = Class.extend({
 
         this.server = http.Server(this.app);
 
-        this.socket = io(this.server);
-        this._initSocketIO(this.socket, this.options.config, sessionStore);
-
         this.clientsManager = ClientsManager.instance();
+
+        this.socket = io(this.server);
+        this._initSocketIO(this.socket, sessionStore, this.clientsManager);
     },
 
     _initApp: function (app, options, session) {
@@ -81,7 +82,7 @@ var Server = Class.extend({
         });
     },
 
-    _initSocketIO: function (sio, session) {
+    _initSocketIO: function (sio, session, clientsManager) {
 
         //Socket.io will call this function when a client connects,
         //So we can send that client a unique ID we use so we can
@@ -91,7 +92,7 @@ var Server = Class.extend({
             // Embed the session in the client's handshake.
             session(client.handshake, {}, function() {
 
-                this.clientsManager.connected(client);
+                clientsManager.connected(client);
 
                 client.on('command', function (cmd) {
 
@@ -131,7 +132,7 @@ var Server = Class.extend({
 
                         var filename = path.join.apply(this, parts);
 
-                        console.log('Saving to', filename);
+                        debug('Saving uploaded file to', filename);
 
                         callback(filename);
                     })
@@ -142,7 +143,8 @@ var Server = Class.extend({
         });
 
         handler.on('end', _.debounce(function(result) {
-            console.log('Updating database...');
+            debug('Updating database...');
+
             mpd.sendCommand('update');
         }.bind(this), 5000));
 

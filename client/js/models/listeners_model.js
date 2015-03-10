@@ -30,11 +30,17 @@ _.extend(ListenersModel.prototype, {
             }.bind(this);
 
             network.once('clientslist', handler);
+
+            network.send('clientslist');
         }.bind(this));
 
-        this.network.send('clientslist');
+
 
         return promise;
+    },
+
+    identify: function(name) {
+        this.network.send('identify', name);
     }
 });
 

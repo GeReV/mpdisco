@@ -41,8 +41,6 @@ var Logo = React.createClass({
             image = (
                 <canvas ref="cover" key={this.state.coverKey} />
             );
-        } else {
-            image = (<img src={LOGO_EMPTY} alt="No Cover" key={LOGO_EMPTY} />);
         }
 
         return (
