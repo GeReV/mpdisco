@@ -1,5 +1,5 @@
 var
-    debug = require('debug')('server'),
+    debug = require('debug')('mpdisco:server'),
     Class = require('clah'),
     path = require('path'),
     http = require('http'),
@@ -132,7 +132,7 @@ var Server = Class.extend({
 
                         var filename = path.join.apply(this, parts);
 
-                        debug('Saving uploaded file to', filename);
+                        debug('Saving uploaded file to %s', filename);
 
                         callback(filename);
                     })

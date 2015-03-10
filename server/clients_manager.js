@@ -1,6 +1,6 @@
 var Class = require('clah'),
     EventEmitter = require('events').EventEmitter,
-    debug = require('debug')('clients_manager'),
+    debug = require('debug')('mpdisco:clients_manager'),
     uuid = require('node-uuid'),
     util = require('util'),
     _ = require('underscore');
@@ -44,12 +44,12 @@ var ClientsManager = Class.extend({
     var prevClient = this.clientsHash[info.userid];
 
     //Useful to know when someone connects
-    debug('Client connected:', info.userid);
+    debug('Client connected: %s', info.userid);
 
     if (prevClient) {
       client.info = prevClient.info;
 
-      debug('Client returned:', info.userid);
+      debug('Client returned: %s', info.userid);
 
     }
 
@@ -83,7 +83,7 @@ var ClientsManager = Class.extend({
 
     var info = client.info;
 
-    debug('Client disconnected:', info.userid);
+    debug('Client disconnected: %s', info.userid);
 
     debug('Client has 5 seconds to return before dropping...');
 
@@ -102,7 +102,7 @@ var ClientsManager = Class.extend({
   dropClient: function(client) {
     var info = client.info;
 
-    debug('Dropped client:', info.userid);
+    debug('Dropped client: %s', info.userid);
 
     this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === info.userid; });
 
@@ -141,6 +141,8 @@ var ClientsManager = Class.extend({
     } else {
       this.loggedClients.push(client);
     }
+
+    debug('Client %s identified as %s.', client.info.userid, client.info.displayName);
 
     client.emit('identify', client.info);
     client.broadcast.emit('clientidentified', client.info/*, this.clientsInfo*/);

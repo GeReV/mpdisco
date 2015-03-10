@@ -2,8 +2,7 @@ var
     Class = require('clah'),
     path = require('path'),
     _ = require('underscore'),
-    mpd = require('mpd'),
-    commandProcessors = require('./command_processors.js');
+    mpd = require('mpd');
 
 var Server = require('./server.js');
 
@@ -25,7 +24,7 @@ var MPDisco = Class.extend({
             console.log('MPDisco Server :: MPD :: connection established');
         });
 
-        this.mode = new mode(this.mpd, commandProcessors);
+        this.mode = mode.create(this.mpd);
 
         this.server = new Server(this.mpd, this.mode, this.options);
         this.server.start();

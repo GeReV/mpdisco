@@ -1,11 +1,12 @@
-var BasicMode = require('./basic_mode.js'),
+var debug = require('debug')('mpdisco:master_mode'),
+    BasicMode = require('./basic_mode.js'),
     ClientsManager = require('../clients_manager.js'),
     config = require('../../config.json'),
     _ = require('underscore');
 
 var MasterMode = BasicMode.extend({
-  init: function(mpd, cmdProcessors) {
-    this._super(mpd, cmdProcessors);
+  init: function(mpd) {
+    this._super(mpd);
 
     this.type = 'master';
 
@@ -63,19 +64,17 @@ var MasterMode = BasicMode.extend({
   },
 
   setMaster: function(client) {
-    var timeout;
-
     if (!client) {
       this.master = null;
 
-      console.log('master cleared');
+      debug('Master cleared.');
 
       return;
     }
 
     this.master = client.info.userid;
 
-    console.log('master changed', this.master);
+    console.log('Master changed:', this.master);
 
     this.setMasterTimeout();
 
@@ -87,22 +86,23 @@ var MasterMode = BasicMode.extend({
   },
   setMasterTimeout: function() {
 
+    var masterTime = +config.master_time;
+
     clearTimeout(this.masterTimeout);
 
-    console.log('master timeout (mins):', config.master_time);
+    debug('Master timeout (mins): %s', masterTime);
 
-    this.masterTimestamp = (new Date()).getTime();
+    this.masterTimestamp = Date.now();
 
     this.masterTimeout = setTimeout(function() {
-      console.log('rotating master');
+      debug('Rotating master');
 
       this.clientsManager.rotate();
 
       this.setMaster(this.clientsManager.first());
 
       clearTimeout(this.masterTimeout);
-    }.bind(this), +config.master_time * 60 * 1000);
-
+    }.bind(this), masterTime * 60 * 1000);
   },
 
   isWhitelistCommand: function(cmd) {
@@ -112,5 +112,9 @@ var MasterMode = BasicMode.extend({
   commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update']
 
 });
-  
+
+MasterMode.create = function(mpd) {
+  return new MasterMode(mpd);
+};
+
 module.exports = MasterMode;

@@ -1,104 +1,51 @@
 var Class = require('clah'),
+    debug = require('debug')('mpdisco:mode'),
     mpd = require('mpd'),
+    mpdcmd = mpd.cmd,
     _ = require('underscore'),
     ClientsManager = require('../clients_manager.js'),
 
-    ObjectListParser = require('../response_parsers/object_list_parser.js'),
-    SimpleParser = require('../response_parsers/simple_parser.js'),
-    LineParser = require('../response_parsers/line_parser.js'),
-
-    CoverArt = require('../cover_art.js'),
-
-    specialCommands,
-    parsers;
-
-var clientsManager = ClientsManager.instance();
-
-
-specialCommands = {
-  list: function emitSpecializedEvent(command, args, response, client) {
-    if (args.length) {
-      console.log('Emitting:', command);
-
-      client.emit(command, response);
-
-      console.log('Emitting:', command + ':' + args[0].toLowerCase());
-
-      client.emit(command + ':' + args[0].toLowerCase(), {
-        args: args.slice(1),
-        data: response
-      });
-    }
-  },
-  find: function emitCommandWithEverySecondArg(command, args, response, client) {
-    if (args.length) {
-      //console.log('Emitting:', command);
-
-      client.emit(command, {
-        args: _.filter(args, function(v, i) { return (i % 2 == 1); }),
-        data: response
-      });
-    }
-  },
-  currentsong: function(command, args, response, client) {
-
-    client.emit(command, response);
-
-    console.log('currentsong', response);
-
-    if (response && response.artist && response.album) {
-
-      CoverArt
-          .getCover({ artist: response.artist, release: response.album })
-          .done(function(url) {
-            console.log('informing client', url);
-            client.emit('coverart', {
-              url: url
-            });
-          },
-          function(error) {
-            console.log('Cover retrieval failed.', error);
-            client.emit('coverart', {
-              url: null
-            });
-          });
-    }
-  }
-};
-
-parsers = {
-  'list':         new LineParser(),
-  'list:album':   new LineParser(),
-  'find':         new ObjectListParser('file'),
-  'playlistinfo': new ObjectListParser('file'),
-  'simple':       new SimpleParser()
-};
+    commandProcessors = require('../command_processors.js'),
+    commandParsers = require('../command_parsers.js'),
+    commandEmitters = require('../command_emitters.js');
 
 function sanitizeArgs(args) {
-  return _.map(args, function(arg) {
-    return arg ? '' + arg : '';
-  });
+  return args.map(String);
 }
 
 function ensureArray(args) {
   return _.isArray(args) ? args : [args];
 }
 
-function getParser(command, args) {
-  var key = command + ':' + args[0];
+function execute (mpd, command, args, client) {
+  var cmd;
 
-  return  parsers[key] ||
-          parsers[command] ||
-          parsers.simple;
+  args = sanitizeArgs(ensureArray(args));
+
+  cmd = mpdcmd(command, args);
+
+  debug('Received: %s %s', command, JSON.stringify(args));
+
+  mpd.sendCommand(cmd, function(err, result) {
+
+    // First parse the result.
+    var parser = commandParsers.parserForCommand(command, args);
+
+    var response = parser.parse(result);
+
+    // Then emit it to the client.
+    var emitter = commandEmitters.emitterForCommand(command);
+
+    emitter(command, args, response, client);
+  });
 }
 
+var clientsManager = ClientsManager.instance();
+
 var BasicMode = Class.extend({
-  init: function(mpd, cmdProcessors) {
+  init: function(mpd) {
     this.type = 'freeforall';
-
     this.mpd = mpd;
-
-    this.commandProcessors = cmdProcessors;
   },
   connected: function(client) {
     client.emit('connected', {
@@ -109,56 +56,45 @@ var BasicMode = Class.extend({
     });
   },
   command: function(command, args, client) {
-    var processor,
-        callback = function(args) {
-          this.execute(command, args, client);
-        }.bind(this),
-        error = function(args) {
-
-          client.emit('error', {
-            command: command,
-            args: args
-          });
-
-        };
 
     command = command.toLowerCase();
 
-    args = sanitizeArgs(ensureArray(args));
-
     if (this.canExecute(command, client)) {
 
-      processor = this.commandProcessors[command];
+      args = sanitizeArgs(ensureArray(args));
 
-      if (processor) {
+      // Run the command through the processor, which calls back with modified args (e.g. Youtube stream from url).
+      var promise = commandProcessors.processorForCommand(this.mpd, command, args);
 
-        // Run the command through the processor, which calls back with modified args (e.g. Youtube stream from url).
-        processor(this.mpd, args, callback, error);
+      promise
+          .then(function(args) {
+            execute(this.mpd, command, args, client);
+          }.bind(this))
+          .fail(function(error) {
+            console.log('Failed to run command: %s (%s) for user %s', command, JSON.stringify(args), client.info.userid);
+            console.log('Error: %s', error);
 
-      }else{
-        this.execute(command, args, client);
-      }
+            client.emit('error', {
+              command: command,
+              args: args
+            });
+          });
 
-      return;
+    } else {
+      console.log('nopermission', command);
+
+      client.emit(command, {
+        type: 'nopermission'
+      });
     }
-
-    console.log('nopermission', command);
-
-    client.emit(command, {
-      type: 'nopermission'
-    });
   },
   // TODO: Review this.
   commands: function(cmds, client) {
 
     cmds = cmds || [];
 
-    cmds = _.map(cmds, function(cmd) {
-      if (!_.isArray(cmd.args)) {
-        cmd.args = [cmd.args];
-      }
-
-      cmd.args = sanitizeArgs(cmd.args);
+    cmds = cmds.map(function(cmd) {
+      cmd.args = sanitizeArgs(ensureArray(cmd.args));
 
       return cmd;
     });
@@ -167,18 +103,18 @@ var BasicMode = Class.extend({
 
       // TODO: Processing each command asynchronously is a bit of a problem. Skipping for now.
 
-      cmds = _.map(cmds, function(cmd) {
-        return mpd.cmd(cmd.command, cmd.args);
+      cmds = cmds.map(function(cmd) {
+        return mpdcmd(cmd.command, cmd.args);
       });
 
-      console.log(cmds);
+      debug(cmds);
 
       this.mpd.sendCommands(cmds, function(err, result) {
 
-        console.log('Result for command list');
-        console.log(cmds);
-        console.log('===');
-        console.log(result);
+        debug('Result for command list');
+        debug(cmds);
+        debug('===');
+        debug(result);
 
       });
 
@@ -186,40 +122,11 @@ var BasicMode = Class.extend({
   },
   canExecute: function(command, client) {
     return !!clientsManager.get(client.info.userid);
-  },
-  execute: function(command, args, client) {
-    var cmd;
-
-    if (!_.isArray(args)) {
-      args = [args]; // Ensure array.
-    }
-
-    args = sanitizeArgs(args);
-
-    cmd = mpd.cmd(command, args);
-
-    console.log(command, args);
-
-    this.mpd.sendCommand(cmd, function(err, result) {
-
-      var response = getParser(command, args).parse(result),
-          special = specialCommands[command];
-
-      console.log('Result for command', command, ': ', result);
-
-      if (special) {
-
-        special(command, args, response, client);
-
-        return;
-
-      }
-
-      console.log('Emitting:', command);
-
-      client.emit(command, response);
-    });
   }
 });
+
+BasicMode.create = function(mpd) {
+  return new BasicMode(mpd);
+};
 
 module.exports = BasicMode;
