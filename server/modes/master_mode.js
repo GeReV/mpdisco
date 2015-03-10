@@ -1,8 +1,7 @@
 var debug = require('debug')('mpdisco:master_mode'),
     BasicMode = require('./basic_mode.js'),
     ClientsManager = require('../clients_manager.js'),
-    config = require('../../config.json'),
-    _ = require('underscore');
+    config = require('../../config.json');
 
 var MasterMode = BasicMode.extend({
   init: function(mpd) {
@@ -74,7 +73,7 @@ var MasterMode = BasicMode.extend({
 
     this.master = client.info.userid;
 
-    console.log('Master changed:', this.master);
+    debug('Master changed: %s', this.master);
 
     this.setMasterTimeout();
 
