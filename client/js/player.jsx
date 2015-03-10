@@ -4,6 +4,8 @@ var HotKey = require('react-hotkey');
 var cx = React.addons.classSet;
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var isTextInputElement = require('react/lib/isTextInputElement');
+
 var Scrubber = require('./scrubber.jsx');
 
 HotKey.activate('keydown');
@@ -128,6 +130,11 @@ var Player = React.createClass({
     },
 
     handleKeyboard: function(e) {
+        // Disable hotkeys for text boxes.
+        if (isTextInputElement(e.target)) {
+            return;
+        }
+
         var key = e.key;
 
         if (key === 'Unidentified') {

@@ -45,45 +45,6 @@ var Listener = React.createClass({
         return this.loggedInView(classes, listener);
     },
 
-    showLogin: function(e) {
-        this.setState({
-            logging: true
-        });
-
-        e.preventDefault();
-    },
-
-    hideLogin: function(e) {
-        this.setState({
-            logging: false
-        });
-
-        e.preventDefault();
-    },
-
-    handleLogin: function(e) {
-        var name = trim(this.refs.login.getDOMNode().value);
-
-        if (!name) {
-            this.hideLogin(e);
-            return;
-        }
-
-        this.props.onIdentify(name);
-
-        e.preventDefault();
-    },
-
-    handleLoginKeyup: function(e) {
-        if (e.key === 'Enter') {
-            this.handleLogin(e);
-        } else if (e.key === 'Escape') {
-            this.hideLogin(e);
-        }
-
-        e.stopPropagation();
-    },
-
     anonymousView: function(classes) {
         var name = this.props.you ?
             <span>You <a href="#" onClick={this.showLogin}>Login?</a></span> :
@@ -119,6 +80,43 @@ var Listener = React.createClass({
                 <span>{name}</span>
             </li>
         );
+    }
+
+    showLogin: function(e) {
+        this.setState({
+            logging: true
+        });
+
+        e.preventDefault();
+    },
+
+    hideLogin: function(e) {
+        this.setState({
+            logging: false
+        });
+
+        e.preventDefault();
+    },
+
+    handleLogin: function(e) {
+        var name = trim(this.refs.login.getDOMNode().value);
+
+        if (!name) {
+            this.hideLogin(e);
+            return;
+        }
+
+        this.props.onIdentify(name);
+
+        e.preventDefault();
+    },
+
+    handleLoginKeyup: function(e) {
+        if (e.key === 'Enter') {
+            this.handleLogin(e);
+        } else if (e.key === 'Escape') {
+            this.hideLogin(e);
+        }
     }
 });
 
