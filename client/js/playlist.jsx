@@ -152,7 +152,7 @@ var Playlist = React.createClass({
     },
 
     itemPlayed: function(e, item) {
-        MPDisco.network.command('playid', item.id);
+        this.props.model.play(item.id);
     },
 
     remove: function(e) {

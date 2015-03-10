@@ -74,6 +74,10 @@ _.extend(PlaylistModel.prototype, {
         });
 
         this.network.commands(commands);
+    },
+
+    play: function(id) {
+        this.network.command('playid', id.toString());
     }
 });
 
