@@ -80,7 +80,7 @@ var Listener = React.createClass({
                 <span>{name}</span>
             </li>
         );
-    }
+    },
 
     showLogin: function(e) {
         this.setState({

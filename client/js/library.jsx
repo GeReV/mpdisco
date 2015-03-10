@@ -124,13 +124,14 @@ var Library = React.createClass({
 
         var artists = this.state.artists || [];
 
+        //<menu>
+        //    <input type="text" id="search" className="search" placeholder="Search" />
+        //</menu>
+
         return (
             <section id="library" className={classes} {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
                 <header>Library</header>
                 <div className="content">
-                    <menu>
-                        <input type="text" id="search" className="search" placeholder="Search" />
-                    </menu>
                     <ReactCSSTransitionGroup component="ul" className="artists tree" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
                         {artists.map(function(artist) {
                             return (
