@@ -9,12 +9,14 @@ var update = React.addons.update;
 var DragDropMixin = require('react-dnd').DragDropMixin;
 var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
 
+var EnabledMixin = require('./mixins/enabled_mixin.js');
+
 var LibraryArtistItem = require('./library_artist_item.jsx');
 var LibraryFileUpload = require('./library_file_upload.jsx');
 
 var Library = React.createClass({
 
-    mixins: [DragDropMixin],
+    mixins: [DragDropMixin, EnabledMixin],
 
     statics: {
         configureDragDrop: function(register) {
@@ -63,43 +65,17 @@ var Library = React.createClass({
         }
     },
 
-    setArtists: function(artists) {
-        this.setState({
-            artists: artists
-        });
-    },
-
-    setUpdatingState: function() {
-        // MPD sends the same event when an update starts and finishes, without any other arguments.
-        var updating = !this.state.updating;
-
-        if (this.state.updatingTimeout) {
-            clearTimeout(this.state.updatingTimeout);
-        }
-
-        // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
-        var updatingTimeout = setTimeout(function() {
-            this.setState({
-                updating: false,
-                updatingTimeout: null
-            });
-        }.bind(this), 5000);
-
-        // Set updating state.
-        this.setState({
-            updating: updating,
-            updatingTimeout: updatingTimeout
-        });
-    },
-
     render: function() {
 
         var dropState = this.getDropState(NativeDragItemTypes.FILE);
 
+        var enabled = this.enabled();
+
         var classes = cx({
             'library-updating': this.state.updating,
             'library-drop': dropState.isDragging,
-            'library-drop-hover': dropState.isHovering
+            'library-drop-hover': dropState.isHovering,
+            'library-disabled': !enabled
         });
 
         var uploads;
@@ -139,9 +115,10 @@ var Library = React.createClass({
                                     key={artist.name}
                                     artist={artist}
                                     library={this.props.model}
+                                    enabled={enabled}
                                     />
                             );
-                        }.bind(this))}
+                        }, this)}
                     </ReactCSSTransitionGroup>
                     <ReactCSSTransitionGroup component="div" transitionName="upload">
                         {uploads}
@@ -150,6 +127,35 @@ var Library = React.createClass({
                 <div id="overlay" />
             </section>
         );
+    },
+
+    setArtists: function(artists) {
+        this.setState({
+            artists: artists
+        });
+    },
+
+    setUpdatingState: function() {
+        // MPD sends the same event when an update starts and finishes, without any other arguments.
+        var updating = !this.state.updating;
+
+        if (this.state.updatingTimeout) {
+            clearTimeout(this.state.updatingTimeout);
+        }
+
+        // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
+        var updatingTimeout = setTimeout(function() {
+            this.setState({
+                updating: false,
+                updatingTimeout: null
+            });
+        }.bind(this), 5000);
+
+        // Set updating state.
+        this.setState({
+            updating: updating,
+            updatingTimeout: updatingTimeout
+        });
     },
 
     uploadComplete: function(file) {

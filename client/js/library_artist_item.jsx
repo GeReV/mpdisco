@@ -1,6 +1,7 @@
 var React = require('react/addons');
 
 var DraggableMixin = require('./mixins/draggable_mixin.js');
+var EnabledMixin = require('./mixins/enabled_mixin.js');
 
 var LibraryAlbumItem = require('./library_album_item.jsx');
 
@@ -8,7 +9,7 @@ var cx = React.addons.classSet;
 
 var LibraryArtistItem = React.createClass({
 
-    mixins: [DraggableMixin],
+    mixins: [DraggableMixin, EnabledMixin],
 
     statics: {
         getDragType: function() {
@@ -28,10 +29,6 @@ var LibraryArtistItem = React.createClass({
         };
     },
 
-    componentWillMount: function() {
-
-    },
-
     render: function() {
         var classes = cx({
             'library-item': true,
@@ -45,12 +42,20 @@ var LibraryArtistItem = React.createClass({
             collapsed: this.state.collapsed
         });
 
+        var enabled = this.enabled();
+
         var albums = this.state.albums.map(function(album) {
-            return <LibraryAlbumItem key={album.name} album={album} library={this.props.library} />;
-        }.bind(this));
+            return <LibraryAlbumItem key={album.name} album={album} library={this.props.library} enabled={enabled} />;
+        }, this);
+
+        var dragSourceAttributes;
+
+        if (enabled) {
+            dragSourceAttributes = this.dragSource();
+        }
 
         return (
-            <li className={classes} {...this.dragSource()}>
+            <li className={classes} {...dragSourceAttributes}>
                 <span className="name" title={this.props.artist.name} onClick={this.toggleAlbums}>{this.props.artist.name}</span>
                 <ul className={treeClasses}>
                     {albums}
