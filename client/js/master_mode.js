@@ -21,31 +21,31 @@ var MasterMode = React.createClass({
     };
   },
 
-  componentDidMount: function() {
-    this.props.network.on('connected', this.connected);
-    this.props.network.on('master', this.setMaster);
+  componentWillMount: function() {
+    var network = this.props.network;
+
+    this.library   = new LibraryModel(network);
+    this.listeners = new ListenersModel(network);
+    this.player    = new PlayerModel(network);
+    this.playlist  = new PlaylistModel(network);
+
+    network.on('connected', this.connected);
+    network.on('master', this.setMaster);
   },
 
   render: function () {
-    var network = this.props.network;
-
-    var library   = new LibraryModel(network);
-    var listeners = new ListenersModel(network);
-    var player    = new PlayerModel(network);
-    var playlist  = new PlaylistModel(network);
-
     var enabled = (this.state.master && this.state.master === this.state.userid);
 
     return (
         <div id="container" role="main">
           <header id="player-head">
-            <Logo model={player} blurRadius={10} />
-            <Player model={player} enabled={enabled} />
+            <Logo model={this.player} blurRadius={10} />
+            <Player model={this.player} enabled={enabled} />
           </header>
           <main>
-            <Library model={library} enabled={enabled} />
-            <Playlist model={playlist} player={player} enabled={enabled} />
-            <Listeners model={listeners} />
+            <Library model={this.library} enabled={enabled} />
+            <Playlist model={this.playlist} player={this.player} enabled={enabled} />
+            <Listeners model={this.listeners} />
           </main>
         </div>
     );

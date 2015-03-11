@@ -14,24 +14,26 @@ var LibraryModel = require('./models/library_model.js');
 var ListenersModel = require('./models/listeners_model.js');
 
 var BasicMode = React.createClass({
-  render: function () {
+  componentWillMount: function() {
     var network = this.props.network;
 
-    var library   = new LibraryModel(network);
-    var listeners = new ListenersModel(network);
-    var player    = new PlayerModel(network);
-    var playlist  = new PlaylistModel(network);
+    this.library   = new LibraryModel(network);
+    this.listeners = new ListenersModel(network);
+    this.player    = new PlayerModel(network);
+    this.playlist  = new PlaylistModel(network);
+  },
 
+  render: function () {
     return (
         <div id="container" role="main">
           <header id="player-head">
-            <Logo model={player} blurRadius={10} />
-            <Player model={player} />
+            <Logo model={this.player} blurRadius={10} />
+            <Player model={this.player} />
           </header>
           <main>
-            <Library model={library} />
-            <Playlist model={playlist} player={player} />
-            <Listeners model={listeners} />
+            <Library model={this.library} />
+            <Playlist model={this.playlist} player={this.player} />
+            <Listeners model={this.listeners} />
           </main>
         </div>
     );
