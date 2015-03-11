@@ -27,7 +27,7 @@ var specialEmitters = {
             log(command, args, response)
 
             client.emit(command, {
-                args: _.filter(args, function(v, i) { return (i % 2 == 1); }),
+                args: args.filter(function(v, i) { return (i % 2 == 1); }),
                 data: response
             });
         }
