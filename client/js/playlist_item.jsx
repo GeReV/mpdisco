@@ -4,6 +4,7 @@ var cx = React.addons.classSet;
 
 var PropTypes = React.PropTypes;
 
+var EnabledMixin = require('./mixins/enabled_mixin.js');
 var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
@@ -14,7 +15,7 @@ function formatTime(seconds) {
 }
 
 var PlaylistItem = React.createClass({
-    mixins: [DragDropMixin],
+    mixins: [DragDropMixin, EnabledMixin],
 
     propTypes: {
         onReorder: PropTypes.func.isRequired,
@@ -100,13 +101,26 @@ var PlaylistItem = React.createClass({
             'playlist-item-dragging': this.getDragState(dragType).isDragging
         });
 
+        var events,
+            dragSourceAttributes,
+            dropTargetAttributes;
+
+        if (this.enabled()) {
+            events = {
+                onMouseDown: this.itemClick,
+                onDoubleClick: this.itemDblClick
+            };
+
+            dragSourceAttributes = this.dragSourceFor(dragType);
+            dropTargetAttributes = this.dropTargetFor(dragType);
+        }
+
         return (
             <li
                 className={classes}
-                onMouseDown={this.itemClick}
-                onDoubleClick={this.itemDblClick}
-                {...this.dragSourceFor(dragType)}
-                {...this.dropTargetFor(dragType)}
+                {...events}
+                {...dragSourceAttributes}
+                {...dropTargetAttributes}
             >
                 <div className="image" />
                 {details}

@@ -16,18 +16,26 @@ var SelectableListMixin = {
             selectedItems: selected,
             focusedItemIndex: this.state.items.indexOf(item)
         });
+
+        if (this.props.itemSelected) {
+            this.props.itemSelected(selected);
+        }
     },
 
     itemSelectAll: function() {
         this.setState({
             selectedItems: this.state.items
         });
+
+        this.props.itemSelected(this.state.items);
     },
 
     itemSelectNone: function() {
         this.setState({
             selectedItems: []
         });
+
+        this.props.itemSelected([]);
     },
 
     itemSelectOne: function(item) {

@@ -82,12 +82,12 @@ var Server = Class.extend({
         });
     },
 
-    _initSocketIO: function (sio, session, clientsManager) {
+    _initSocketIO: function (socket, session, clientsManager) {
 
         //Socket.io will call this function when a client connects,
         //So we can send that client a unique ID we use so we can
         //maintain the list of players.
-        sio.on('connection', function (client) {
+        socket.on('connection', function (client) {
 
             // Embed the session in the client's handshake.
             session(client.handshake, {}, function() {
@@ -106,13 +106,14 @@ var Server = Class.extend({
 
                 }.bind(this));
 
-                this.mpd.on('system', function (system) {
-                    client.emit('update', system);
-                    client.emit('update:' + system);
-                });
             }.bind(this));
 
         }.bind(this));
+
+        this.mpd.on('system', function (system) {
+            socket.sockets.emit('update', system);
+            socket.sockets.emit('update:' + system);
+        });
     },
 
     _initUploadHandler: function(mpd, config) {
