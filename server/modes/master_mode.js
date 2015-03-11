@@ -22,11 +22,11 @@ var MasterMode = BasicMode.extend({
 
   connected: function(client) {
     client.emit('connected', {
-      id: client.info.userid,
+      userid: client.info.userid,
       info: client.info,
       clients: this.clientsManager.clientsInfo(),
       mode: this.type,
-      master: this.master && this.clientsManager.get(this.master).info
+      master: this.master
     });
   },
 
@@ -77,8 +77,8 @@ var MasterMode = BasicMode.extend({
 
     this.setMasterTimeout();
 
-    client.emit('master', ClientsManager.get(this.master).info);
-    client.broadcast.emit('master', ClientsManager.get(this.master).info);
+    client.emit('master', this.master);
+    client.broadcast.emit('master', this.master);
   },
   clearMaster: function() {
     this.setMaster(null);

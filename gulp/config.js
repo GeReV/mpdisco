@@ -30,7 +30,7 @@ module.exports = {
     // A separate bundle will be generated for each
     // bundle config in the list below
     bundleConfigs: [{
-      entries: src + "/js/app.jsx",
+      entries: src + "/js/mpdisco.jsx",
       dest: dest + "/js",
       outputName: "mpdisco.js"
     }]

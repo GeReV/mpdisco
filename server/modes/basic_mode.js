@@ -49,7 +49,7 @@ var BasicMode = Class.extend({
   },
   connected: function(client) {
     client.emit('connected', {
-      id: client.info.userid,
+      userid: client.info.userid,
       info: client.info,
       clients: clientsManager.clientsInfo(),
       mode: this.type
