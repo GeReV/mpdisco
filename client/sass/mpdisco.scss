@@ -6,6 +6,7 @@ $library-background: #354052;
 $library-color: #a0acbf;
 
 $left-column-width: 280px;
+$header-height: 44px;
 
 @mixin slide($slide-offset, $slide-duration: 0.3s, $slide-delay: $slide-duration / 2) {
   .slide-enter {
@@ -173,8 +174,8 @@ input[type="text"] {
   > header {
     box-sizing: border-box;
     font-weight: bold;
-    height: 44px;
-    line-height: 44px;
+    height: $header-height;
+    line-height: $header-height;
     padding: 0 11px;
     text-transform: uppercase;
   }
@@ -352,40 +353,12 @@ input[type="text"] {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
+  position: relative;
   
   &.playlist-drop > .list {
     box-shadow: 0 0 5px #bbdefb inset;
   }
 
-  &.playlist-disabled .content {
-    position: relative;
-
-    .lock {
-      background: rgba(255, 255, 255, 0.6);
-      color: rgba(0, 0, 0, 0.1);
-      font-size: 40px;
-      overflow: hidden;
-      padding: 50px 0;
-      text-align: center;
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-
-      i {
-        color: rgba(0, 0, 0, 0.05);
-        font-size: 300px;
-        flex: 0 0 auto;
-      }
-
-      span {
-        display: block;
-        text-transform: uppercase;
-      }
-    }
-  }
-  
   header {
     background: #efefef;
     border-bottom: 1px solid #d7d7d7;
@@ -422,24 +395,6 @@ input[type="text"] {
     .remove {
       margin: 0 5px;
     }
-
-    input[type="text"] {
-      padding-right: 20px;
-      vertical-align: middle;
-      line-height: 18px;
-
-      &:after {
-        @extend .icon;
-        @extend .icon-plus:before;
-
-        color: #989898;
-        line-height: 24px;
-        height: 24px;
-        position: absolute;
-        top: 14px;
-        right: 18px;
-      }
-    }
   }
   
   .active {
@@ -467,6 +422,39 @@ input[type="text"] {
       width: 9px;
       height: 9px;
     }
+  }
+
+  .lock {
+    background: rgba(255, 255, 255, 0.6);
+    color: rgba(0, 0, 0, 0.1);
+    font-size: 40px;
+    margin-top: $header-height;
+    opacity: 0;
+    overflow: hidden;
+    padding: 50px 0;
+    pointer-events: none;
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    i {
+      color: rgba(0, 0, 0, 0.05);
+      font-size: 300px;
+      flex: 0 0 auto;
+    }
+
+    span {
+      display: block;
+      text-transform: uppercase;
+    }
+  }
+
+  &.playlist-disabled .lock {
+    opacity: 1;
   }
 }
 
@@ -948,16 +936,20 @@ input[type="text"] {
       padding: 2px 3px;
     }
 
-    &.anonymous {
+    &.listener-you {
+
+    }
+
+    &.listener-anonymous {
       font-weight: normal;
     }
     
-    &.master::after {
+    &.listener-master::after {
       background: #75c33c;
       content: "DJ";
     }
     
-    &.up-next::after {
+    &.listener-up-next::after {
       background: #956dc6;
       content: "Up Next";
     }

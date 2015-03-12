@@ -89,7 +89,7 @@ var MasterMode = BasicMode.extend({
 
     clearTimeout(this.masterTimeout);
 
-    debug('Master timeout (mins): %s', masterTime);
+    debug('Master timeout: %s min', masterTime);
 
     this.masterTimestamp = Date.now();
 
@@ -100,7 +100,6 @@ var MasterMode = BasicMode.extend({
 
       this.setMaster(this.clientsManager.first());
 
-      clearTimeout(this.masterTimeout);
     }.bind(this), masterTime * 60 * 1000);
   },
 

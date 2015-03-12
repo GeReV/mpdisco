@@ -1,26 +1,11 @@
 var React = require('react/addons');
 
+var ListenersMixin = require('./mixins/listeners_mixin.js');
+
 var Listener = require('./listener.jsx');
 
 var Listeners = React.createClass({
-    getInitialState: function() {
-        return {
-            listeners: this.props.model.listeners || []
-        }
-    },
-
-    componentDidMount: function() {
-        var updateList = function(listeners, me) {
-            this.setState({
-                listeners: listeners,
-                me: me
-            });
-        }.bind(this);
-
-        this.props.model.on('clientslist', updateList);
-
-        this.props.model.fetchListeners();
-    },
+    mixins: [ListenersMixin],
 
     render: function() {
         var me = this.state.me;
@@ -40,10 +25,6 @@ var Listeners = React.createClass({
                 </ul>
             </section>
         );
-    },
-
-    handleIdentify: function(name) {
-        this.props.model.identify(name);
     }
 });
 

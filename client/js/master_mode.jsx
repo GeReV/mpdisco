@@ -4,7 +4,7 @@ var Logo = require('./logo.jsx');
 var Player = require('./player.jsx');
 var Playlist = require('./playlist.jsx');
 var Library = require('./library.jsx');
-var Listeners = require('./listeners.jsx');
+var Listeners = require('./master_mode_listeners.jsx');
 
 //var Error = require('error');
 
@@ -12,6 +12,8 @@ var PlayerModel = require('./models/player_model.js');
 var PlaylistModel = require('./models/playlist_model.js');
 var LibraryModel = require('./models/library_model.js');
 var ListenersModel = require('./models/listeners_model.js');
+
+var MasterModeModel = require('./models/master_mode_model.js');
 
 var MasterMode = React.createClass({
   getInitialState: function() {
@@ -29,8 +31,12 @@ var MasterMode = React.createClass({
     this.player    = new PlayerModel(network);
     this.playlist  = new PlaylistModel(network);
 
-    network.on('connected', this.connected);
-    network.on('master', this.setMaster);
+    this.model     = new MasterModeModel(network);
+  },
+
+  componentDidMount: function() {
+    this.model.on('connected', this.setUser);
+    this.model.on('master', this.setMaster);
   },
 
   render: function () {
@@ -45,14 +51,16 @@ var MasterMode = React.createClass({
           <main>
             <Library model={this.library} enabled={enabled} />
             <Playlist model={this.playlist} player={this.player} enabled={enabled} />
-            <Listeners model={this.listeners} />
+            <Listeners model={this.listeners} mastermode={this.model} />
           </main>
         </div>
     );
   },
 
-  connected: function(info) {
-    this.setState(info);
+  setUser: function(userid) {
+    this.setState({
+      userid: userid
+    });
   },
 
   setMaster: function(master) {

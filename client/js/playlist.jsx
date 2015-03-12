@@ -35,33 +35,24 @@ var Playlist = React.createClass({
             dropTargetAttributes = this.dropTargetFor.apply(this, accepts);
         }
 
-        var lock;
-        if (!enabled) {
-            lock = (
-                <div className="lock">
-                    <i className="icon-lock" />
-                    <span>You are not the current DJ</span>
-                </div>
-            );
-        }
-
         return (
             <section id="playlist" className={playlistClasses} {...dropTargetAttributes}>
                 <header>
                     <span>Playlist</span>
                     <PlaylistTools status={this.state.status} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
                 </header>
-                <div className="content">
-                    <ListView
-                        className="list"
-                        items={this.state.items}
-                        itemCreator={this.itemCreator}
-                        enabled={enabled}
-                        onItemActivated={this.itemPlayed}
-                        onItemRemoved={this.itemRemoved}
-                        onItemSelected={this.itemSelected}
-                        onItemsReordered={this.itemsReordered}/>
-                    {lock}
+                <ListView
+                    className="content list"
+                    items={this.state.items}
+                    itemCreator={this.itemCreator}
+                    enabled={enabled}
+                    onItemActivated={this.itemPlayed}
+                    onItemRemoved={this.itemRemoved}
+                    onItemSelected={this.itemSelected}
+                    onItemsReordered={this.itemsReordered}/>
+                <div className="lock">
+                    <i className="icon-lock" />
+                    <span>You are not the current DJ</span>
                 </div>
             </section>
         );

@@ -8,7 +8,9 @@ var Listener = React.createClass({
     propTypes: {
         onIdentify: React.PropTypes.func.isRequired,
         listener: React.PropTypes.object.isRequired,
-        you: React.PropTypes.bool
+        you: React.PropTypes.bool,
+        next: React.PropTypes.bool,
+        master: React.PropTypes.bool
     },
 
     render: function() {
@@ -22,7 +24,9 @@ var Listener = React.createClass({
 
         var classes = cx({
             'listener': true,
-            'listener-you': this.props.you
+            'listener-you': this.props.you,
+            'listener-master': this.props.master,
+            'listener-up-next': this.props.next
         });
 
         var thumbnailUrl = (listener.thumbnailUrl || 'http://www.gravatar.com/avatar/00000000000000000000000000000000') + '?s=48';
