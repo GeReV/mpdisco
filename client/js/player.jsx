@@ -3,6 +3,7 @@ var React = require('react/addons');
 var cx = React.addons.classSet;
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
+var PlayerControls = require('./player_controls.jsx');
 var Scrubber = require('./scrubber.jsx');
 
 var PlayerMixin = require('./mixins/player_mixin.js');
@@ -42,19 +43,38 @@ var Player = React.createClass({
         });
 
         return (
-            <div id="player" className={classes}>
+            <section id="player" className={classes}>
                 <div className="info">
-                    <ReactCSSTransitionGroup component="h1" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
+                    <ReactCSSTransitionGroup
+                        component="h1"
+                        transitionName="slide"
+                        transitionEnter={this.state.animations}
+                        transitionLeave={this.state.animations}
+                    >
                         <span key={'title_' + song.id}>{title}</span>
                     </ReactCSSTransitionGroup>
-                    <ReactCSSTransitionGroup component="h2" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
+                    <ReactCSSTransitionGroup
+                        component="h2"
+                        transitionName="slide"
+                        transitionEnter={this.state.animations}
+                        transitionLeave={this.state.animations}
+                    >
                         <span key={'artist_album_' + song.id}>{song.artist} {album}</span>
                     </ReactCSSTransitionGroup>
+
                     <h2 className="duration">{time}</h2>
+
+                    <PlayerControls
+                        state={this.state.status.state}
+                        onPlay={this.togglePlay}
+                        onStop={this.stop}
+                        onNext={this.next}
+                        onPrevious={this.previous}
+                    />
                 </div>
                 <Scrubber progress={this.state.time} total={song.time} onScrub={this.scrub} />
                 <div className={indicatorClasses} />
-            </div>
+            </section>
         );
     }
 });

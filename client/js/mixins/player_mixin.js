@@ -17,7 +17,7 @@ var PlayerMixin = {
                 time: 0
             },
             status: {
-                state: ''
+                state: 'stop'
             },
             time: 0,
             indicatorAppear: false,
@@ -99,27 +99,42 @@ var PlayerMixin = {
             key = e.keyCode;
         }
 
-        if (key === ' ') {
-            return this.togglePlay();
-        }
-
         if (key === 90) { // KeyZ
+            this.updateIndicator('previous');
+
             return this.previous();
         }
 
-        if (key === 67) { // KeyC
+        if (key === 67 || key === ' ') { // KeyC, Space
+            var state = this.state.status.state;
+            var indicator;
+
+            if (state === 'play') {
+                indicator = 'pause';
+            } else if (state === 'pause' || state === 'stop') {
+                indicator = 'play';
+            }
+
+            this.updateIndicator(indicator);
+
             return this.togglePlay();
         }
 
         if (key === 86) { // KeyV
+            this.updateIndicator('stop');
+
             return this.stop();
         }
 
         if (key === 88) { // KeyX
+            this.updateIndicator('play');
+
             return this.play();
         }
 
         if (key === 66) { // KeyB
+            this.updateIndicator('next');
+
             return this.next();
         }
     },
@@ -136,32 +151,22 @@ var PlayerMixin = {
 
     play: function() {
         this.props.model.play();
-
-        this.updateIndicator('play');
     },
 
     stop: function() {
         this.props.model.stop();
-
-        this.updateIndicator('stop');
     },
 
     pause: function() {
         this.props.model.pause(true);
-
-        this.updateIndicator('pause');
     },
 
     next: function() {
         this.props.model.next();
-
-        this.updateIndicator('next');
     },
 
     previous: function() {
         this.props.model.previous();
-
-        this.updateIndicator('previous');
     },
 
     updateIndicator: function(state) {

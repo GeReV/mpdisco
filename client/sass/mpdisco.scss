@@ -3,10 +3,13 @@
 @import 'font-awesome';
 
 $library-background: #354052;
-$library-color: #a0acbf;
 
 $left-column-width: 280px;
 $header-height: 44px;
+
+$secondary-color: #a0acbf;
+$secondary-color-highlight: #d2e0f4;
+$secondary-color-active: #8396af;
 
 @mixin slide($slide-offset, $slide-duration: 0.3s, $slide-delay: $slide-duration / 2) {
   .slide-enter {
@@ -38,6 +41,10 @@ html {
 
 body {
   background: transparent;
+}
+
+a, a:hover, a:focus {
+  text-decoration: none;
 }
 
 [draggable] {
@@ -91,7 +98,6 @@ header + menu {
 #player-head {
   display: flex;
   flex-direction: row;
-  height: 140px;
 }
 
 #logo {
@@ -312,21 +318,35 @@ input[type="text"] {
       font-size: 32px;
       line-height: 26px;
     }
-    
-    .time {
-      color: #cccbcd;
+  }
+
+  .player-controls {
+
+    margin: 8px 0 0 0;
+
+    a {
+      color: $secondary-color;
+      display: inline-block;
+      line-height: 32px;
+      margin-right: 10px;
+      text-align: center;
+      text-shadow: 0 1px 0 rgba(0, 0, 0, 0.8);
+      transition: text-shadow 0.1s ease-in-out, color 0.1s ease-in-out;
+      height: 32px;
+
+      &:last-child {
+        margin-right: 0;
+      }
     }
-  }
-  
-  menu {
-    margin-top: 10px;
-    margin-bottom: 5px;
-    position: absolute;
-    bottom: 0;
-  }
-  
-  button {
-    width: 38px;
+
+    a:hover {
+      color: $secondary-color-highlight;
+    }
+
+    a:active {
+      color: $secondary-color-active;
+      text-shadow: 0 0 0 rgba(0, 0, 0, 0.8);
+    }
   }
 }
 
@@ -378,8 +398,6 @@ input[type="text"] {
       display: inline-block;
       text-align: center;
       width: 30px;
-
-      text-decoration: none;
 
       &.disabled {
         color: #ccc;
@@ -564,7 +582,7 @@ input[type="text"] {
   /* end */
 
   background: $library-background;
-  color: $library-color;
+  color: $secondary-color;
   display: flex;
   flex-direction: column;
   
@@ -605,7 +623,7 @@ input[type="text"] {
     background: lighten($library-background, 5%);
     border-radius: 0 0 5px 5px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-    color: #fff;
+    color: $secondary-color-highlight;
     flex: 1 0 auto;
     margin: 0 2px;
     min-height: 150px;
@@ -739,7 +757,6 @@ input[type="text"] {
     display: block;
     line-height: 32px;
     overflow: hidden;
-    text-decoration: none;
     text-overflow: ellipsis;
     white-space: nowrap;
 
@@ -764,7 +781,7 @@ input[type="text"] {
   
   &.selected .name,
   .name:hover {
-    color: #fff;
+    color: $secondary-color-highlight;
     background: darken($library-background, 5%);
   }
   
