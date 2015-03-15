@@ -1,6 +1,6 @@
 {
   "name": "mpdisco",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "author": "Amir Grozki",
   "description": "A team-controlled music server based on mpd.",
   "scripts": {
@@ -37,7 +37,6 @@
     "underscore": "^1.8.2"
   },
   "devDependencies": {
-    "browser-sync": "~1.3.6",
     "browserify": "^8.0.2",
     "browserify-shim": "^3.8.2",
     "debug": "^2.1.2",
