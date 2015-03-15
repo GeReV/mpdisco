@@ -1,33 +1,23 @@
 var React = require('react/addons');
 
-var ListenersModel = require('../models/listeners_model.js');
+var MPDiscoController = require('../mpdisco_controller.js');
+
+var tree = require('../mpdisco_model.js').tree;
 
 var ListenersMixin = {
     propTypes: {
-        model: React.PropTypes.instanceOf(ListenersModel).isRequired
+        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
     },
 
-    getInitialState: function() {
-        return {
-            listeners: this.props.model.listeners || []
-        }
-    },
+    mixins: [tree.mixin],
 
-    componentDidMount: function() {
-        var updateList = function(listeners, me) {
-            this.setState({
-                listeners: listeners,
-                me: me
-            });
-        }.bind(this);
-
-        this.props.model.on('clientslist', updateList);
-
-        this.props.model.fetchListeners();
+    cursors: {
+        listeners: ['listeners'],
+        me: ['me']
     },
 
     handleIdentify: function(name) {
-        this.props.model.identify(name);
+        this.props.controller.listenerIdentify(name);
     }
 };
 

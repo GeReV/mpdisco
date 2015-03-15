@@ -61,7 +61,7 @@ var specialEmitters = {
 };
 
 function simpleEmitter(command, args, response, client) {
-    log(command, args, response)
+    log(command, args, response);
 
     client.emit(command, response);
 }

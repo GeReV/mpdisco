@@ -3,7 +3,7 @@ var _ = require('underscore');
 
 var SelectableListMixin = {
     propTypes: {
-        itemSelected: React.PropTypes.func
+        onItemsSelected: React.PropTypes.func
     },
 
     itemSelected: function(e, item) {
@@ -22,8 +22,8 @@ var SelectableListMixin = {
             focusedItemIndex: this.state.items.indexOf(item)
         });
 
-        if (this.props.itemSelected) {
-            this.props.itemSelected(selected);
+        if (this.props.onItemsSelected) {
+            this.props.onItemsSelected(selected);
         }
     },
 
@@ -32,8 +32,8 @@ var SelectableListMixin = {
             selectedItems: this.state.items
         });
 
-        if (this.props.itemSelected) {
-            this.props.itemSelected(this.state.items);
+        if (this.props.onItemsSelected) {
+            this.props.onItemsSelected(this.state.items);
         }
     },
 
@@ -42,8 +42,8 @@ var SelectableListMixin = {
             selectedItems: []
         });
 
-        if (this.props.itemSelected) {
-            this.props.itemSelected([]);
+        if (this.props.onItemsSelected) {
+            this.props.onItemsSelected([]);
         }
     },
 

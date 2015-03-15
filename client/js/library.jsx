@@ -14,9 +14,21 @@ var EnabledMixin = require('./mixins/enabled_mixin.js');
 var LibraryArtistItem = require('./library_artist_item.jsx');
 var LibraryFileUpload = require('./library_file_upload.jsx');
 
+var MPDiscoController = require('./mpdisco_controller.js');
+
+var tree = require('./mpdisco_model.js').tree;
+
 var Library = React.createClass({
 
-    mixins: [DragDropMixin, EnabledMixin],
+    mixins: [DragDropMixin, EnabledMixin, tree.mixin],
+
+    propTypes: {
+        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
+    },
+
+    cursors: {
+        artists: ['artists']
+    },
 
     statics: {
         configureDragDrop: function(register) {
@@ -42,22 +54,17 @@ var Library = React.createClass({
     getInitialState: function() {
         return {
             animations: false,
-            artists: null,
             uploads: [],
             uploading: []
         };
     },
 
     componentDidMount: function() {
-        this.props.model.on('updating', this.setUpdatingState);
-
-        this.props.model.on('update', this.setArtists);
-
-        this.props.model.fetchArtists().done(this.setArtists);
+        //this.props.model.on('updating', this.setUpdatingState);
     },
 
     componentDidUpdate: function() {
-        if (this.state.artists && !this.state.animations) {
+        if (this.cursors.artists.get() && !this.state.animations) {
             // Turn library update animations on.
             this.setState({
                 animations: true
@@ -98,7 +105,7 @@ var Library = React.createClass({
             );
         }
 
-        var artists = this.state.artists || [];
+        var artists = this.cursors.artists.get();
 
         //<menu>
         //    <input type="text" id="search" className="search" placeholder="Search" />
@@ -114,7 +121,7 @@ var Library = React.createClass({
                                 <LibraryArtistItem
                                     key={artist.name}
                                     artist={artist}
-                                    library={this.props.model}
+                                    controller={this.props.controller}
                                     enabled={enabled}
                                     />
                             );
@@ -127,12 +134,6 @@ var Library = React.createClass({
                 <div id="overlay" />
             </section>
         );
-    },
-
-    setArtists: function(artists) {
-        this.setState({
-            artists: artists
-        });
     },
 
     setUpdatingState: function() {

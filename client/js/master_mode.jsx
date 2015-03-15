@@ -8,11 +8,6 @@ var Listeners = require('./master_mode_listeners.jsx');
 
 //var Error = require('error');
 
-var PlayerModel = require('./models/player_model.js');
-var PlaylistModel = require('./models/playlist_model.js');
-var LibraryModel = require('./models/library_model.js');
-var ListenersModel = require('./models/listeners_model.js');
-
 var MasterModeModel = require('./models/master_mode_model.js');
 
 var MasterMode = React.createClass({
@@ -24,14 +19,7 @@ var MasterMode = React.createClass({
   },
 
   componentWillMount: function() {
-    var network = this.props.network;
-
-    this.library   = new LibraryModel(network);
-    this.listeners = new ListenersModel(network);
-    this.player    = new PlayerModel(network);
-    this.playlist  = new PlaylistModel(network);
-
-    this.model     = new MasterModeModel(network);
+    this.model = new MasterModeModel(this.props.network);
   },
 
   componentDidMount: function() {
@@ -45,13 +33,13 @@ var MasterMode = React.createClass({
     return (
         <div id="container" role="main">
           <header id="player-head">
-            <Logo model={this.player} blurRadius={10} />
-            <Player model={this.player} enabled={enabled} />
+            <Logo blurRadius={10} />
+            <Player controller={this.props.controller} enabled={enabled} />
           </header>
           <main>
-            <Library model={this.library} enabled={enabled} />
-            <Playlist model={this.playlist} player={this.player} enabled={enabled} />
-            <Listeners model={this.listeners} mastermode={this.model} />
+            <Library controller={this.props.controller} enabled={enabled} />
+            <Playlist controller={this.props.controller} enabled={enabled} />
+            <Listeners controller={this.props.controller} mastermode={this.model} />
           </main>
         </div>
     );

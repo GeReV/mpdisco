@@ -12,7 +12,6 @@ _.extend(Network.prototype, {
     this.socket.emit(name, data);
   },
   command: function (command) {
-
     var args = [];
 
     if (arguments.length === 2 && _.isArray(arguments[1])) {
@@ -21,12 +20,21 @@ _.extend(Network.prototype, {
       args = _.rest(arguments);
     }
 
+    args = args.map(String);
+
     this.send('command', {
       command: command,
       args: args
     });
   },
   commands: function (commands) {
+    commands = commands.map(function(command) {
+
+      command.args = command.args.map(String);
+
+      return command;
+    });
+
     this.send('commands', commands);
   },
   once: function (name, callback) {

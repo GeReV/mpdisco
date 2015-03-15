@@ -8,8 +8,8 @@ var Listeners = React.createClass({
     mixins: [ListenersMixin],
 
     render: function() {
-        var me = this.state.me;
-        var listeners = this.state.listeners.map(function(listener) {
+        var me = this.cursors.me;
+        var listeners = this.cursors.listeners.get().map(function(listener) {
             var isMe = (listener.userid === me.userid);
 
             return (

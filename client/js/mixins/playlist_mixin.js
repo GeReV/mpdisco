@@ -1,11 +1,24 @@
+var React = require('react/addons');
 var DragDropMixin = require('react-dnd').DragDropMixin;
+
+var MPDiscoController = require('../mpdisco_controller.js');
+
+var tree = require('../mpdisco_model.js').tree;
 
 var accepts = ['artist', 'album', 'song'];
 
 var PlaylistMixin = {
-    mixins: [
-        DragDropMixin
-    ],
+    mixins: [DragDropMixin, tree.mixin],
+
+    cursors: {
+        items: ['playlist'],
+        status: ['status'],
+        song: ['currentsong']
+    },
+
+    propTypes: {
+        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
+    },
 
     statics: {
         configureDragDrop: function(register) {
@@ -13,7 +26,7 @@ var PlaylistMixin = {
                 register(itemType, {
                     dropTarget: {
                         acceptDrop: function(component, item) {
-                            component.props.model.addItem(itemType, item);
+                            component.props.controller.playlistAddItem(itemType, item);
                         }
                     }
                 });
@@ -24,32 +37,8 @@ var PlaylistMixin = {
     getInitialState: function() {
         return {
             animations: false,
-            items: [],
-            selectedItems: [],
-            playingItem: null
+            selectedItems: []
         };
-    },
-
-    componentWillMount: function() {
-        this.props.player.on('song', function(song) {
-            this.setState({
-                playingItemId: song.id
-            });
-        }.bind(this));
-
-        this.props.player.on('state', function(state) {
-            this.setState({
-                status: state
-            });
-        }.bind(this));
-
-        this.props.model.on('playlist', function(playlist) {
-            this.setState({
-                items: playlist || []
-            });
-        }.bind(this));
-
-        this.props.model.fetchPlaylist();
     },
 
     componentDidMount: function() {
@@ -60,14 +49,14 @@ var PlaylistMixin = {
     },
 
     itemPlayed: function(item) {
-        this.props.model.play(item.id);
+        this.props.controller.play(item.id);
     },
 
     itemRemoved: function(items) {
-        this.props.model.removeItems(items || this.state.selectedItems);
+        this.props.controller.playlistRemoveItems(items || this.state.selectedItems);
     },
 
-    itemSelected: function(items) {
+    itemsSelected: function(items) {
         this.setState({
             selectedItems: items
         });
@@ -77,24 +66,24 @@ var PlaylistMixin = {
         this.setState({
             items: items
         });
-        this.props.model.reorderItems(items);
+        this.props.controller.playlistReorderItems(items);
     },
 
     repeat: function(repeat, single) {
         if (repeat && single) {
             // Both on, turn both off.
-            this.props.player.toggleRepeat(0, 0);
+            this.props.controller.toggleRepeat(0, 0);
         } else if (repeat) {
             // Repeat on, turn single on.
-            this.props.player.toggleRepeat(1, 1);
+            this.props.controller.toggleRepeat(1, 1);
         } else {
             // Both off, turn repeat on.
-            this.props.player.toggleRepeat(1, 0);
+            this.props.controller.toggleRepeat(1, 0);
         }
     },
 
     shuffle: function(shuffle) {
-        this.props.player.toggleShuffle(shuffle);
+        this.props.controller.toggleShuffle(shuffle);
     }
 };
 

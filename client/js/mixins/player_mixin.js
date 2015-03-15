@@ -1,24 +1,29 @@
+var React = require('react/addons');
 var HotKey = require('react-hotkey');
 
 HotKey.activate('keydown');
 
 var isTextInputElement = require('react/lib/isTextInputElement');
 
+var MPDiscoController = require('../mpdisco_controller.js');
+
+var tree = require('../mpdisco_model.js').tree;
+
 var PlayerMixin = {
-    mixins: [HotKey.Mixin('handleKeyboard')],
+    mixins: [HotKey.Mixin('handleKeyboard'), tree.mixin],
+
+    propTypes: {
+        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
+    },
+
+    cursors: {
+        song: ['currentsong'],
+        status: ['status']
+    },
 
     getInitialState: function() {
         return {
             animations: false,
-            song: {
-                title: '',
-                artist: '',
-                album: '',
-                time: 0
-            },
-            status: {
-                state: 'stop'
-            },
             time: 0,
             indicatorAppear: false,
             indicatorState: null
@@ -26,14 +31,11 @@ var PlayerMixin = {
     },
 
     componentDidMount: function() {
-        this.props.model.on('song', function(song) {
-            this.setState({
-                song: song
-            });
-        }.bind(this));
+        var statusCursor = this.cursors.status;
 
-        this.props.model.on('state', function(status) {
+        statusCursor.on('update', function() {
             var time = 0;
+            var status = statusCursor.get();
             if (status.time) {
                 time = status.time.split(':');
                 time = +time[0];
@@ -49,16 +51,13 @@ var PlayerMixin = {
             }
 
             this.setState({
-                status: status,
                 time: time
             });
         }.bind(this));
-
-        this.props.model.update();
     },
 
     componentDidUpdate: function() {
-        if (this.state.song && !this.state.animations) {
+        if (this.cursors.song.get() && !this.state.animations) {
             this.setState({
                 animations: true
             });
@@ -76,11 +75,11 @@ var PlayerMixin = {
             return;
         }
 
-        var song = this.state.song;
+        var song = this.cursors.song.get();
 
         var seconds = Math.floor(+song.time * percent);
 
-        this.props.model.seek(song.id, seconds);
+        this.props.controller.seek(song.id, seconds);
     },
 
     handleKeyboard: function(e) {
@@ -106,7 +105,7 @@ var PlayerMixin = {
         }
 
         if (key === 67 || key === ' ') { // KeyC, Space
-            var state = this.state.status.state;
+            var state = this.cursors.status.get().state;
             var indicator;
 
             if (state === 'play') {
@@ -140,7 +139,7 @@ var PlayerMixin = {
     },
 
     togglePlay: function() {
-        var state = this.state.status.state;
+        var state = this.cursors.status.get().state;
 
         if (state === 'play') {
             this.pause();
@@ -150,44 +149,46 @@ var PlayerMixin = {
     },
 
     play: function() {
-        this.props.model.play();
+        this.props.controller.play();
     },
 
     stop: function() {
-        this.props.model.stop();
+        this.props.controller.stop();
     },
 
     pause: function() {
-        this.props.model.pause(true);
+        this.props.controller.pause(true);
     },
 
     next: function() {
-        this.props.model.next();
+        this.props.controller.next();
     },
 
     previous: function() {
-        this.props.model.previous();
+        this.props.controller.previous();
     },
 
     updateIndicator: function(state) {
         // Clear any pending timeout, so it trigger and hide our indicator prematurely.
-        if (this.state.indicatorAppearTimeout) {
-            clearTimeout(this.state.indicatorAppearTimeout);
+        if (this.indicatorAppearTimeout) {
+            clearTimeout(this.indicatorAppearTimeout);
         }
+
+        this.indicatorAppearTimeout = setTimeout(this.clearIndicator, 400);
 
         // Once the clear is finished, show the updated indicator.
         this.setState({
             indicatorState: state,
-            indicatorAppear: true,
-            indicatorAppearTimeout: setTimeout(this.clearIndicator, 400)
+            indicatorAppear: true
         });
     },
 
     clearIndicator: function() {
         // Clear the indicator from screen.
+        this.indicatorAppearTimeout = null;
+
         this.setState({
-            indicatorAppear: false,
-            indicatorAppearTimeout: null
+            indicatorAppear: false
         });
     }
 };

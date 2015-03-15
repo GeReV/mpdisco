@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var cx = React.addons.classSet;
 
-var PlaylistTools = require('./playlist_controls.jsx');
+var PlaylistControls = require('./playlist_controls.jsx');
 var PlaylistItem = require('./playlist_item.jsx');
 var ListView = require('./list_view.jsx');
 
@@ -12,6 +12,8 @@ var EnabledMixin = require('./mixins/enabled_mixin.js');
 var PlaylistMixin = require('./mixins/playlist_mixin.js').PlaylistMixin;
 
 var accepts = require('./mixins/playlist_mixin.js').accepts;
+
+var tree = require('./mpdisco_model.js').tree;
 
 var Playlist = React.createClass({
 
@@ -39,16 +41,16 @@ var Playlist = React.createClass({
             <section id="playlist" className={playlistClasses} {...dropTargetAttributes}>
                 <header>
                     <span>Playlist</span>
-                    <PlaylistTools status={this.state.status} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
+                    <PlaylistControls status={this.cursors.status.get()} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
                 </header>
                 <ListView
                     className="content list"
-                    items={this.state.items}
+                    items={this.cursors.items.get()}
                     itemCreator={this.itemCreator}
                     enabled={enabled}
                     onItemActivated={this.itemPlayed}
                     onItemRemoved={this.itemRemoved}
-                    onItemSelected={this.itemSelected}
+                    onItemsSelected={this.itemsSelected}
                     onItemsReordered={this.itemsReordered}/>
                 <div className="lock">
                     <i className="icon-lock" />
@@ -59,14 +61,15 @@ var Playlist = React.createClass({
     },
 
     itemCreator: function(item) {
-        var playing  = (this.state.playingItemId === item.id);
+        var song = this.cursors.song.get();
+        var isPlaying = (song && song.id === item.id);
 
         return (
             <PlaylistItem
                 key={item.id}
                 item={item}
                 enabled={this.enabled()}
-                playing={playing}
+                playing={isPlaying}
             />
         );
     }

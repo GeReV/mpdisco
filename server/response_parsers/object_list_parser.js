@@ -6,27 +6,29 @@ var ObjectListParser = AbstractParser.extend({
     this.separatorKey = separatorKey;
   },
   parse: function(s) {
-    if (!s) {
-      return s;
-    }
-
-    var that = this,
-        lines = s.split('\n'),
-        obj = {},
+    var obj = {},
         json = [];
 
-    _(lines).chain().compact().each(function(l, index) {
-      var o = that.parseLine(l);
+    if (!s) {
+      return json;
+    }
+
+    s.split('\n').forEach(function(l, index) {
+      if (!l) {
+        return;
+      }
+
+      var o = this.parseLine(l);
 
       // If we ran into an existing key, it means it's a new record.
-      if (o.key == that.separatorKey && index > 0) {
+      if (o.key === this.separatorKey && index > 0) {
         json.push(obj);
 
         obj = {};
       }
 
       obj[o.key] = o.value;
-    });
+    }, this);
 
     json.push(obj);
 

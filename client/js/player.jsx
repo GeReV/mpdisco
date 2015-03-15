@@ -24,7 +24,7 @@ var Player = React.createClass({
             'player-disabled': !this.enabled()
         });
 
-        var song = this.state.song;
+        var song = this.cursors.song.get();
 
         var time = formatTime(this.state.time || 0);
 
@@ -65,7 +65,7 @@ var Player = React.createClass({
                     <h2 className="duration">{time}</h2>
 
                     <PlayerControls
-                        state={this.state.status.state}
+                        state={this.cursors.status.get().state}
                         onPlay={this.togglePlay}
                         onStop={this.stop}
                         onNext={this.next}

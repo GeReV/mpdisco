@@ -4,17 +4,24 @@ var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var stackblur = require('./vendor/StackBlur');
 
-var LOGO_EMPTY = "images/noise.png";
+var tree = require('./mpdisco_model.js').tree;
 
 var Logo = React.createClass({
-    getInitialState: function() {
-        return {
-            cover: null
-        };
+
+    mixins: [tree.mixin],
+
+    cursors: {
+        cover: ['cover']
     },
 
     componentDidMount: function() {
-        this.props.model.on('cover', function(url) {
+        this.cursors.cover.on('update', function() {
+            var url = this.cursors.cover.get();
+
+            if (!url) {
+                return;
+            }
+
             var blurCanvas = function() {
                 var canvas = this.refs.cover.getDOMNode();
 
@@ -37,7 +44,7 @@ var Logo = React.createClass({
     render: function() {
 
         var image;
-        if (this.state.cover) {
+        if (this.cursors.cover.get()) {
             image = (
                 <canvas ref="cover" key={this.state.coverKey} />
             );
