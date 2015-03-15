@@ -37,6 +37,7 @@
     "underscore": "^1.8.2"
   },
   "devDependencies": {
+    "browser-sync": "^2.2.4",
     "browserify": "^8.0.2",
     "browserify-shim": "^3.8.2",
     "debug": "^2.1.2",
