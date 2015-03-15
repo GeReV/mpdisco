@@ -404,6 +404,11 @@ input[type="text"] {
       }
     }
 
+    a.active {
+      color: #0085a3;
+      text-shadow: 0 0 2px #00b6e4;
+    }
+
     .separator {
       border-left: 1px solid #c6c6c6;
       display: inline;
@@ -414,10 +419,6 @@ input[type="text"] {
     .remove {
       margin: 0 5px;
     }
-  }
-  
-  .active {
-    text-shadow: 0 0 3px #00b6e4;
   }
   
   .repeat {
