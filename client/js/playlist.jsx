@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var cx = React.addons.classSet;
 
-var PlaylistTools = require('./playlist_tools.jsx');
+var PlaylistTools = require('./playlist_controls.jsx');
 var PlaylistItem = require('./playlist_item.jsx');
 var ListView = require('./list_view.jsx');
 

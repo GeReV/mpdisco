@@ -51,7 +51,7 @@ var PlaylistTools = React.createClass({
         });
 
         return (
-            <div className="playlist-tools button-group">
+            <div className="playlist-controls">
                 <a className={shuffleClasses} href="#" onClick={this.toggleShuffle}><i className="icon-random"></i></a>
                 <a className={repeatClasses} href="#" onClick={this.toggleRepeat}><i className="icon-refresh"></i></a>
                 <span className="separator"></span>
