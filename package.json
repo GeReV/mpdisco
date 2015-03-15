@@ -17,6 +17,7 @@
     "server"
   ],
   "dependencies": {
+    "baobab": "^0.4.0",
     "clah": "^1.2.1",
     "compression": "^1.4.1",
     "cookie": "^0.1.2",

@@ -178,7 +178,7 @@ var ClientsManager = Class.extend({
   clientsInfo: function() {
     return _.map(this.clientsHash, function(v) {
       return v.info;
-    });
+    }) || [];
   }
 });
 

@@ -18,8 +18,8 @@ var MasterModeListeners = React.createClass({
     },
 
     render: function() {
-        var me = this.state.me;
-        var listeners = this.state.listeners.map(function(listener) {
+        var me = this.cursors.me.get();
+        var listeners = this.cursors.listeners.get().map(function(listener) {
             var isMe = (listener.userid === me.userid);
             var isMaster = this.state.master === listener.userid;
             var isNextMaster = false;
