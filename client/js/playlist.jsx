@@ -4,7 +4,7 @@ var _ = require('underscore');
 
 var cx = React.addons.classSet;
 
-var PlaylistTools = require('./playlist_controls.jsx');
+var PlaylistControls = require('./playlist_controls.jsx');
 var PlaylistItem = require('./playlist_item.jsx');
 var ListView = require('./list_view.jsx');
 
@@ -41,7 +41,7 @@ var Playlist = React.createClass({
             <section id="playlist" className={playlistClasses} {...dropTargetAttributes}>
                 <header>
                     <span>Playlist</span>
-                    <PlaylistTools status={this.cursors.status.get()} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
+                    <PlaylistControls status={this.cursors.status.get()} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
                 </header>
                 <ListView
                     className="content list"
@@ -50,7 +50,7 @@ var Playlist = React.createClass({
                     enabled={enabled}
                     onItemActivated={this.itemPlayed}
                     onItemRemoved={this.itemRemoved}
-                    onItemSelected={this.itemSelected}
+                    onItemsSelected={this.itemsSelected}
                     onItemsReordered={this.itemsReordered}/>
                 <div className="lock">
                     <i className="icon-lock" />

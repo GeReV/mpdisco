@@ -56,7 +56,7 @@ var PlaylistMixin = {
         this.props.controller.playlistRemoveItems(items || this.state.selectedItems);
     },
 
-    itemSelected: function(items) {
+    itemsSelected: function(items) {
         this.setState({
             selectedItems: items
         });
