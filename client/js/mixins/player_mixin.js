@@ -79,7 +79,7 @@ var PlayerMixin = {
 
         var seconds = Math.floor(+song.time * percent);
 
-        this.props.model.seek(song.id, seconds);
+        this.props.controller.seek(song.id, seconds);
     },
 
     handleKeyboard: function(e) {
