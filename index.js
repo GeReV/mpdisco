@@ -1,6 +1,4 @@
 
-var MPDisco = require('./server/server.js');
+var MPDiscoApp = require('./server/app.js');
 
-var mpdisco = new MPDisco();
-
-mpdisco.start(MPDisco.Modes.Master);
+var mpdisco = new MPDiscoApp(MPDiscoApp.Modes.Master);

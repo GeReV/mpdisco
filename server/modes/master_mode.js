@@ -1,124 +1,118 @@
-(function() {
-  var BasicMode = require('./basic_mode.js'),
-      ClientsManager = require('../clients_manager.js')(),
-      config = require('../../config.json'),
-      _ = require('underscore');
-  
-  var MasterMode = BasicMode.extend({
-    init: function(mpd, cmdProcessors) {
-      this._super(mpd, cmdProcessors);
-      
-      this.type = 'master';
-      
-      this.master = null;
-      
-      ClientsManager.on('disconnected', this.disconnected.bind(this));
-      
-      ClientsManager.on('connected', this.connected.bind(this));
-      
-      ClientsManager.on('identified', this.identified.bind(this));
-    },
-    
-    connected: function(client) {
-      client.emit('connected', {
-        id: client.info.userid,
-        info: client.info,
-        clients: ClientsManager.clientsInfo(),
-        mode: this.type,
-        master: this.master && ClientsManager.get(this.master).info
-      });
-    },
-    
-    disconnected: function(client) {
-      if (ClientsManager.isEmpty()) {
-        this.clearMaster();
-      } else if (!this.isMaster(ClientsManager.first())) {
-        this.setMaster(ClientsManager.first());
-      }
-    },
-    
-    identified: function(client) {
-      if (!this.master && !ClientsManager.isEmpty()) {
-        this.setMaster(ClientsManager.first());
-      }
-    },
-    
-    rotate: function() {
-      if (Clients.isEmpty()) {
-        return;
-      }
-      
-      ClientsManager.rotate();
-      
-      this.setMaster(ClientsManager.first());
-    },
-    
-    canExecute: function(command, client) {
-      return this.isMaster(client) || this.isWhitelistCommand(command);
-    },
-    
-    isMaster: function(client) {
-      return this.master === client.info.userid;
-    },
-    
-    setMaster: function(client) {
-      var timeout;
-      
-      if (!client) {
-        this.master = null;
-        
-        console.log('master cleared');
-        
-        return;
-      }
-      
-      this.master = client.info.userid;
-      
-      console.log('master changed', this.master);
-      
-      this.setMasterTimeout();
+var debug = require('debug')('mpdisco:master_mode'),
+    BasicMode = require('./basic_mode.js'),
+    ClientsManager = require('../clients_manager.js'),
+    config = require('../../config.json');
 
-      client.emit('master', ClientsManager.get(this.master).info);
-      client.broadcast.emit('master', ClientsManager.get(this.master).info);
-    },
-    clearMaster: function() {
-      this.setMaster(null);
-    },
-    setMasterTimeout: function() {
+var MasterMode = BasicMode.extend({
+  init: function(mpd) {
+    this._super(mpd);
 
-      clearTimeout(this.masterTimeout);
-      
-      console.log('master timeout (mins):', config.master_time);
-      
-      this.masterTimestamp = (new Date()).getTime();
-      
-      this.masterTimeout = setTimeout(function() {
-        console.log('rotating master');
-        
-        ClientsManager.rotate();
-        
-        this.setMaster(ClientsManager.first());
-        
-        clearTimeout(this.masterTimeout);
-      }.bind(this), +config.master_time * 60 * 1000);
-      
-    },
-    
-    isWhitelistCommand: function(cmd) {
-      return (this.commandWhitelist.indexOf(cmd) !== -1);
-    },
-    
-    commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update']
-    
-  });
-  
-  if (this.define && define.amd) {
-    // Publish as AMD module
-    define(function() {
-      return MasterMode;
+    this.type = 'master';
+
+    this.master = null;
+
+    var clientsManager = this.clientsManager = ClientsManager.instance();
+
+    clientsManager.on('disconnected', this.disconnected.bind(this));
+
+    clientsManager.on('connected', this.connected.bind(this));
+
+    clientsManager.on('identified', this.identified.bind(this));
+  },
+
+  connected: function(client) {
+    client.emit('connected', {
+      userid: client.info.userid,
+      info: client.info,
+      clients: this.clientsManager.clientsInfo(),
+      mode: this.type,
+      master: this.master
     });
-  } else if (typeof(module) != 'undefined' && module.exports) {
-    // Publish as node.js module
-    module.exports = MasterMode;
-  }
-})();
+  },
+
+  disconnected: function(client) {
+    if (this.clientsManager.isEmpty()) {
+      this.clearMaster();
+    } else if (!this.isMaster(this.clientsManager.first())) {
+      this.setMaster(this.clientsManager.first());
+    }
+  },
+
+  identified: function(client) {
+    if (!this.master && !this.clientsManager.isEmpty()) {
+      this.setMaster(this.clientsManager.first());
+    }
+  },
+
+  rotate: function() {
+    if (this.clientsManager.isEmpty()) {
+      return;
+    }
+
+    this.clientsManager.rotate();
+
+    this.setMaster(this.clientsManager.first());
+  },
+
+  canExecute: function(command, client) {
+    return this.isMaster(client) || this.isWhitelistCommand(command);
+  },
+
+  isMaster: function(client) {
+    return this.master === client.info.userid;
+  },
+
+  setMaster: function(client) {
+    if (!client) {
+      this.master = null;
+
+      debug('Master cleared.');
+
+      return;
+    }
+
+    this.master = client.info.userid;
+
+    debug('Master changed: %s', this.master);
+
+    this.setMasterTimeout();
+
+    client.emit('master', this.master);
+    client.broadcast.emit('master', this.master);
+  },
+  clearMaster: function() {
+    this.setMaster(null);
+  },
+  setMasterTimeout: function() {
+
+    var masterTime = +config.master_time;
+
+    clearTimeout(this.masterTimeout);
+
+    debug('Master timeout: %s min', masterTime);
+
+    this.masterTimestamp = Date.now();
+
+    this.masterTimeout = setTimeout(function() {
+      debug('Rotating master');
+
+      this.clientsManager.rotate();
+
+      this.setMaster(this.clientsManager.first());
+
+    }.bind(this), masterTime * 60 * 1000);
+  },
+
+  isWhitelistCommand: function(cmd) {
+    return (this.commandWhitelist.indexOf(cmd) !== -1);
+  },
+
+  commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update']
+
+});
+
+MasterMode.create = function(mpd) {
+  return new MasterMode(mpd);
+};
+
+module.exports = MasterMode;
