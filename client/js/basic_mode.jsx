@@ -8,15 +8,7 @@ var Listeners = require('./listeners.jsx');
 
 //var Error = require('error');
 
-var LibraryModel = require('./models/library_model.js');
-
 var BasicMode = React.createClass({
-  componentWillMount: function() {
-    var network = this.props.network;
-
-    this.library = new LibraryModel(network);
-  },
-
   render: function () {
     return (
         <div id="container" role="main">
@@ -25,7 +17,7 @@ var BasicMode = React.createClass({
             <Player controller={this.props.controller} />
           </header>
           <main>
-            <Library model={this.library} />
+            <Library controller={this.props.controller} />
             <Playlist controller={this.props.controller} />
             <Listeners controller={this.props.controller} />
           </main>

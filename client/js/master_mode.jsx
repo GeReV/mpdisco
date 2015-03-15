@@ -8,8 +8,6 @@ var Listeners = require('./master_mode_listeners.jsx');
 
 //var Error = require('error');
 
-var LibraryModel = require('./models/library_model.js');
-
 var MasterModeModel = require('./models/master_mode_model.js');
 
 var MasterMode = React.createClass({
@@ -21,11 +19,7 @@ var MasterMode = React.createClass({
   },
 
   componentWillMount: function() {
-    var network = this.props.network;
-
-    this.library   = new LibraryModel(network);
-
-    this.model     = new MasterModeModel(network);
+    this.model = new MasterModeModel(this.props.network);
   },
 
   componentDidMount: function() {
@@ -43,7 +37,7 @@ var MasterMode = React.createClass({
             <Player controller={this.props.controller} enabled={enabled} />
           </header>
           <main>
-            <Library model={this.library} enabled={enabled} />
+            <Library controller={this.props.controller} enabled={enabled} />
             <Playlist controller={this.props.controller} enabled={enabled} />
             <Listeners controller={this.props.controller} mastermode={this.model} />
           </main>

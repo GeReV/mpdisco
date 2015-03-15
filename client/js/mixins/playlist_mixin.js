@@ -26,7 +26,7 @@ var PlaylistMixin = {
                 register(itemType, {
                     dropTarget: {
                         acceptDrop: function(component, item) {
-                            component.props.model.addItem(itemType, item);
+                            component.props.controller.playlistAddItem(itemType, item);
                         }
                     }
                 });

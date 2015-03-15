@@ -7,9 +7,15 @@ var LibraryAlbumItem = require('./library_album_item.jsx');
 
 var cx = React.addons.classSet;
 
+var MPDiscoController = require('./mpdisco_controller.js');
+
 var LibraryArtistItem = React.createClass({
 
     mixins: [DraggableMixin, EnabledMixin],
+
+    propTypes: {
+        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
+    },
 
     statics: {
         getDragType: function() {
@@ -23,7 +29,6 @@ var LibraryArtistItem = React.createClass({
 
     getInitialState: function() {
         return {
-            albums: this.props.artist.albums || [],
             loaded: false,
             collapsed: true
         };
@@ -44,8 +49,14 @@ var LibraryArtistItem = React.createClass({
 
         var enabled = this.enabled();
 
-        var albums = this.state.albums.map(function(album) {
-            return <LibraryAlbumItem key={album.name} album={album} library={this.props.library} enabled={enabled} />;
+        var artist = this.props.artist;
+
+        var albums = (artist.albums || []).map(function(album) {
+            return <LibraryAlbumItem
+                key={album.name}
+                album={album}
+                controller={this.props.controller}
+                enabled={enabled} />;
         }, this);
 
         var dragSourceAttributes;
@@ -56,7 +67,7 @@ var LibraryArtistItem = React.createClass({
 
         return (
             <li className={classes} {...dragSourceAttributes}>
-                <span className="name" title={this.props.artist.name} onClick={this.toggleAlbums}>{this.props.artist.name}</span>
+                <span className="name" title={artist.name} onClick={this.toggleAlbums}>{artist.name}</span>
                 <ul className={treeClasses}>
                     {albums}
                 </ul>
@@ -67,16 +78,12 @@ var LibraryArtistItem = React.createClass({
     toggleAlbums: function(e) {
         if (!this.state.loaded) {
 
-            var promise = this.props.library.fetchAlbums(this.props.artist.name);
+            this.props.controller.libraryListAlbums(this.props.artist);
 
-            promise
-                .done(function(albums) {
-                    this.setState({
-                        albums: albums,
-                        loaded: true,
-                        collapsed: false
-                    });
-                }.bind(this));
+            this.setState({
+                loaded: true,
+                collapsed: false
+            });
         } else {
             this.setState({
                 collapsed: !this.state.collapsed

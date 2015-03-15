@@ -1,6 +1,6 @@
 var React = require('react/addons');
+
 var Network = require('./network.js');
-var _ = require('underscore');
 
 var BasicMode = require('./basic_mode.jsx');
 var MasterMode = require('./master_mode.jsx');
@@ -8,11 +8,9 @@ var MasterMode = require('./master_mode.jsx');
 var MPDiscoModel = require('./mpdisco_model.js');
 var MPDiscoController = require('./mpdisco_controller.js');
 
-var host = window.location.hostname;
+var network = new Network(window.location.hostname, 3000);
 
-var network = new Network(host, 3000);
-
-var model = new MPDiscoModel(network);
+MPDiscoModel.init(network);
 
 var controller = new MPDiscoController(network);
 

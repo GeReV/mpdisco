@@ -18,6 +18,10 @@ var Logo = React.createClass({
         this.cursors.cover.on('update', function() {
             var url = this.cursors.cover.get();
 
+            if (!url) {
+                return;
+            }
+
             var blurCanvas = function() {
                 var canvas = this.refs.cover.getDOMNode();
 
