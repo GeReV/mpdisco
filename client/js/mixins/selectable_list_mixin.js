@@ -1,6 +1,11 @@
+var React = require('react/addons');
 var _ = require('underscore');
 
 var SelectableListMixin = {
+    propTypes: {
+        itemSelected: React.PropTypes.func
+    },
+
     itemSelected: function(e, item) {
         var selected = this.state.selected;
 
@@ -27,7 +32,9 @@ var SelectableListMixin = {
             selectedItems: this.state.items
         });
 
-        this.props.itemSelected(this.state.items);
+        if (this.props.itemSelected) {
+            this.props.itemSelected(this.state.items);
+        }
     },
 
     itemSelectNone: function() {
@@ -35,7 +42,9 @@ var SelectableListMixin = {
             selectedItems: []
         });
 
-        this.props.itemSelected([]);
+        if (this.props.itemSelected) {
+            this.props.itemSelected([]);
+        }
     },
 
     itemSelectOne: function(item) {
