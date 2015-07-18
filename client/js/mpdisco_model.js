@@ -103,7 +103,7 @@ _.extend(init, {
 
     bindLibrary: function(network, cursor) {
         function update() {
-            network.command('list', 'artist');
+            network.command('list', 'albumartist');
         }
 
         network.on('update:database', update);
