@@ -45,7 +45,9 @@ _.extend(LibraryMerger.prototype, {
             return filteredArtistNames.indexOf(item.name) < 0;
         });
 
-        return filteredArists.concat(newArtists);
+        return _.sortBy(filteredArists.concat(newArtists), function(item) {
+          return item.name.replace(/^\s*The\s+/i, ''); // Ignore names starting with "The".
+        });
     },
 
     handleAlbumsResponse: function(res) {
