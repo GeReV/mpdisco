@@ -1,5 +1,5 @@
 var Baobab = require('baobab');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var LibraryMerger = require('./library_merger.js');
 

@@ -1,5 +1,5 @@
 var io = require('socket.io-client');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var Network = function(host, port) {
   this.url = "ws://" + host + ":" + port + "/";

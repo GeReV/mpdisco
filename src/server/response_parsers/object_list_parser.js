@@ -1,11 +1,14 @@
 var AbstractParser = require('./abstract_parser.js'),
-    _ = require('underscore');
+    _ = require('lodash');
 
-var ObjectListParser = AbstractParser.extend({
-  init: function(separatorKey) {
+export default class ObjectListParser extends AbstractParser {
+  constructor(separatorKey) {
+    super();
+
     this.separatorKey = separatorKey;
-  },
-  parse: function(s) {
+  }
+
+  parse(s) {
     var obj = {},
         json = [];
 
@@ -34,6 +37,4 @@ var ObjectListParser = AbstractParser.extend({
 
     return json;
   }
-});
-
-module.exports = ObjectListParser;
+}

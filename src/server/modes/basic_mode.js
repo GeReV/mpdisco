@@ -1,5 +1,4 @@
-var Class = require('clah'),
-    debug = require('debug')('mpdisco:mode'),
+var debug = require('debug')('mpdisco:mode'),
     mpd = require('mpd'),
     mpdcmd = mpd.cmd,
     _ = require('underscore'),
@@ -17,7 +16,7 @@ function ensureArray(args) {
   return _.isArray(args) ? args : [args];
 }
 
-function execute (mpd, command, args, client) {
+function execute(mpd, command, args, client) {
   var cmd;
 
   args = sanitizeArgs(ensureArray(args));
@@ -42,20 +41,26 @@ function execute (mpd, command, args, client) {
 
 var clientsManager = ClientsManager.instance();
 
-var BasicMode = Class.extend({
-  init: function(mpd) {
+export default class BasicMode {
+  static create(mpd) {
+    return new BasicMode(mpd);
+  };
+
+  constructor(mpd) {
     this.type = 'freeforall';
     this.mpd = mpd;
-  },
-  connected: function(client) {
+  }
+
+  connected(client) {
     client.emit('connected', {
       userid: client.info.userid,
       info: client.info,
       clients: clientsManager.clientsInfo(),
       mode: this.type
     });
-  },
-  command: function(command, args, client) {
+  }
+
+  command(command, args, client) {
 
     command = command.toLowerCase();
 
@@ -87,9 +92,9 @@ var BasicMode = Class.extend({
         type: 'nopermission'
       });
     }
-  },
+  }
   // TODO: Review this.
-  commands: function(cmds, client) {
+  commands(cmds, client) {
 
     cmds = cmds || [];
 
@@ -119,14 +124,9 @@ var BasicMode = Class.extend({
       });
 
     }
-  },
-  canExecute: function(command, client) {
+  }
+
+  canExecute(command, client) {
     return !!clientsManager.get(client.info.userid);
   }
-});
-
-BasicMode.create = function(mpd) {
-  return new BasicMode(mpd);
-};
-
-module.exports = BasicMode;
+}

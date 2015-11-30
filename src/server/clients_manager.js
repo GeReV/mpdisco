@@ -1,9 +1,8 @@
-var Class = require('clah'),
-    EventEmitter = require('events').EventEmitter,
+var EventEmitter = require('events').EventEmitter,
     debug = require('debug')('mpdisco:clients_manager'),
     uuid = require('node-uuid'),
     util = require('util'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 var Gravatar = require('./gravatar.js');
 
@@ -20,16 +19,18 @@ _.findIndex = function(obj, iterator, context) {
   return result;
 };
 
-var ClientsManager = Class.extend({
-  init: function() {
+class ClientsManager extends EventEmitter {
+  constructor() {
+    super();
+
     this.loggedClients = [];
 
     this.clientsHash = {};
 
     this.disconnectionTimeouts = {};
-  },
+  }
 
-  connected: function(client) {
+  connected(client) {
     var session = client.handshake.session;
 
     if (!session.userid) {
@@ -77,9 +78,9 @@ var ClientsManager = Class.extend({
     }
 
     this.emit('connected', client);
-  },
+  }
 
-  disconnected: function(client) {
+  disconnected(client) {
 
     var info = client.info;
 
@@ -97,9 +98,9 @@ var ClientsManager = Class.extend({
 
     }.bind(this), 5000);
 
-  },
+  }
 
-  dropClient: function(client) {
+  dropClient(client) {
     var info = client.info;
 
     debug('Dropped client: %s', info.userid);
@@ -107,9 +108,9 @@ var ClientsManager = Class.extend({
     this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === info.userid; });
 
     delete this.clientsHash[info.userid];
-  },
+  }
 
-  performIdentification: function(client, name) {
+  performIdentification(client, name) {
      if (!name) {
        return;
      }
@@ -123,9 +124,9 @@ var ClientsManager = Class.extend({
          displayName: name
        });
      }
-  },
+  }
 
-  identifyClient: function(client, profile) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
+  identifyClient(client, profile) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
     var index;
 
     if (profile.entry && profile.entry.length) {
@@ -151,39 +152,37 @@ var ClientsManager = Class.extend({
     this.sendClientsList(client);
 
     this.emit('identified', client);
-  },
+  }
 
-  sendClientsList: function(client) {
+  sendClientsList(client) {
     client.emit('clientslist', this.clientsInfo(), client.info);
-  },
+  }
 
-  get: function(userid) {
+  get(userid) {
     return this.clientsHash[userid];
-  },
+  }
 
-  first: function() {
+  first() {
     if (this.loggedClients.length) {
       return this.loggedClients[0];
     }
-  },
+  }
 
-  rotate: function() {
+  rotate() {
     this.loggedClients.push(this.loggedClients.shift());
-  },
+  }
 
-  isEmpty: function() {
+  isEmpty() {
     return this.loggedClients.length <= 0;
-  },
+  }
 
-  clientsInfo: function() {
+  clientsInfo() {
     return _.map(this.clientsHash, function(v) {
       return v.info;
     }) || [];
   }
-});
+}
 
-_.extend(ClientsManager.prototype, EventEmitter.prototype);
-  
 var ClientsManagerSingleton = function() {
   if ( ClientsManagerSingleton.prototype._singletonInstance ) {
     return ClientsManagerSingleton.prototype._singletonInstance;
@@ -193,7 +192,7 @@ var ClientsManagerSingleton = function() {
 
   return ClientsManagerSingleton.prototype._singletonInstance;
 };
-  
+
 module.exports = {
   instance: ClientsManagerSingleton
 };

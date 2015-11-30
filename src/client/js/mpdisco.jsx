@@ -1,19 +1,68 @@
-var React = require('react/addons');
 
-var Network = require('./network.js');
+import 'babel-core/polyfill';
+import ReactDOM from 'react-dom';
+import FastClick from 'fastclick';
 
-var BasicMode = require('./components/basic_mode.jsx');
-var MasterMode = require('./components/master_mode.jsx');
+import Network from './network.js';
 
-var MPDiscoModel = require('./mpdisco_model.js');
-var MPDiscoController = require('./mpdisco_controller.js');
+import BasicMode from './components/basic_mode.jsx';
+import MasterMode from './components/master_mode.jsx';
 
-var network = new Network(window.location.hostname, 3000);
+import MPDiscoModel from './mpdisco_model.js';
+import MPDiscoController from './mpdisco_controller.js';
+
+const network = new Network(window.location.hostname, 3000);
 
 MPDiscoModel.init(network);
 
-var controller = new MPDiscoController(network);
+const controller = new MPDiscoController(network);
 
-var MPDisco = MasterMode;
+const MPDisco = MasterMode;
 
-React.render(<MPDisco controller={controller} network={network} />, document.body);
+
+let cssContainer = document.getElementById('css');
+
+const appContainer = document.getElementById('app');
+
+const context = {
+  onSetTitle: value => document.title = value,
+  onSetMeta: (name, content) => {
+    // Remove and create a new <meta /> tag in order to make it work
+    // with bookmarks in Safari
+    const elements = document.getElementsByTagName('meta');
+    [].slice.call(elements).forEach((element) => {
+      if (element.getAttribute('name') === name) {
+        element.parentNode.removeChild(element);
+      }
+    });
+    const meta = document.createElement('meta');
+    meta.setAttribute('name', name);
+    meta.setAttribute('content', content);
+    document.getElementsByTagName('head')[0].appendChild(meta);
+  }
+};
+
+function render(component) {
+  ReactDOM.render(component, appContainer, () => {
+    // Remove the pre-rendered CSS because it's no longer used
+    // after the React app is launched
+    if (cssContainer) {
+      cssContainer.parentNode.removeChild(cssContainer);
+      cssContainer = null;
+    }
+  });
+}
+
+function run() {
+  // Make taps on links and buttons work fast on mobiles
+  FastClick.attach(document.body);
+
+  render(<MPDisco controller={controller} network={network} />)
+}
+
+// Run the application when both DOM is ready and page content is loaded
+if (['complete', 'loaded', 'interactive'].includes(document.readyState) && document.body) {
+  run();
+} else {
+  document.addEventListener('DOMContentLoaded', run, false);
+}

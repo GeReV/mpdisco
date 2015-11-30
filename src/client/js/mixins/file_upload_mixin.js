@@ -1,6 +1,6 @@
 var React = require('react/addons');
 var Q = require('q');
-var _ = require('underscore');
+var _ = require('lodash');
 
 function xhrSuccess(req) {
     return (req.status === 200 || (req.status === 0 && req.responseText));

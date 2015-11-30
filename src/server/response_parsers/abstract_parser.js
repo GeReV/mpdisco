@@ -1,11 +1,9 @@
-var Class = require('clah');
-
-var AbstractParser = Class.extend({
-  init: function() {},
-  parse: function(response) {
+export default class AbstractParser {
+  parse(response) {
     return {};
-  },
-  parseLine: function(l) {
+  }
+
+  parseLine(l) {
     var i = l.indexOf(':'),
         key = l.slice(0, i).toLowerCase().trim(),
         value = (l.slice(i + 1) || '').trim();
@@ -15,6 +13,4 @@ var AbstractParser = Class.extend({
       value: value
     };
   }
-});
-
-module.exports = AbstractParser;
+}

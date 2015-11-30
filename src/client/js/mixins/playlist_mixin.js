@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var DragDropMixin = require('react-dnd').DragDropMixin;
+//var DragDropMixin = require('react-dnd').DragDropMixin;
 
 var MPDiscoController = require('../mpdisco_controller.js');
 
@@ -8,7 +8,7 @@ var tree = require('../mpdisco_model.js').tree;
 var accepts = ['artist', 'album', 'song'];
 
 var PlaylistMixin = {
-    mixins: [DragDropMixin, tree.mixin],
+    mixins: [/*DragDropMixin, */tree.mixin],
 
     cursors: {
         items: ['playlist'],
@@ -20,19 +20,19 @@ var PlaylistMixin = {
         controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
     },
 
-    statics: {
-        configureDragDrop: function(register) {
-            accepts.forEach(function(itemType) {
-                register(itemType, {
-                    dropTarget: {
-                        acceptDrop: function(component, item) {
-                            component.props.controller.playlistAddItem(itemType, item);
-                        }
-                    }
-                });
-            });
-        }
-    },
+    //statics: {
+    //    configureDragDrop: function(register) {
+    //        accepts.forEach(function(itemType) {
+    //            register(itemType, {
+    //                dropTarget: {
+    //                    acceptDrop: function(component, item) {
+    //                        component.props.controller.playlistAddItem(itemType, item);
+    //                    }
+    //                }
+    //            });
+    //        });
+    //    }
+    //},
 
     getInitialState: function() {
         return {

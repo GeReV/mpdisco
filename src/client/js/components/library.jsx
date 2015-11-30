@@ -1,13 +1,13 @@
 var React = require('react/addons');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
 
 var cx = React.addons.classSet;
 var update = React.addons.update;
 
-var DragDropMixin = require('react-dnd').DragDropMixin;
-var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
+//var DragDropMixin = require('react-dnd').DragDropMixin;
+//var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
 
 var EnabledMixin = require('./../mixins/enabled_mixin.js');
 
@@ -20,7 +20,7 @@ var tree = require('./../mpdisco_model.js').tree;
 
 var Library = React.createClass({
 
-    mixins: [DragDropMixin, EnabledMixin, tree.mixin],
+    mixins: [/*DragDropMixin,*/ EnabledMixin, tree.mixin],
 
     propTypes: {
         controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
@@ -30,26 +30,26 @@ var Library = React.createClass({
         artists: ['artists']
     },
 
-    statics: {
-        configureDragDrop: function(register) {
-            register(NativeDragItemTypes.FILE, {
-                dropTarget: {
-                    acceptDrop: function(component, item) {
-                        if (!item) {
-                            return;
-                        }
-
-                        if (_.isArray(item.files)) {
-                            component.setState({
-                                uploads: item.files,    // These will be rendered.
-                                uploading: item.files   // These will be used to keep track of progress.
-                            });
-                        }
-                    }
-                }
-            });
-        }
-    },
+    //statics: {
+    //    configureDragDrop: function(register) {
+    //        register(NativeDragItemTypes.FILE, {
+    //            dropTarget: {
+    //                acceptDrop: function(component, item) {
+    //                    if (!item) {
+    //                        return;
+    //                    }
+    //
+    //                    if (_.isArray(item.files)) {
+    //                        component.setState({
+    //                            uploads: item.files,    // These will be rendered.
+    //                            uploading: item.files   // These will be used to keep track of progress.
+    //                        });
+    //                    }
+    //                }
+    //            }
+    //        });
+    //    }
+    //},
 
     getInitialState: function() {
         return {
@@ -74,14 +74,14 @@ var Library = React.createClass({
 
     render: function() {
 
-        var dropState = this.getDropState(NativeDragItemTypes.FILE);
+        //var dropState = this.getDropState(NativeDragItemTypes.FILE);
 
         var enabled = this.enabled();
 
         var classes = cx({
             'library-updating': this.state.updating,
-            'library-drop': dropState.isDragging,
-            'library-drop-hover': dropState.isHovering,
+            //'library-drop': dropState.isDragging,
+            //'library-drop-hover': dropState.isHovering,
             'library-disabled': !enabled
         });
 
@@ -112,7 +112,7 @@ var Library = React.createClass({
         //</menu>
 
         return (
-            <section id="library" className={classes} {...this.dropTargetFor(NativeDragItemTypes.FILE)}>
+            <section id="library" className={classes}/* {...this.dropTargetFor(NativeDragItemTypes.FILE)}*/>
                 <header>Library</header>
                 <div className="content">
                     <ReactCSSTransitionGroup component="ul" className="artists tree" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>

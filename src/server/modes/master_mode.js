@@ -5,9 +5,15 @@ import config from '../../../config.json';
 
 const debug = dbg('mpdisco:master_mode');
 
-var MasterMode = BasicMode.extend({
-  init: function(mpd) {
-    this._super(mpd);
+export default class MasterMode extends BasicMode {
+  static commandWhitelist = ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update'];
+
+  static create(mpd) {
+    return new MasterMode(mpd);
+  };
+
+  constructor(mpd) {
+    super(mpd);
 
     this.type = 'master';
 
@@ -20,9 +26,9 @@ var MasterMode = BasicMode.extend({
     clientsManager.on('connected', this.connected.bind(this));
 
     clientsManager.on('identified', this.identified.bind(this));
-  },
+  }
 
-  connected: function(client) {
+  connected(client) {
     client.emit('connected', {
       userid: client.info.userid,
       info: client.info,
@@ -30,23 +36,23 @@ var MasterMode = BasicMode.extend({
       mode: this.type,
       master: this.master
     });
-  },
+  }
 
-  disconnected: function(client) {
+  disconnected(client) {
     if (this.clientsManager.isEmpty()) {
       this.clearMaster();
     } else if (!this.isMaster(this.clientsManager.first())) {
       this.setMaster(this.clientsManager.first());
     }
-  },
+  }
 
-  identified: function(client) {
+  identified(client) {
     if (!this.master && !this.clientsManager.isEmpty()) {
       this.setMaster(this.clientsManager.first());
     }
-  },
+  }
 
-  rotate: function() {
+  rotate() {
     if (this.clientsManager.isEmpty()) {
       return;
     }
@@ -54,17 +60,17 @@ var MasterMode = BasicMode.extend({
     this.clientsManager.rotate();
 
     this.setMaster(this.clientsManager.first());
-  },
+  }
 
-  canExecute: function(command, client) {
+  canExecute(command, client) {
     return this.isMaster(client) || this.isWhitelistCommand(command);
-  },
+  }
 
-  isMaster: function(client) {
+  isMaster(client) {
     return this.master === client.info.userid;
-  },
+  }
 
-  setMaster: function(client) {
+  setMaster(client) {
     if (!client) {
       this.master = null;
 
@@ -81,11 +87,13 @@ var MasterMode = BasicMode.extend({
 
     client.emit('master', this.master);
     client.broadcast.emit('master', this.master);
-  },
-  clearMaster: function() {
+  }
+
+  clearMaster() {
     this.setMaster(null);
-  },
-  setMasterTimeout: function() {
+  }
+
+  setMasterTimeout() {
 
     var masterTime = +config.master_time;
 
@@ -103,18 +111,9 @@ var MasterMode = BasicMode.extend({
       this.setMaster(this.clientsManager.first());
 
     }.bind(this), masterTime * 60 * 1000);
-  },
+  }
 
-  isWhitelistCommand: function(cmd) {
-    return (this.commandWhitelist.indexOf(cmd) !== -1);
-  },
-
-  commandWhitelist: ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update']
-
-});
-
-MasterMode.create = function(mpd) {
-  return new MasterMode(mpd);
-};
-
-module.exports = MasterMode;
+  isWhitelistCommand(cmd) {
+    return (MasterMode.commandWhitelist.indexOf(cmd) !== -1);
+  }
+}

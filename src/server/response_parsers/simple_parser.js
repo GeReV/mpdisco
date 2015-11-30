@@ -1,33 +1,31 @@
 var AbstractParser = require('./abstract_parser.js'),
-  _ = require('underscore');
+  _ = require('lodash');
 
-var SimpleParser = AbstractParser.extend({
-parse: function(s) {
-  if (!s) {
-    return s;
-  }
+export default class SimpleParser extends AbstractParser {
+  parse(s) {
+    if (!s) {
+      return s;
+    }
 
-  var that = this,
+    var that = this,
       lines = s.split('\n'),
       obj = {},
       json = [],
       overwrites = 0;
 
-  _(lines).chain().compact().each(function(l, index) {
-    var o = that.parseLine(l);
+    _(lines).chain().compact().each(function (l, index) {
+      var o = that.parseLine(l);
 
-    if (obj.hasOwnProperty(o.key) && overwrites >= 2) {
-      console.warn('Key overwrite when parsing response (key=' + o.key + '), SimpleParser could be wrong for response. Response:');
-      console.warn(s);
-    }
+      if (obj.hasOwnProperty(o.key) && overwrites >= 2) {
+        console.warn('Key overwrite when parsing response (key=' + o.key + '), SimpleParser could be wrong for response. Response:');
+        console.warn(s);
+      }
 
-    obj[o.key] = o.value;
-  });
+      obj[o.key] = o.value;
+    });
 
-  json.push(obj);
+    json.push(obj);
 
-  return (json.length == 1 ? json[0] : json);
+    return (json.length == 1 ? json[0] : json);
+  }
 }
-});
-
-module.exports = SimpleParser;

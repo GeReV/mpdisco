@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var _ = require('underscore');
+var _ = require('lodash');
 
 var SelectableListMixin = {
     propTypes: {

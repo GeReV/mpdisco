@@ -1,5 +1,4 @@
-var Class = require('clah'),
-    config = require('../../config.json'),
+var config = require('../../config.json'),
     mm = require('./meta_data.js'),
     http = require('http'),
     httpFollower = require('./helpers/http_follower.js'),
@@ -7,9 +6,9 @@ var Class = require('clah'),
     fs = require('fs'),
     Q = require('q'),
     _ = require('underscore');
-  
-var CoverArt = Class.extend({
-  getCover: function(options) {
+
+class CoverArt {
+  getCover(options) {
     var output = this._outputPath(options);
 
     var promise = Q.promise(function(resolve, reject) {
@@ -37,9 +36,9 @@ var CoverArt = Class.extend({
     }.bind(this));
 
     return promise;
-  },
+  }
 
-  _findRelease: function(options) {
+  _findRelease(options) {
     return Q.promise(function(resolve, reject) {
 
       var host = 'musicbrainz.org',
@@ -98,9 +97,9 @@ var CoverArt = Class.extend({
       }.bind(this));
 
     }.bind(this));
-  },
+  }
 
-  _retrieveCover: function(urls) {
+  _retrieveCover(urls) {
     return Q.promise(function(resolve, reject) {
       function getCover(url) {
         if (urls.length <= 0) {
@@ -122,9 +121,9 @@ var CoverArt = Class.extend({
 
       getCover(urls.shift());
     });
-  },
+  }
 
-  _downloadCover: function(url, output) {
+  _downloadCover(url, output) {
     var file = fs.createWriteStream(output);
 
     var promise = Q.promise(function(resolve, reject) {
@@ -142,9 +141,9 @@ var CoverArt = Class.extend({
     });
 
     return promise;
-  },
+  }
 
-  _outputPath: function(options) {
+  _outputPath(options) {
 
     var output = path.join(config.music_directory.replace(/^~/, process.env.HOME),
         mm.safeName(options.artist),
@@ -152,9 +151,9 @@ var CoverArt = Class.extend({
         'front.jpg');
 
     return output;
-  },
+  }
 
-  _extractBestGuessReleases: function(json) {
+  _extractBestGuessReleases(json) {
 
     var results = [];
 
@@ -171,6 +170,6 @@ var CoverArt = Class.extend({
     return results.concat(_.without(json.releases, results)); // Append the rest and return.
 
   }
-});
-  
-module.exports = new CoverArt();
+}
+
+export default new CoverArt();

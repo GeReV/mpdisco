@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 var LibraryMerger = function(network, cursor) {
     this.network = network;

@@ -1,8 +1,8 @@
 var AbstractParser = require('./abstract_parser.js'),
-    _ = require('underscore');
+    _ = require('lodash');
 
-var LineParser = AbstractParser.extend({
-  parse: function(s) {
+export default class LineParser extends AbstractParser {
+  parse(s) {
     if (!s) {
       return s;
     }
@@ -24,6 +24,4 @@ var LineParser = AbstractParser.extend({
 
     return json;
   }
-});
-
-module.exports = LineParser;
+}

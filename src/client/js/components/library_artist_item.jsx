@@ -1,6 +1,6 @@
 var React = require('react/addons');
 
-var DraggableMixin = require('./../mixins/draggable_mixin.js');
+//var DraggableMixin = require('./../mixins/draggable_mixin.js');
 var EnabledMixin = require('./../mixins/enabled_mixin.js');
 
 var LibraryAlbumItem = require('./library_album_item.jsx');
@@ -11,7 +11,7 @@ var MPDiscoController = require('./../mpdisco_controller.js');
 
 var LibraryArtistItem = React.createClass({
 
-    mixins: [DraggableMixin, EnabledMixin],
+    mixins: [/*DraggableMixin, */EnabledMixin],
 
     propTypes: {
         controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
@@ -59,14 +59,14 @@ var LibraryArtistItem = React.createClass({
                 enabled={enabled} />;
         }, this);
 
-        var dragSourceAttributes;
-
-        if (enabled) {
-            dragSourceAttributes = this.dragSource();
-        }
+        //var dragSourceAttributes;
+        //
+        //if (enabled) {
+        //    dragSourceAttributes = this.dragSource();
+        //}
 
         return (
-            <li className={classes} {...dragSourceAttributes}>
+            <li className={classes}/* {...dragSourceAttributes}*/>
                 <span className="name" title={artist.name} onClick={this.toggleAlbums}>{artist.name}</span>
                 <ul className={treeClasses}>
                     {albums}

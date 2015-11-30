@@ -5,7 +5,7 @@ var cx = React.addons.classSet;
 var PropTypes = React.PropTypes;
 
 var EnabledMixin = require('./../mixins/enabled_mixin.js');
-var DragDropMixin = require('react-dnd').DragDropMixin;
+//var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
     function zeroPad(n) {
@@ -15,43 +15,43 @@ function formatTime(seconds) {
 }
 
 var PlaylistItem = React.createClass({
-    mixins: [DragDropMixin, EnabledMixin],
+    mixins: [/*DragDropMixin, */EnabledMixin],
 
     propTypes: {
         onReorder: PropTypes.func.isRequired,
         onDidReorder: PropTypes.func.isRequired
     },
 
-    statics: {
-        getDragType: function() {
-            return 'playlist-item';
-        },
-
-        configureDragDrop: function(register) {
-            register(this.getDragType(), {
-                dragSource: {
-                    beginDrag: function(component) {
-                        return {
-                            item: component.props.item
-                        };
-                    },
-                    endDrag: function(component) {
-                        component.props.onDidReorder();
-                    }
-                },
-
-                dropTarget: {
-                    over: function(component, item) {
-                        component.props.onReorder(item, component.props.item);
-                    }
-                }
-            });
-        }
-    },
+    //statics: {
+    //    getDragType: function() {
+    //        return 'playlist-item';
+    //    },
+    //
+    //    configureDragDrop: function(register) {
+    //        register(this.getDragType(), {
+    //            dragSource: {
+    //                beginDrag: function(component) {
+    //                    return {
+    //                        item: component.props.item
+    //                    };
+    //                },
+    //                endDrag: function(component) {
+    //                    component.props.onDidReorder();
+    //                }
+    //            },
+    //
+    //            dropTarget: {
+    //                over: function(component, item) {
+    //                    component.props.onReorder(item, component.props.item);
+    //                }
+    //            }
+    //        });
+    //    }
+    //},
 
     render: function() {
 
-        var dragType = this.constructor.getDragType();
+        //var dragType = this.constructor.getDragType();
 
         var item = this.props.item;
 
@@ -98,12 +98,12 @@ var PlaylistItem = React.createClass({
             'playlist-item-selected': this.props.selected,
             'playlist-item-playing': this.props.playing,
             'playlist-item-focus': this.props.focused,
-            'playlist-item-dragging': this.getDragState(dragType).isDragging
+            //'playlist-item-dragging': this.getDragState(dragType).isDragging
         });
 
-        var events,
-            dragSourceAttributes,
-            dropTargetAttributes;
+        var events;
+            //dragSourceAttributes,
+            //dropTargetAttributes;
 
         if (this.enabled()) {
             events = {
@@ -111,16 +111,16 @@ var PlaylistItem = React.createClass({
                 onDoubleClick: this.itemDblClick
             };
 
-            dragSourceAttributes = this.dragSourceFor(dragType);
-            dropTargetAttributes = this.dropTargetFor(dragType);
+            //dragSourceAttributes = this.dragSourceFor(dragType);
+            //dropTargetAttributes = this.dropTargetFor(dragType);
         }
 
         return (
             <li
                 className={classes}
                 {...events}
-                {...dragSourceAttributes}
-                {...dropTargetAttributes}
+                //{...dragSourceAttributes}
+                //{...dropTargetAttributes}
             >
                 <div className="image" />
                 {details}

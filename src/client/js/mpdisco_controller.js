@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 var MPDiscoController = function(network) {
     this.network = network;

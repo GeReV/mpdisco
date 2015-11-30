@@ -1,13 +1,12 @@
 var
     debug = require('debug')('mpdisco:server'),
-    Class = require('clah'),
     path = require('path'),
     http = require('http'),
     express = require('express'),
     compression = require('compression'),
     cookieParser = require('cookie-parser'),
     session = require('express-session'),
-    _ = require('underscore');
+    _ = require('lodash');
 
 import io from 'socket.io/lib/index.js';
 
@@ -17,12 +16,13 @@ var metadata = require('./meta_data.js');
 var upload = require('./file_upload.js');
 var ClientsManager = require('./clients_manager.js');
 
-var Server = Class.extend({
-    defaults: {
+export default class Server {
+    static defaults = {
         serverPort: 3000
-    },
-    init: function(mpd, mode, options) {
-        this.options = _.defaults(this.defaults, options);
+    };
+
+    constructor(mpd, mode, options) {
+        this.options = _.defaults(Server.defaults, options);
 
         this.mpd = mpd;
         this.mode = mode;
@@ -45,9 +45,9 @@ var Server = Class.extend({
 
         this.socket = io(this.server);
         this._initSocketIO(this.socket, sessionStore, this.clientsManager);
-    },
+    }
 
-    _initApp: function (app, options, session) {
+    _initApp(app, options, session) {
 
         var config = options.config;
 
@@ -72,9 +72,9 @@ var Server = Class.extend({
         });
 
         app.all('/upload', this.uploadHandler);
-    },
+    }
 
-    start: function() {
+    start() {
         var options = this.options;
         var port = options.serverPort;
 
@@ -85,9 +85,9 @@ var Server = Class.extend({
             console.log('MPDisco Server :: Listening on port ' + port);
           }
         });
-    },
+    }
 
-    _initSocketIO: function (socket, session, clientsManager) {
+    _initSocketIO(socket, session, clientsManager) {
 
         //Socket.io will call this function when a client connects,
         //So we can send that client a unique ID we use so we can
@@ -119,9 +119,9 @@ var Server = Class.extend({
             socket.sockets.emit('update', system);
             socket.sockets.emit('update:' + system);
         });
-    },
+    }
 
-    _initUploadHandler: function(mpd, config) {
+    _initUploadHandler(mpd, config) {
         var handler = upload({
             acceptFileTypes: /\.(mp3|ogg|flac|mp4)/i,
             tmpDir: '/tmp',
@@ -156,6 +156,4 @@ var Server = Class.extend({
 
         return handler;
     }
-});
-
-module.exports = Server;
+}

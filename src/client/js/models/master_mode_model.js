@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 
 var EventEmitter = require('events').EventEmitter;
 var util = require('util');
