@@ -2,8 +2,8 @@ import io from 'socket.io-client';
 import _ from 'lodash';
 
 class Network {
-  constructor(host, port) {
-    this.url = "ws://" + host + ":" + port + "/";
+  constructor(host = window.location.hostname, port = 3000) {
+    this.url = `ws://${host}:${port}/`;
 
     this.socket = io.connect(this.url);
   }
@@ -13,7 +13,7 @@ class Network {
   }
 
   command(command) {
-    var args = [];
+    let args = [];
 
     if (arguments.length === 2 && _.isArray(arguments[1])) {
       args = arguments[1];
@@ -53,4 +53,4 @@ class Network {
   }
 }
 
-export default Network;
+export default new Network();

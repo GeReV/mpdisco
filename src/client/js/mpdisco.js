@@ -4,17 +4,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 
-import Network from './network.js';
 
 import BasicMode from './components/basic_mode.jsx';
 import MasterMode from './components/master_mode.jsx';
 
-import MPDiscoModel from './mpdisco_model.js';
 import MPDiscoController from './mpdisco_controller.js';
 
-const network = new Network(window.location.hostname, 3000);
-
-MPDiscoModel.init(network);
+import reactor from './reactor.js';
+import network from './network.js';
+import actions from './actions.js';
+import receiver from './receiver.js';
 
 const controller = new MPDiscoController(network);
 

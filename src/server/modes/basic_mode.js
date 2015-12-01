@@ -25,15 +25,15 @@ function execute(mpd, command, args, client) {
 
   debug('Received: %s %s', command, JSON.stringify(args));
 
-  mpd.sendCommand(cmd, function(err, result) {
+  mpd.sendCommand(cmd, (err, result) => {
 
     // First parse the result.
-    var parser = commandParsers.parserForCommand(command, args);
+    const parser = commandParsers.parserForCommand(command, args);
 
-    var response = parser.parse(result);
+    const response = parser.parse(result);
 
     // Then emit it to the client.
-    var emitter = commandEmitters.emitterForCommand(command);
+    const emitter = commandEmitters.emitterForCommand(command);
 
     emitter(command, args, response, client);
   });

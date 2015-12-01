@@ -7,20 +7,18 @@ export default class LineParser extends AbstractParser {
       return s;
     }
 
-    var that = this,
-        lines = s.split('\n'),
-        obj,
-        json = [];
+    const lines = s.split('\n'),
+          json = [];
 
-    _(lines).chain().compact().each(function(l, index) {
-      var o = that.parseLine(l);
+    _.compact(lines)
+      .map(this.parseLine)
+      .forEach((o, index) => {
+        let obj = {};
 
-      obj = {};
+        obj[o.key] = o.value;
 
-      obj[o.key] = o.value;
-
-      json.push(obj);
-    });
+        json.push(obj);
+      });
 
     return json;
   }

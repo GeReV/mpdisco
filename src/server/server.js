@@ -76,11 +76,10 @@ export default class Server {
           onPageNotFound: () => statusCode = 404
         };
 
-      await Router.dispatch({path: req.path, context}, (state, component) => {
-        data.body = ReactDOM.renderToString(component);
-        data.css = css.join('');
-      })
-        ;
+        await Router.dispatch({path: req.path, context}, (state, component) => {
+          data.body = ReactDOM.renderToString(component);
+          data.css = css.join('');
+        });
 
         const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
         res.status(statusCode).send('<!doctype html>\n' + html);
