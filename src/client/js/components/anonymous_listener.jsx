@@ -1,15 +1,15 @@
-var React = require('react/addons');
+import React from 'react';
 
-var cx = React.addons.classSet;
+import cx from 'classnames';
 
-var trim = function(s) {
+const trim = function(s) {
     return s.replace(/^\s+|\s+$/g, '');
 };
 
-var AnonymousListener = React.createClass({
+export default React.createClass({
     propTypes: {
         onIdentify: React.PropTypes.func.isRequired,
-        you: React.PropTypes.bool,
+        you: React.PropTypes.bool
     },
 
     getInitialState: function() {
@@ -100,5 +100,3 @@ var AnonymousListener = React.createClass({
         }
     }
 });
-
-module.exports = AnonymousListener;

@@ -1,17 +1,18 @@
-var io = require('socket.io-client');
-var _ = require('lodash');
+import io from 'socket.io-client';
+import _ from 'lodash';
 
-var Network = function(host, port) {
-  this.url = "ws://" + host + ":" + port + "/";
+class Network {
+  constructor(host, port) {
+    this.url = "ws://" + host + ":" + port + "/";
 
-  this.socket = io.connect(this.url);
-};
+    this.socket = io.connect(this.url);
+  }
 
-_.extend(Network.prototype, {
-  send: function (name, data) {
+  send(name, data) {
     this.socket.emit(name, data);
-  },
-  command: function (command) {
+  }
+
+  command(command) {
     var args = [];
 
     if (arguments.length === 2 && _.isArray(arguments[1])) {
@@ -26,9 +27,10 @@ _.extend(Network.prototype, {
       command: command,
       args: args
     });
-  },
-  commands: function (commands) {
-    commands = commands.map(function(command) {
+  }
+
+  commands(commands) {
+    commands = commands.map(function (command) {
 
       command.args = command.args.map(String);
 
@@ -36,16 +38,19 @@ _.extend(Network.prototype, {
     });
 
     this.send('commands', commands);
-  },
-  once: function (name, callback) {
+  }
+
+  once(name, callback) {
     this.socket.once(name, callback);
-  },
-  on: function (name, callback) {
+  }
+
+  on(name, callback) {
     this.socket.on(name, callback);
-  },
-  off: function (name, callback) {
+  }
+
+  off(name, callback) {
     this.socket.off(name, callback);
   }
-});
+}
 
-module.exports = Network;
+export default Network;

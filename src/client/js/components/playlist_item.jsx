@@ -1,10 +1,8 @@
-var React = require('react/addons');
+import React, { Component, PropTypes } from 'react';
+import cx from 'classnames';
 
-var cx = React.addons.classSet;
+import EnabledMixin from './../mixins/enabled_mixin.js';
 
-var PropTypes = React.PropTypes;
-
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
 //var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
@@ -14,7 +12,7 @@ function formatTime(seconds) {
     return Math.floor(seconds / 60) + ':' + zeroPad(seconds % 60);
 }
 
-var PlaylistItem = React.createClass({
+export default React.createClass({
     mixins: [/*DragDropMixin, */EnabledMixin],
 
     propTypes: {
@@ -143,5 +141,3 @@ var PlaylistItem = React.createClass({
         e.preventDefault();
     }
 });
-
-module.exports = PlaylistItem;

@@ -1,12 +1,12 @@
-var React = require('react/addons');
-var Q = require('q');
-var _ = require('lodash');
+import React from 'react';
+import Q from 'q';
+import _ from 'lodash';
 
 function xhrSuccess(req) {
     return (req.status === 200 || (req.status === 0 && req.responseText));
 }
 
-var FileUploadMixin = {
+export default {
     propTypes: {
         file: React.PropTypes.instanceOf(File).isRequired,
         onUploadComplete: React.PropTypes.func.isRequired,
@@ -86,5 +86,3 @@ var FileUploadMixin = {
         return defer.promise;
     }
 };
-
-module.exports = FileUploadMixin;

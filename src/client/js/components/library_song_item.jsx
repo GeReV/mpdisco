@@ -1,9 +1,9 @@
-var React = require('react/addons');
+import React from 'react';
 
 //var DraggableMixin = require('./../mixins/draggable_mixin.js');
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
+import EnabledMixin from '../mixins/enabled_mixin.js';
 
-var LibrarySongItem = React.createClass({
+export default React.createClass({
 
     mixins: [/*DraggableMixin, */EnabledMixin],
 
@@ -32,5 +32,3 @@ var LibrarySongItem = React.createClass({
         );
     }
 });
-
-module.exports = LibrarySongItem;

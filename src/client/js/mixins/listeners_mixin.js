@@ -1,10 +1,10 @@
-var React = require('react/addons');
+import React from 'react';
 
-var MPDiscoController = require('../mpdisco_controller.js');
+import MPDiscoController from '../mpdisco_controller.js';
 
-var tree = require('../mpdisco_model.js').tree;
+import { tree } from '../mpdisco_model.js';
 
-var ListenersMixin = {
+export default {
     propTypes: {
         controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
     },
@@ -20,5 +20,3 @@ var ListenersMixin = {
         this.props.controller.listenerIdentify(name);
     }
 };
-
-module.exports = ListenersMixin;

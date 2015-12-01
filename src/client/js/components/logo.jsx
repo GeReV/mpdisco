@@ -1,12 +1,11 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import stackblur from '../vendor/StackBlur';
 
-var stackblur = require('./../vendor/StackBlur');
+import { tree } from '../mpdisco_model.js';
 
-var tree = require('./../mpdisco_model.js').tree;
-
-var Logo = React.createClass({
+export default React.createClass({
 
     mixins: [tree.mixin],
 
@@ -60,5 +59,3 @@ var Logo = React.createClass({
         );
     }
 });
-
-module.exports = Logo;

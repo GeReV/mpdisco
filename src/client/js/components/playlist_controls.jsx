@@ -1,10 +1,9 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
+import cx from 'classnames';
 
-var cx = React.addons.classSet;
+import EnabledMixin from './../mixins/enabled_mixin.js';
 
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
-
-var PlaylistTools = React.createClass({
+export default React.createClass({
     mixins: [EnabledMixin],
 
     propTypes: {
@@ -97,5 +96,3 @@ var PlaylistTools = React.createClass({
         e.preventDefault();
     }
 });
-
-module.exports = PlaylistTools;

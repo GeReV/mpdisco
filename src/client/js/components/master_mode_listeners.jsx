@@ -1,12 +1,12 @@
-var React = require('react/addons');
+import React from 'react';
 
-var ListenersMixin = require('./../mixins/listeners_mixin.js');
+import ListenersMixin from '../mixins/listeners_mixin.js';
 
-var MasterModeModel = require('./../models/master_mode_model.js');
+import MasterModeModel from '../models/master_mode_model.js';
 
-var MasterModeListener = require('./master_mode_listener.jsx');
+import MasterModeListener from './master_mode_listener.jsx';
 
-var MasterModeListeners = React.createClass({
+export default React.createClass({
     mixins: [ListenersMixin],
 
     propTypes: {
@@ -52,5 +52,3 @@ var MasterModeListeners = React.createClass({
         });
     }
 });
-
-module.exports = MasterModeListeners;

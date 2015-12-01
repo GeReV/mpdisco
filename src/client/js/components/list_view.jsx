@@ -1,15 +1,15 @@
-var React = require('react/addons');
-var _ = require('lodash');
+import React, { Component } from 'react';
+import _ from 'lodash';
 
-var HotKey = require('react-hotkey');
+import HotKey from 'react-hotkey';
 
-var SelectableListMixin = require('./../mixins/selectable_list_mixin.js');
-var SortableMixin = require('./../mixins/sortable_mixin.js');
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
+import SelectableListMixin from '../mixins/selectable_list_mixin.js';
+import SortableMixin from '../mixins/sortable_mixin.js';
+import EnabledMixin from '../mixins/enabled_mixin.js';
 
 HotKey.activate('keydown');
 
-var ListView = React.createClass({
+export default React.createClass({
     mixins: [
         SelectableListMixin,
         SortableMixin,
@@ -152,5 +152,3 @@ var ListView = React.createClass({
         this.ui.playlist.prop('scrollTop', scrollTop);
     }
 });
-
-module.exports = ListView;

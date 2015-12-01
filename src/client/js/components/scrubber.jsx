@@ -1,4 +1,4 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
 
 var Scrubber = React.createClass({
     render: function() {

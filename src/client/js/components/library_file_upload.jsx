@@ -1,12 +1,12 @@
-var React = require('react/addons');
+import React from 'react';
 
-var cx = React.addons.classSet;
+import cx from 'classnames';
 
-var FileUploadMixin = require('./../mixins/file_upload_mixin');
+import FileUploadMixin from '../mixins/file_upload_mixin';
 
-var ProgressBar = require('./progress_bar.jsx');
+import ProgressBar from './progress_bar.jsx';
 
-var LibraryFileUpload = React.createClass({
+export default React.createClass({
     mixins: [FileUploadMixin],
 
     getInitialState: function() {
@@ -33,5 +33,3 @@ var LibraryFileUpload = React.createClass({
         );
     }
 });
-
-module.exports = LibraryFileUpload;

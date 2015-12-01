@@ -1,6 +1,6 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
 
-var cx = React.addons.classSet;
+import cx from 'classnames';
 
 var PlayerControls = React.createClass({
     propTypes: {

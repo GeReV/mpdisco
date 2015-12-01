@@ -1,6 +1,6 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
 
-var EnabledMixin = {
+export default {
     propTypes: {
         enabled: React.PropTypes.bool
     },
@@ -11,5 +11,3 @@ var EnabledMixin = {
         return this.props.enabled;
     }
 };
-
-module.exports = EnabledMixin;

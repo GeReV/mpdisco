@@ -1,13 +1,14 @@
-var React = require('react/addons');
-var HotKey = require('react-hotkey');
+import React, { Component } from 'react';
+
+import HotKey from 'react-hotkey';
 
 HotKey.activate('keydown');
 
-var isTextInputElement = require('react/lib/isTextInputElement');
+import isTextInputElement from 'react/lib/isTextInputElement';
 
-var MPDiscoController = require('../mpdisco_controller.js');
+import MPDiscoController from '../mpdisco_controller.js';
 
-var tree = require('../mpdisco_model.js').tree;
+import { tree } from '../mpdisco_model.js';
 
 var PlayerMixin = {
     mixins: [HotKey.Mixin('handleKeyboard'), tree.mixin],

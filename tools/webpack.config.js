@@ -26,7 +26,7 @@ const AUTOPREFIXER_BROWSERS = [
 ];
 const GLOBALS = {
   'process.env.NODE_ENV': DEBUG ? '"development"' : '"production"',
-  __DEV__: DEBUG,
+  __DEV__: DEBUG
 };
 
 //
@@ -37,7 +37,7 @@ const GLOBALS = {
 const config = {
   output: {
     publicPath: '/',
-    sourcePrefix: '  ',
+    sourcePrefix: '  '
   },
 
   cache: DEBUG,
@@ -52,7 +52,7 @@ const config = {
     chunks: VERBOSE,
     chunkModules: VERBOSE,
     cached: VERBOSE,
-    cachedAssets: VERBOSE,
+    cachedAssets: VERBOSE
   },
 
   plugins: [
@@ -67,24 +67,28 @@ const config = {
     loaders: [
       {
         test: /\.jsx?$/,
+        include: [
+          path.resolve(__dirname, '../node_modules/react-routing/src'),
+          path.resolve(__dirname, '../src')
+        ],
         loader: 'babel-loader'
       }, {
         test: /\.json$/,
-        loader: 'json-loader',
+        loader: 'json-loader'
       }, {
         test: /\.txt$/,
-        loader: 'raw-loader',
+        loader: 'raw-loader'
       }, {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2)$/,
-        loader: 'url-loader?limit=10000',
+        loader: 'url-loader?limit=10000'
       }, {
         test: /\.(eot|ttf|wav|mp3)$/,
-        loader: 'file-loader',
+        loader: 'file-loader'
       }, {
         test: /\.scss$/,
-        loader: 'style-loader/useable!css-loader!postcss-loader',
-      },
-    ],
+        loader: 'style-loader/useable!css-loader!postcss-loader'
+      }
+    ]
   },
 
   postcss: function plugins(bundler) {
@@ -93,7 +97,7 @@ const config = {
       require('precss')(),
       require('autoprefixer')({ browsers: AUTOPREFIXER_BROWSERS }),
     ];
-  },
+  }
 };
 
 //
@@ -103,16 +107,16 @@ const config = {
 const appConfig = merge({}, config, {
   entry: [
     ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-    './src/client/js/mpdisco.jsx',
+    './src/client/js/mpdisco.js'
   ],
   output: {
-    path: path.join(__dirname, '../build/public'),
+    path: './build/public',
     filename: 'mpdisco.js'
   },
 
   // Choose a developer tool to enhance debugging
   // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: DEBUG ? 'cheap-module-eval-source-map' : false,
+  devtool: DEBUG ? 'cheap-module-source-map' : false,
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
     ...(!DEBUG ? [
@@ -122,12 +126,12 @@ const appConfig = merge({}, config, {
           warnings: VERBOSE
         }
       }),
-      new webpack.optimize.AggressiveMergingPlugin(),
+      new webpack.optimize.AggressiveMergingPlugin()
     ] : []),
     ...(WATCH ? [
       new webpack.HotModuleReplacementPlugin(),
-      new webpack.NoErrorsPlugin(),
-    ] : []),
+      new webpack.NoErrorsPlugin()
+    ] : [])
   ]
 });
 
@@ -145,10 +149,11 @@ appConfig.module.loaders
             transform: 'react-transform-hmr',
             imports: ['react'],
             locals: ['module']
-          }, {
+          },
+          {
             transform: 'react-transform-catch-errors',
             imports: ['react', 'redbox-react']
-          },
+          }
         ]
       }
     }
@@ -181,13 +186,13 @@ const serverConfig = merge({}, config, {
     process: false,
     Buffer: false,
     __filename: false,
-    __dirname: false,
+    __dirname: false
   },
   devtool: 'source-map',
   plugins: [
     new webpack.DefinePlugin(GLOBALS),
     new webpack.BannerPlugin('require("source-map-support").install();',
-      { raw: true, entryOnly: false }),
+      { raw: true, entryOnly: false })
   ]
 });
 

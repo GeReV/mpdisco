@@ -1,10 +1,10 @@
-var React = require('react/addons');
+import React from 'react';
 
-var ListenersMixin = require('./../mixins/listeners_mixin.js');
+import ListenersMixin from '../mixins/listeners_mixin.js';
 
-var Listener = require('./listener.jsx');
+import Listener from './listener.jsx';
 
-var Listeners = React.createClass({
+export default React.createClass({
     mixins: [ListenersMixin],
 
     render: function() {
@@ -27,5 +27,3 @@ var Listeners = React.createClass({
         );
     }
 });
-
-module.exports = Listeners;

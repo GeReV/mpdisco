@@ -1,13 +1,13 @@
-var React = require('react/addons');
+import React from 'react';
 //var DragDropMixin = require('react-dnd').DragDropMixin;
 
-var MPDiscoController = require('../mpdisco_controller.js');
+import MPDiscoController from '../mpdisco_controller.js';
 
-var tree = require('../mpdisco_model.js').tree;
+import { tree } from '../mpdisco_model.js';
 
-var accepts = ['artist', 'album', 'song'];
+const accepts = ['artist', 'album', 'song'];
 
-var PlaylistMixin = {
+export default {
     mixins: [/*DragDropMixin, */tree.mixin],
 
     cursors: {
@@ -87,7 +87,4 @@ var PlaylistMixin = {
     }
 };
 
-module.exports = {
-    PlaylistMixin: PlaylistMixin,
-    accepts: accepts
-};
+export default accepts;

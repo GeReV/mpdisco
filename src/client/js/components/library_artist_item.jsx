@@ -1,15 +1,16 @@
-var React = require('react/addons');
+import React from 'react';
+
+import cx from 'classnames';
 
 //var DraggableMixin = require('./../mixins/draggable_mixin.js');
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
+import EnabledMixin from '../mixins/enabled_mixin.js';
 
-var LibraryAlbumItem = require('./library_album_item.jsx');
+import LibraryAlbumItem from './library_album_item.jsx';
 
-var cx = React.addons.classSet;
 
-var MPDiscoController = require('./../mpdisco_controller.js');
+import MPDiscoController from '../mpdisco_controller.js';
 
-var LibraryArtistItem = React.createClass({
+export default React.createClass({
 
     mixins: [/*DraggableMixin, */EnabledMixin],
 
@@ -93,5 +94,3 @@ var LibraryArtistItem = React.createClass({
         e.preventDefault();
     }
 });
-
-module.exports = LibraryArtistItem;

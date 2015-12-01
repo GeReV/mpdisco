@@ -1,34 +1,36 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
 
-var Logo = require('./logo.jsx');
-var Player = require('./player.jsx');
-var Playlist = require('./playlist.jsx');
-var Library = require('./library.jsx');
-var Listeners = require('./master_mode_listeners.jsx');
+import Logo from './logo.jsx';
+import Player from './player.jsx';
+import Playlist from './playlist.jsx';
+import Library from './library.jsx';
+import Listeners from './master_mode_listeners.jsx';
 
 //var Error = require('error');
 
-var MasterModeModel = require('./../models/master_mode_model.js');
+import MasterModeModel from '../models/master_mode_model.js';
 
-var MasterMode = React.createClass({
-  getInitialState: function() {
-    return {
+class MasterMode extends Component {
+  constructor() {
+    super();
+
+    this.state = {
       userid: null,
       master: null
     };
-  },
+  }
 
-  componentWillMount: function() {
+  componentWillMount() {
     this.model = new MasterModeModel(this.props.network);
-  },
+  }
 
-  componentDidMount: function() {
+  componentDidMount() {
     this.model.on('connected', this.setUser);
     this.model.on('master', this.setMaster);
-  },
+  }
 
-  render: function () {
-    var enabled = (this.state.master && this.state.master === this.state.userid);
+  render() {
+    const enabled = (this.state.master && this.state.master === this.state.userid);
 
     return (
         <div id="container" role="main">
@@ -43,19 +45,19 @@ var MasterMode = React.createClass({
           </main>
         </div>
     );
-  },
+  }
 
-  setUser: function(userid) {
+  setUser(userid) {
     this.setState({
       userid: userid
     });
-  },
+  }
 
-  setMaster: function(master) {
+  setMaster(master) {
     this.setState({
       master: master
     });
   }
-});
+}
 
-module.exports = MasterMode;
+export default MasterMode;

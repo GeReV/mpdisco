@@ -1,6 +1,6 @@
-var React = require('react/addons');
+import React from 'react';
 
-var Error = React.createClass({
+export default React.createClass({
     render: function() {
         return
             <div id="error">
@@ -8,5 +8,3 @@ var Error = React.createClass({
             </div>;
     }
 });
-
-module.exports = Error;

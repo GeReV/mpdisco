@@ -1,44 +1,44 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
+import cx from 'classnames';
 
-var _ = require('lodash');
+import _ from 'lodash';
 
-var cx = React.addons.classSet;
 
-var PlaylistControls = require('./playlist_controls.jsx');
-var PlaylistItem = require('./playlist_item.jsx');
-var ListView = require('./list_view.jsx');
+import PlaylistControls from './playlist_controls.jsx';
+import PlaylistItem from './playlist_item.jsx';
+import ListView from './list_view.jsx';
 
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
-var PlaylistMixin = require('./../mixins/playlist_mixin.js').PlaylistMixin;
+import EnabledMixin from '../mixins/enabled_mixin.js';
+import { PlaylistMixin } from '../mixins/playlist_mixin.js';
 
-var accepts = require('./../mixins/playlist_mixin.js').accepts;
+import { accepts } from '../mixins/playlist_mixin.js';
 
-var tree = require('./../mpdisco_model.js').tree;
+import { tree } from '../mpdisco_model.js';
 
-var Playlist = React.createClass({
+export default React.createClass({
 
     mixins: [PlaylistMixin, EnabledMixin],
 
     render: function() {
 
-        var dropStates = accepts.map(this.getDropState);
+        //var dropStates = accepts.map(this.getDropState);
 
         var enabled = this.enabled();
 
         var playlistClasses = cx({
-            'playlist-drop': _.any(dropStates, function (state) {
-                return state.isDragging || state.isHovering;
-            }),
+            //'playlist-drop': _.any(dropStates, function (state) {
+            //    return state.isDragging || state.isHovering;
+            //}),
             'playlist-disabled': !enabled
         });
 
-        var dropTargetAttributes;
-        if (enabled) {
-            dropTargetAttributes = this.dropTargetFor.apply(this, accepts);
-        }
+        //var dropTargetAttributes;
+        //if (enabled) {
+        //    dropTargetAttributes = this.dropTargetFor.apply(this, accepts);
+        //}
 
         return (
-            <section id="playlist" className={playlistClasses} {...dropTargetAttributes}>
+            <section id="playlist" className={playlistClasses}/* {...dropTargetAttributes}*/>
                 <header>
                     <span>Playlist</span>
                     <PlaylistControls status={this.cursors.status.get()} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
@@ -74,5 +74,3 @@ var Playlist = React.createClass({
         );
     }
 });
-
-module.exports = Playlist;

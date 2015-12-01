@@ -1,10 +1,10 @@
-var React = require('react/addons');
+import React from 'react';
 
-var cx = React.addons.classSet;
+import cx from 'classnames';
 
-var AnonymousListener = require('./anonymous_listener.jsx');
+import AnonymousListener from './anonymous_listener.jsx';
 
-var Listener = React.createClass({
+export default React.createClass({
     propTypes: {
         onIdentify: React.PropTypes.func.isRequired,
         listener: React.PropTypes.object.isRequired,
@@ -40,5 +40,3 @@ var Listener = React.createClass({
         );
     }
 });
-
-module.exports = Listener;

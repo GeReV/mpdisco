@@ -1,15 +1,15 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
 
-var Logo = require('./logo.jsx');
-var Player = require('./player.jsx');
-var Playlist = require('./playlist.jsx');
-var Library = require('./library.jsx');
-var Listeners = require('./listeners.jsx');
+import Logo from './logo.jsx';
+import Player from './player.jsx';
+import Playlist from './playlist.jsx';
+import Library from './library.jsx';
+import Listeners from './listeners.jsx';
 
 //var Error = require('error');
 
-var BasicMode = React.createClass({
-  render: function () {
+class BasicMode extends Component {
+  render() {
     return (
         <div id="container" role="main">
           <header id="player-head">
@@ -24,6 +24,6 @@ var BasicMode = React.createClass({
         </div>
     );
   }
-});
+}
 
-module.exports = BasicMode;
+export default BasicMode;

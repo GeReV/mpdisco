@@ -1,24 +1,22 @@
-var React = require('react/addons');
-var _ = require('lodash');
-
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
-
-var cx = React.addons.classSet;
-var update = React.addons.update;
+import React from 'react';
+import _ from 'lodash';
+import cx from 'classnames';
+import update from 'react-addons-update';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 //var DragDropMixin = require('react-dnd').DragDropMixin;
 //var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
 
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
+import EnabledMixin from '../mixins/enabled_mixin.js';
 
-var LibraryArtistItem = require('./library_artist_item.jsx');
-var LibraryFileUpload = require('./library_file_upload.jsx');
+import LibraryArtistItem from './library_artist_item.jsx';
+import LibraryFileUpload from './library_file_upload.jsx';
 
-var MPDiscoController = require('./../mpdisco_controller.js');
+import MPDiscoController from '../mpdisco_controller.js';
 
-var tree = require('./../mpdisco_model.js').tree;
+import { tree } from '../mpdisco_model.js';
 
-var Library = React.createClass({
+export default React.createClass({
 
     mixins: [/*DragDropMixin,*/ EnabledMixin, tree.mixin],
 
@@ -190,5 +188,3 @@ var Library = React.createClass({
         console.log('Failed:', upload);
     }
 });
-
-module.exports = Library;

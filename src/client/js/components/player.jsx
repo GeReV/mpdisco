@@ -1,13 +1,12 @@
-var React = require('react/addons');
+import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import cx from 'classnames';
 
-var cx = React.addons.classSet;
-var ReactCSSTransitionGroup = React.addons.CSSTransitionGroup;
+import PlayerControls from './player_controls.jsx';
+import Scrubber from './scrubber.jsx';
 
-var PlayerControls = require('./player_controls.jsx');
-var Scrubber = require('./scrubber.jsx');
-
-var PlayerMixin = require('./../mixins/player_mixin.js');
-var EnabledMixin = require('./../mixins/enabled_mixin.js');
+import PlayerMixin from '../mixins/player_mixin.js';
+import EnabledMixin from '../mixins/enabled_mixin.js';
 
 function formatTime(seconds) {
     function zeroPad(n) {
@@ -16,7 +15,7 @@ function formatTime(seconds) {
     return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
 }
 
-var Player = React.createClass({
+export default React.createClass({
     mixins: [PlayerMixin, EnabledMixin],
 
     render: function() {
@@ -78,5 +77,3 @@ var Player = React.createClass({
         );
     }
 });
-
-module.exports = Player;

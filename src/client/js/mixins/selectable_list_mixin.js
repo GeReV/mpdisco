@@ -1,7 +1,7 @@
-var React = require('react/addons');
-var _ = require('lodash');
+import React from 'react';
+import _ from 'lodash';
 
-var SelectableListMixin = {
+export default {
     propTypes: {
         onItemsSelected: React.PropTypes.func
     },
@@ -134,5 +134,3 @@ var SelectableListMixin = {
         }
     }
 };
-
-module.exports = SelectableListMixin;

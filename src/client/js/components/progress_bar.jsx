@@ -1,8 +1,6 @@
-var React = require('react/addons');
+import React, { PropTypes } from 'react';
 
-var PropTypes = React.PropTypes;
-
-var ProgressBar = React.createClass({
+export default React.createClass({
     propTypes: {
         percentage: PropTypes.number.isRequired
     },
@@ -19,5 +17,3 @@ var ProgressBar = React.createClass({
         );
     }
 });
-
-module.exports = ProgressBar;
