@@ -1,15 +1,15 @@
-import React from 'react';
+// import React from 'react';
 
-import MPDiscoController from '../mpdisco_controller.js';
+// import MPDiscoController from '../mpdisco_controller.js';
 
-import { tree } from '../mpdisco_model.js';
+// import { tree } from '../mpdisco_model.js';
 
 export default {
     propTypes: {
-        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
+        // controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
     },
 
-    mixins: [tree.mixin],
+    // mixins: [tree.mixin],
 
     cursors: {
         listeners: ['listeners'],

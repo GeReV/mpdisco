@@ -1,4 +1,4 @@
-import { Reactor, Store, toImmutable } from 'nuclear-js';
+import { Reactor } from 'nuclear-js';
 
 import PlayerStateStore from './stores/player_state_store.js';
 import LibraryStore from './stores/library_store.js';
@@ -13,4 +13,3 @@ reactor.registerStores({
 });
 
 export default reactor;
-

@@ -4,18 +4,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 
-
 import BasicMode from './components/basic_mode.jsx';
 import MasterMode from './components/master_mode.jsx';
-
-import MPDiscoController from './mpdisco_controller.js';
 
 import reactor from './reactor.js';
 import network from './network.js';
 import actions from './actions.js';
 import receiver from './receiver.js';
-
-const controller = new MPDiscoController(network);
 
 const MPDisco = MasterMode;
 
@@ -57,7 +52,7 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  render(<MPDisco controller={controller} network={network} />)
+  render(<MPDisco reactor={reactor} network={network} />)
 }
 
 // Run the application when both DOM is ready and page content is loaded

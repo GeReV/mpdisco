@@ -1,34 +1,39 @@
-import React from 'react';
+import React, {Component} from 'react';
 
 //var DraggableMixin = require('./../mixins/draggable_mixin.js');
-import EnabledMixin from '../mixins/enabled_mixin.js';
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
 
-export default React.createClass({
+import styles from '../../sass/library-item.scss';
 
-    mixins: [/*DraggableMixin, */EnabledMixin],
+@withStyles(styles)
+@withEnabled
+export default class LibrarySongItem extends Component {
 
-    statics: {
-        getDragType: function() {
-            return 'song';
-        }
-    },
+  // mixins: [/*DraggableMixin, */EnabledMixin],
 
-    getDragItem: function() {
-        return this.props.song;
-    },
+  static getDragType () {
+    return 'song';
+  }
 
-    render: function() {
+  getDragItem () {
+    return this.props.song;
+  }
 
-        //var dragSourceAttributes;
-        //
-        //if (this.enabled()) {
-        //    dragSourceAttributes = this.dragSource();
-        //}
+  render () {
 
-        return (
-            <li className="library-item song"/* {...dragSourceAttributes}*/>
-                <span className="name" title={this.props.song.title}>{this.props.song.title}</span>
-            </li>
-        );
-    }
-});
+    //var dragSourceAttributes;
+    //
+    //if (this.enabled()) {
+    //    dragSourceAttributes = this.dragSource();
+    //}
+
+    const title = this.props.song.get('title');
+
+    return (
+      <li className="library-item song">
+        <span className="name" title={title}>{title}</span>
+      </li>
+    );
+  }
+}

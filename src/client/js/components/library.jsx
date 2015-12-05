@@ -1,32 +1,24 @@
-import React from 'react';
-import _ from 'lodash';
+import React, { Component } from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import cx from 'classnames';
 import update from 'react-addons-update';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 //var DragDropMixin = require('react-dnd').DragDropMixin;
 //var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
 
-import EnabledMixin from '../mixins/enabled_mixin.js';
+import actions from '../actions';
+
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
+
+import styles from '../../sass/library.scss';
 
 import LibraryArtistItem from './library_artist_item.jsx';
 import LibraryFileUpload from './library_file_upload.jsx';
 
-import MPDiscoController from '../mpdisco_controller.js';
-
-import { tree } from '../mpdisco_model.js';
-
-export default React.createClass({
-
-    mixins: [/*DragDropMixin,*/ EnabledMixin, tree.mixin],
-
-    propTypes: {
-        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
-    },
-
-    cursors: {
-        artists: ['artists']
-    },
+@withStyles(styles)
+@withEnabled
+export default class Library extends Component {
 
     //statics: {
     //    configureDragDrop: function(register) {
@@ -49,45 +41,48 @@ export default React.createClass({
     //    }
     //},
 
-    getInitialState: function() {
-        return {
-            animations: false,
-            uploads: [],
-            uploading: []
-        };
-    },
+    constructor() {
+      super();
 
-    componentDidMount: function() {
+      this.state = {
+          animations: false,
+          uploads: [],
+          uploading: []
+      };
+    }
+
+    componentDidMount() {
         //this.props.model.on('updating', this.setUpdatingState);
-    },
+        actions.fetchLibraryArtists();
+    }
 
-    componentDidUpdate: function() {
-        if (this.cursors.artists.get() && !this.state.animations) {
+    componentDidUpdate() {
+        if (this.props.artists && !this.state.animations) {
             // Turn library update animations on.
             this.setState({
-                animations: true
+              animations: true
             });
         }
-    },
+    }
 
-    render: function() {
+    render() {
 
         //var dropState = this.getDropState(NativeDragItemTypes.FILE);
 
-        var enabled = this.enabled();
+        const enabled = this.props.enabled;
 
-        var classes = cx({
+        const classes = cx({
             'library-updating': this.state.updating,
             //'library-drop': dropState.isDragging,
             //'library-drop-hover': dropState.isHovering,
             'library-disabled': !enabled
         });
 
-        var uploads;
+        let uploads;
         if (this.state.uploads.length) {
             uploads = (
                 <ul className="library-upload">
-                    {this.state.uploads.map(function(file) {
+                    {this.state.uploads.map(file => {
                         var key = file.name;
 
                         return (
@@ -98,43 +93,56 @@ export default React.createClass({
                                 onUploadFail={this.uploadFail}
                             />
                         );
-                    }.bind(this))}
+                    })}
                 </ul>
             );
         }
-
-        var artists = this.cursors.artists.get();
 
         //<menu>
         //    <input type="text" id="search" className="search" placeholder="Search" />
         //</menu>
 
+        const artists = this.props.library
+          .get('artists')
+          .toList()
+          .map(artist => {
+            return (
+                <LibraryArtistItem
+                    key={artist.get('name')}
+                    artist={artist}
+                    enabled={enabled}
+                    />
+            );
+          });
+
         return (
             <section id="library" className={classes}/* {...this.dropTargetFor(NativeDragItemTypes.FILE)}*/>
                 <header>Library</header>
                 <div className="content">
-                    <ReactCSSTransitionGroup component="ul" className="artists tree" transitionName="slide" transitionEnter={this.state.animations} transitionLeave={this.state.animations}>
-                        {artists.map(function(artist) {
-                            return (
-                                <LibraryArtistItem
-                                    key={artist.name}
-                                    artist={artist}
-                                    controller={this.props.controller}
-                                    enabled={enabled}
-                                    />
-                            );
-                        }, this)}
+                    <ReactCSSTransitionGroup component="ul"
+                                             className="artists tree"
+                                             transitionName="slide"
+                                             transitionEnter={this.state.animations}
+                                             transitionLeave={this.state.animations}
+                                             transitionEnterTimeout={4000}
+                                             transitionLeaveTimeout={4000}
+                     >
+                      {artists}
                     </ReactCSSTransitionGroup>
-                    <ReactCSSTransitionGroup component="div" transitionName="upload">
-                        {uploads}
+                    <ReactCSSTransitionGroup component="div"
+                                             transitionName="upload"
+                                             transitionEnterTimeout={4000}
+                                             transitionLeaveTimeout={4000}
+                    >
+                      {uploads}
                     </ReactCSSTransitionGroup>
                 </div>
                 <div id="overlay" />
             </section>
         );
-    },
+    }
 
-    setUpdatingState: function() {
+    setUpdatingState() {
         // MPD sends the same event when an update starts and finishes, without any other arguments.
         var updating = !this.state.updating;
 
@@ -143,25 +151,25 @@ export default React.createClass({
         }
 
         // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
-        var updatingTimeout = setTimeout(function() {
+        const updatingTimeout = setTimeout(() => {
             this.setState({
                 updating: false,
                 updatingTimeout: null
             });
-        }.bind(this), 5000);
+        }, 5000);
 
         // Set updating state.
         this.setState({
             updating: updating,
             updatingTimeout: updatingTimeout
         });
-    },
+    }
 
-    uploadComplete: function(file) {
-        var index = this.state.uploading.indexOf(file);
+    uploadComplete(file) {
+        const index = this.state.uploading.indexOf(file);
 
         if (index >= 0) {
-            var stateUpdate = {
+            const stateUpdate = {
                 uploading: {
                     $splice: [
                         [index, 1]
@@ -175,16 +183,16 @@ export default React.createClass({
         if (this.state.uploading.length <= 0) {
             this.uploadAllComplete();
         }
-    },
+    }
 
-    uploadAllComplete: function() {
+    uploadAllComplete() {
         this.setState({
             uploads: [],
             uploading: []
         });
-    },
-
-    uploadFail: function(file) {
-        console.log('Failed:', upload);
     }
-});
+
+    uploadFail(file) {
+        console.log('Failed:', file);
+    }
+}

@@ -1,35 +1,41 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 
-var Scrubber = React.createClass({
-    render: function() {
-        var progress = 0;
+import withStyles from '../decorators/withStyles';
 
-        if (this.props.progress && this.props.total) {
-            progress = +this.props.progress / +this.props.total * 100;
+import styles from '../../sass/scrubber.scss';
 
-            if (progress > 100) {
-                progress = 100;
-            }
-        }
+@withStyles(styles)
+class Scrubber extends Component {
+  render() {
+    let progress = 0;
 
-        var style = {
-            width: progress + '%'
-        };
+    if (this.props.progress && this.props.total) {
+      progress = +this.props.progress / +this.props.total * 100;
 
-        return (
-            <div id="scrubber" onClick={this.scrub}>
-                <div className="progress" style={style} />
-            </div>
-        );
-    },
-
-    scrub: function(e) {
-        var percent = (e.nativeEvent.offsetX / this.getDOMNode().offsetWidth);
-
-        if (this.props.onScrub) {
-            this.props.onScrub(percent);
-        }
+      if (progress > 100) {
+        progress = 100;
+      }
     }
-});
 
-module.exports = Scrubber;
+    const style = {
+      width: progress + '%'
+    };
+
+    return (
+      <div id="scrubber" onClick={this.scrub}>
+        <div className="progress" style={style}/>
+      </div>
+    );
+  }
+
+  scrub(e) {
+    const percent = (e.nativeEvent.offsetX / ReactDOM.findDOMNode(this).offsetWidth);
+
+    if (this.props.onScrub) {
+      this.props.onScrub(percent);
+    }
+  }
+}
+
+export default Scrubber;

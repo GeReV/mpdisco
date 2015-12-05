@@ -1,31 +1,54 @@
 import React, { Component } from 'react';
 import cx from 'classnames';
+import { nuclearComponent } from 'nuclear-js-react-addons';
 
-import _ from 'lodash';
-
+import actions from '../actions';
+import getters from '../getters';
 
 import PlaylistControls from './playlist_controls.jsx';
 import PlaylistItem from './playlist_item.jsx';
 import ListView from './list_view.jsx';
 
-import EnabledMixin from '../mixins/enabled_mixin.js';
-import { PlaylistMixin } from '../mixins/playlist_mixin.js';
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
 
-import { accepts } from '../mixins/playlist_mixin.js';
+import styles from '../../sass/playlist.scss';
 
-import { tree } from '../mpdisco_model.js';
+// import { PlaylistMixin } from '../mixins/playlist_mixin.js';
 
-export default React.createClass({
+// import { accepts } from '../mixins/playlist_mixin.js';
 
-    mixins: [PlaylistMixin, EnabledMixin],
+@nuclearComponent(props => {
+  return {
+    items: getters.playlist
+  };
+})
+@withStyles(styles)
+@withEnabled
+class Playlist extends Component {
 
-    render: function() {
+    constructor() {
+      super();
 
+      this.state = {
+          animations: false,
+          selectedItems: []
+      };
+    }
+
+    componentDidMount() {
+      // Turn library update animations on.
+      this.setState({
+          animations: true
+      });
+    }
+
+    render() {
         //var dropStates = accepts.map(this.getDropState);
 
-        var enabled = this.enabled();
+        const enabled = this.props.enabled;
 
-        var playlistClasses = cx({
+        const playlistClasses = cx({
             //'playlist-drop': _.any(dropStates, function (state) {
             //    return state.isDragging || state.isHovering;
             //}),
@@ -38,31 +61,35 @@ export default React.createClass({
         //}
 
         return (
-            <section id="playlist" className={playlistClasses}/* {...dropTargetAttributes}*/>
+            <section id="playlist" className={playlistClasses}>
                 <header>
                     <span>Playlist</span>
-                    <PlaylistControls status={this.cursors.status.get()} enabled={enabled} onShuffle={this.shuffle} onRepeat={this.repeat} onRemove={this.itemRemoved} />
+                    <PlaylistControls status={this.props.status}
+                                      enabled={enabled}
+                                      onShuffle={this.shuffle}
+                                      onRepeat={this.repeat}
+                                      onRemove={this.itemRemoved} />
                 </header>
                 <ListView
                     className="content list"
-                    items={this.cursors.items.get()}
+                    items={this.props.items}
                     itemCreator={this.itemCreator}
                     enabled={enabled}
                     onItemActivated={this.itemPlayed}
                     onItemRemoved={this.itemRemoved}
                     onItemsSelected={this.itemsSelected}
-                    onItemsReordered={this.itemsReordered}/>
+                    onItemsReordered={this.itemsReordered} />
                 <div className="lock">
                     <i className="icon-lock" />
                     <span>You are not the current DJ</span>
                 </div>
             </section>
         );
-    },
+    }
 
-    itemCreator: function(item) {
-        var song = this.cursors.song.get();
-        var isPlaying = (song && song.id === item.id);
+    itemCreator(item) {
+        const song = this.props.song;
+        const isPlaying = (song && song === item);
 
         return (
             <PlaylistItem
@@ -73,4 +100,44 @@ export default React.createClass({
             />
         );
     }
-});
+
+    itemPlayed(item) {
+        actions.play(item.id);
+    }
+
+    itemRemoved(items) {
+        actions.playlistRemoveItems(items || this.state.selectedItems);
+    }
+
+    itemsSelected(items) {
+        this.setState({
+            selectedItems: items
+        });
+    }
+
+    itemsReordered(items) {
+        this.setState({
+            items: items
+        });
+        actions.playlistReorderItems(items);
+    }
+
+    repeat(repeat, single) {
+        if (repeat && single) {
+            // Both on, turn both off.
+            actions.toggleRepeat(0, 0);
+        } else if (repeat) {
+            // Repeat on, turn single on.
+            actions.toggleRepeat(1, 1);
+        } else {
+            // Both off, turn repeat on.
+            actions.toggleRepeat(1, 0);
+        }
+    }
+
+    shuffle(shuffle) {
+        actions.toggleShuffle(shuffle);
+    }
+}
+
+export default Playlist;

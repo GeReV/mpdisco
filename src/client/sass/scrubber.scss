@@ -1,0 +1,13 @@
+#scrubber {
+  background: #121212;
+  cursor: pointer;
+  height: 10px;
+
+  .progress {
+    background: linear-gradient(to bottom, #00d3ef, #009fdc);
+    border-radius: 0 5px 5px 0;
+    padding-right: 5px;
+    width: 0;
+    height: 10px;
+  }
+}

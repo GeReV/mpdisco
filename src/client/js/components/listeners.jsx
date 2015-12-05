@@ -1,9 +1,14 @@
 import React from 'react';
 
+import withStyles from '../decorators/withStyles';
+
+import styles from '../../sass/listeners.scss';
+
 import ListenersMixin from '../mixins/listeners_mixin.js';
 
 import Listener from './listener.jsx';
 
+// @withStyles(styles)
 export default React.createClass({
     mixins: [ListenersMixin],
 

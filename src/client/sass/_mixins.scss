@@ -1,0 +1,23 @@
+@define-mixin slide $slide-offset, $slide-duration: 0.3s, $slide-delay: $slide-duration / 2 {
+  .slide-enter {
+    opacity: 0.01;
+    transform: translate(-$slide-offset, 0);
+    transition: transform $slide-duration ease-in-out, opacity $slide-duration ease-in-out;
+  }
+
+  .slide-enter.slide-enter-active {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+
+  .slide-leave {
+    opacity: 1;
+    transform: translate(0, 0);
+    transition: transform $slide-duration ease-in-out $slide-delay, opacity $slide-duration ease-in-out $slide-delay;
+  }
+
+  .slide-leave.slide-leave-active {
+    opacity: 0.01;
+    transform: translate($slide-offset, 0);
+  }
+}

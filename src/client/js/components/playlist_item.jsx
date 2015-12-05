@@ -1,8 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import cx from 'classnames';
 
-import EnabledMixin from './../mixins/enabled_mixin.js';
-
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
 //var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
@@ -12,13 +12,23 @@ function formatTime(seconds) {
     return Math.floor(seconds / 60) + ':' + zeroPad(seconds % 60);
 }
 
-export default React.createClass({
-    mixins: [/*DragDropMixin, */EnabledMixin],
 
-    propTypes: {
+
+import styles from '../../sass/playlist-item.scss';
+
+// import { PlaylistMixin } from '../mixins/playlist_mixin.js';
+
+// import { accepts } from '../mixins/playlist_mixin.js';
+
+@withStyles(styles)
+@withEnabled
+export default class PlaylistItem extends Component {
+    // mixins: [/*DragDropMixin, */EnabledMixin],
+
+    static propTypes = {
         onReorder: PropTypes.func.isRequired,
         onDidReorder: PropTypes.func.isRequired
-    },
+    };
 
     //statics: {
     //    getDragType: function() {
@@ -47,13 +57,13 @@ export default React.createClass({
     //    }
     //},
 
-    render: function() {
+    render() {
 
         //var dragType = this.constructor.getDragType();
 
-        var item = this.props.item;
+        const item = this.props.item;
 
-        var details;
+        let details;
 
         if (item.title) {
             details = [];
@@ -89,9 +99,9 @@ export default React.createClass({
             details = <span className="url">{item.file}</span>
         }
 
-        var time = formatTime(+this.props.item.time);
+        const time = formatTime(+this.props.item.get('time'));
 
-        var classes = cx({
+        const classes = cx({
             'playlist-item': true,
             'playlist-item-selected': this.props.selected,
             'playlist-item-playing': this.props.playing,
@@ -99,11 +109,11 @@ export default React.createClass({
             //'playlist-item-dragging': this.getDragState(dragType).isDragging
         });
 
-        var events;
+        let events;
             //dragSourceAttributes,
             //dropTargetAttributes;
 
-        if (this.enabled()) {
+        if (this.props.enabled) {
             events = {
                 onMouseDown: this.itemClick,
                 onDoubleClick: this.itemDblClick
@@ -125,19 +135,19 @@ export default React.createClass({
                 <span className="time">{time}</span>
             </li>
         );
-    },
+    }
 
-    itemClick: function(e) {
+    itemClick(e) {
         if (this.props.onItemClick) {
             this.props.onItemClick(e, this.props.item);
         }
-    },
+    }
 
-    itemDblClick: function(e) {
+    itemDblClick(e) {
         if (this.props.onItemDblClick) {
             this.props.onItemDblClick(e, this.props.item);
         }
 
         e.preventDefault();
     }
-});
+}

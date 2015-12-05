@@ -1,6 +1,12 @@
 import reactor from './reactor';
 import network from './network.js';
-import { fetchStatus, fetchCurrentSong, fetchListeners, fetchLibrary } from './actions.js';
+import {
+  fetchStatus,
+  fetchCurrentSong,
+  fetchListeners,
+  fetchLibraryArtists,
+  fetchPlaylist
+} from './actions.js';
 import {
     RECEIVE_COVER_ART,
     RECEIVE_CURRENT_SONG,
@@ -9,7 +15,7 @@ import {
     RECEIVE_LIBRARY_SONGS,
     RECEIVE_LISTENERS,
     RECEIVE_PLAYLIST,
-    RECEIVE_STATUS,
+    RECEIVE_STATUS
   } from './action_types.js';
 
 class Receiver {
@@ -38,12 +44,13 @@ class Receiver {
 
     this.on('clientdisconnected', fetchListeners);
 
-    this.on('update:database', fetchListeners);
+    this.on('update:database', fetchLibraryArtists);
     this.on('list:artist', res => {
       reactor.dispatch(RECEIVE_LIBRARY_ARTISTS, {
         artists: res.data.map(_ => {
           return {
-            name: _.artist
+            name: _.artist,
+            albums: {}
           };
         })
       });
@@ -54,7 +61,8 @@ class Receiver {
         albums: res.data.map(_ => {
           return {
             name: _.album,
-            artist: null
+            artist: null,
+            songs: {}
           };
         })
       });
@@ -92,6 +100,8 @@ class Receiver {
     this.on('playid', update);
     this.on('repeat', update);
     this.on('random', update);
+
+    this.on('update:playlist', fetchPlaylist);
   }
 
   on(event, handler) {

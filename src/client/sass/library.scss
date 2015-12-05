@@ -1,0 +1,182 @@
+@import '_mixins.scss';
+@import '_variables.scss';
+
+#library {
+
+  /* Update animation */
+  $anim-duration: 0.3s;
+
+  @mixin slide 100%, $anim-duration;
+
+  /* React removes the classes as soon as the first slide finishes.
+     Need to rethink this one. */
+  /*.slide-enter {
+    color: #e0ecff;
+
+    .name {
+      transition: color 1.5s ease-out $anim-duration;
+    }
+  }
+  .slide-enter.slide-enter-active {
+    color: $library-color;
+  }*/
+  /* end */
+
+  background: $library-background;
+  color: $secondary-color;
+  display: flex;
+  flex: 0 0 $left-column-width;
+  flex-direction: column;
+
+  &.library-drop .content {
+    box-shadow: 0 0 5px lighten($library-background, 50%) inset;
+  }
+
+  &.library-drop-hover .content {
+    box-shadow: 0 0 5px lighten($library-background, 70%) inset;
+  }
+
+  &.library-updating header::before {
+    @extend .icon;
+    @extend .icon-spin;
+    @extend .icon-refresh:before;
+
+    float: right;
+  }
+
+  .content {
+    position: relative;
+  }
+
+  header {
+    background: rgba(0, 0, 0, 0.2);
+    color: #fff;
+  }
+
+  a {
+    display: block;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .library-upload {
+    background: lighten($library-background, 5%);
+    border-radius: 0 0 5px 5px;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+    color: $secondary-color-highlight;
+    flex: 1 0 auto;
+    margin: 0 2px;
+    min-height: 150px;
+    overflow-y: auto;
+    padding: 5px;
+    transition: transform .75s ease-in-out;
+    transform: translate(0, 0);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    &.upload-enter,
+    &.upload-leave.upload-leave-active {
+      transform: translate(0, -100%);
+    }
+
+    &.upload-enter.upload-enter-active,
+    &.upload-leave {
+      transform: translate(0, 0);
+    }
+
+    span {
+      display: inline-block;
+    }
+
+    .filename {
+      @extend .ellipsis;
+
+      flex: 1 1 70%;
+    }
+
+    .progress-bar {
+      background: transparent;
+      border: 1px solid #cdcdcd;
+      border-radius: 4px;
+      flex: 0 0 30%;
+      margin: 1px 0 1px 5px;
+      overflow: hidden;
+      padding: 2px;
+      text-align: left;
+      width: 30%;
+      height: 12px;
+    }
+
+    .progress {
+      background-image: linear-gradient(to bottom, #c6d2e3, #7c96be);
+      height: 100%;
+    }
+
+    > li {
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      &.done {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      &.failed {
+        color: #be7c80;
+
+        .progress {
+          background-image: -moz-linear-gradient(top, #e3c6c8, #be7c80);
+          background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#e3c6c8), to(#be7c80));
+          background-image: -webkit-linear-gradient(top, #e3c6c8, #be7c80);
+          background-image: -o-linear-gradient(top, #e3c6c8, #be7c80);
+          background-image: linear-gradient(to bottom, #e3c6c8, #be7c80);
+        }
+      }
+    }
+  }
+
+  menu {
+    padding: 5px;
+    position: relative;
+
+    .search {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      border-color: rgba(255, 255, 255, 0.2);
+      color: #a0acbf;
+      font-size: 12px;
+      line-height: 20px;
+      padding: 4px 20px 4px 10px;
+      vertical-align: middle;
+      width: 100%;
+
+      &:focus {
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    ::-webkit-input-placeholder,
+    ::-moz-placeholder,
+    :-moz-placeholder,
+    :-ms-input-placeholder {
+      color: #000; /*rgba(255, 255, 255, 0.2);*/
+    }
+
+    &::after {
+      @extend .icon;
+      @extend .icon-search:before;
+
+      color: #989898;
+      line-height: 24px;
+      height: 24px;
+      position: absolute;
+      top: 4px;
+      right: 12px;
+    }
+  }
+}

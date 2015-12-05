@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import cx from 'classnames';
+import { nuclearComponent } from 'nuclear-js-react-addons';
 
-import PlayerControls from './player_controls.jsx';
+import isTextInputElement from 'react/lib/isTextInputElement';
+
+import actions from '../actions';
+import getters from '../getters';
+
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
+
+import styles from '../../sass/player.scss';
+
 import Scrubber from './scrubber.jsx';
-
-import PlayerMixin from '../mixins/player_mixin.js';
-import EnabledMixin from '../mixins/enabled_mixin.js';
+import PlayerControls from './player_controls.jsx';
 
 function formatTime(seconds) {
     function zeroPad(n) {
@@ -15,23 +23,70 @@ function formatTime(seconds) {
     return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
 }
 
-export default React.createClass({
-    mixins: [PlayerMixin, EnabledMixin],
+@nuclearComponent(props => {
+  return {
+    status: getters.currentStatus
+  };
+})
+@withStyles(styles)
+@withEnabled
+class Player extends Component {
+  constructor() {
+    super();
 
-    render: function() {
-        var classes = cx({
-            'player-disabled': !this.enabled()
+    this.state = {
+      time: 0,
+      animations: false,
+      indicatorAppear: false,
+      indicatorState: null
+    };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.status !== this.props.status) {
+      const status = this.props.status;
+
+      let time = 0;
+      if (status.get('time')) {
+          time = status.get('time').split(':');
+          time = +time[0];
+      }
+
+      if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+      }
+
+      if (status.get('state') === 'play') {
+          this.interval = setInterval(this.timeCounter, 1000);
+      }
+
+      this.setState({
+          time: time
+      });
+    }
+
+    if (this.props.song && !this.state.animations) {
+        this.setState({
+            animations: true
+        });
+    }
+  }
+
+    render() {
+        const classes = cx({
+            'player-disabled': !this.props.enabled
         });
 
-        var song = this.cursors.song.get();
+        const { song, status } = this.props;
 
-        var time = formatTime(this.state.time || 0);
+        const time = formatTime(this.state.time || 0);
 
-        var title = song.title || 'Idle';
+        const title = song.get('title', 'Idle');
 
-        var album = song.album ? ('- ' + song.album) : '';
+        const album = song.get('album') ? ('- ' + song.get('album')) : '';
 
-        var indicatorClasses = cx({
+        const indicatorClasses = cx({
             'indicator': true,
             'appear': this.state.indicatorAppear,
             'icon-play': (this.state.indicatorState === 'play'),
@@ -49,31 +104,165 @@ export default React.createClass({
                         transitionName="slide"
                         transitionEnter={this.state.animations}
                         transitionLeave={this.state.animations}
+                        transitionEnterTimeout={4000}
+                        transitionLeaveTimeout={4000}
                     >
-                        <span key={'title_' + song.id}>{title}</span>
+                        <span key={'title_' + song.get('id')}>{title}</span>
                     </ReactCSSTransitionGroup>
                     <ReactCSSTransitionGroup
                         component="h2"
                         transitionName="slide"
                         transitionEnter={this.state.animations}
                         transitionLeave={this.state.animations}
+                        transitionEnterTimeout={4000}
+                        transitionLeaveTimeout={4000}
                     >
-                        <span key={'artist_album_' + song.id}>{song.artist} {album}</span>
+                        <span key={'artist_album_' + song.get('id')}>{song.get('artist')} {album}</span>
                     </ReactCSSTransitionGroup>
 
                     <h2 className="duration">{time}</h2>
 
                     <PlayerControls
-                        state={this.cursors.status.get().state}
+                        state={status.get('state')}
                         onPlay={this.togglePlay}
                         onStop={this.stop}
                         onNext={this.next}
                         onPrevious={this.previous}
                     />
                 </div>
-                <Scrubber progress={this.state.time} total={song.time} onScrub={this.scrub} />
+                <Scrubber progress={this.state.time} total={song.get('time')} onScrub={this.scrub} />
                 <div className={indicatorClasses} />
             </section>
         );
     }
-});
+
+    timeCounter() {
+        this.setState({
+            time: this.state.time + 1
+        });
+    }
+
+    scrub(percent) {
+        if (!this.props.enabled) {
+            return;
+        }
+
+        const song = this.props.song;
+
+        const seconds = Math.floor(+song.get('time') * percent);
+
+        this.props.controller.seek(song.get('id'), seconds);
+    }
+
+    handleKeyboard(e) {
+        if (!this.props.enabled) {
+            return;
+        }
+
+        // Disable hotkeys for text boxes.
+        if (isTextInputElement(e.target)) {
+            return;
+        }
+
+        let key = e.key;
+
+        if (key === 'Unidentified') {
+            key = e.keyCode;
+        }
+
+        if (key === 90) { // KeyZ
+            this.updateIndicator('previous');
+
+            return this.previous();
+        }
+
+        if (key === 67 || key === ' ') { // KeyC, Space
+            const state = this.props.status.get('state');
+            let indicator;
+
+            if (state === 'play') {
+                indicator = 'pause';
+            } else if (state === 'pause' || state === 'stop') {
+                indicator = 'play';
+            }
+
+            this.updateIndicator(indicator);
+
+            return this.togglePlay();
+        }
+
+        if (key === 86) { // KeyV
+            this.updateIndicator('stop');
+
+            return this.stop();
+        }
+
+        if (key === 88) { // KeyX
+            this.updateIndicator('play');
+
+            return this.play();
+        }
+
+        if (key === 66) { // KeyB
+            this.updateIndicator('next');
+
+            return this.next();
+        }
+    }
+
+    togglePlay() {
+        const state = this.props.status.get('state');
+
+        if (state === 'play') {
+            this.pause();
+        } else if (state === 'pause' || state === 'stop') {
+            this.play();
+        }
+    }
+
+    play() {
+        actions.play();
+    }
+
+    stop() {
+        actions.stop();
+    }
+
+    pause() {
+        actions.pause(true);
+    }
+
+    next() {
+        actions.next();
+    }
+
+    previous() {
+        actions.previous();
+    }
+
+    updateIndicator(state) {
+        // Clear any pending timeout, so it trigger and hide our indicator prematurely.
+        if (this.indicatorAppearTimeout) {
+            clearTimeout(this.indicatorAppearTimeout);
+        }
+
+        this.indicatorAppearTimeout = setTimeout(this.clearIndicator, 400);
+
+        // Once the clear is finished, show the updated indicator.
+        this.setState({
+            indicatorState: state,
+            indicatorAppear: true
+        });
+    }
+
+    clearIndicator() {
+        // Clear the indicator from screen.
+        this.indicatorAppearTimeout = null;
+
+        this.setState({
+          indicatorAppear: false
+        });
+    }
+}
+
+export default Player;

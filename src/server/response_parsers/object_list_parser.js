@@ -1,5 +1,4 @@
-var AbstractParser = require('./abstract_parser.js'),
-    _ = require('lodash');
+import AbstractParser from './abstract_parser.js';
 
 export default class ObjectListParser extends AbstractParser {
   constructor(separatorKey) {

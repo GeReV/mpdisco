@@ -1,96 +1,90 @@
-import React from 'react';
+import React, {Component} from 'react';
 
 import cx from 'classnames';
 
+import actions from '../actions';
+
+import withEnabled from '../decorators/withEnabled';
+import withStyles from '../decorators/withStyles';
+
+import styles from '../../sass/library-item.scss';
 //var DraggableMixin = require('./../mixins/draggable_mixin.js');
-import EnabledMixin from '../mixins/enabled_mixin.js';
+// import EnabledMixin from '../mixins/enabled_mixin.js';
 
 import LibrarySongItem from './library_song_item.jsx';
 
-import MPDiscoController from '../mpdisco_controller.js';
+@withStyles(styles)
+@withEnabled
+export default class LibraryAlbumItem extends Component {
 
-export default React.createClass({
+  static getDragType () {
+    return 'album';
+  }
 
-    mixins: [/*DraggableMixin, */EnabledMixin],
+  constructor () {
+    super();
 
-    propTypes: {
-        controller: React.PropTypes.instanceOf(MPDiscoController).isRequired
-    },
+    this.state = {
+      loaded: false,
+      collapsed: true
+    };
+  }
 
-    statics: {
-        getDragType: function() {
-            return 'album';
-        }
-    },
+  getDragItem () {
+    return this.props.album;
+  }
 
-    getDragItem: function() {
-        return this.props.album;
-    },
+  render () {
+    const classes = cx({
+      'library-item': true,
+      'album': true,
+      'open': !this.state.collapsed
+    });
 
-    getInitialState: function() {
-        return {
-            loaded: false,
-            collapsed: true
-        };
-    },
+    const treeClasses = cx({'songs': true, 'tree': true, 'collapsed': this.state.collapsed});
 
-    render: function() {
-        var classes = cx({
-            'library-item': true,
-            'album': true,
-            'open': !this.state.collapsed
-        });
+    const enabled = this.props.enabled;
 
-        var treeClasses = cx({
-            'songs': true,
-            'tree': true,
-            'collapsed': this.state.collapsed
-        });
+    const album = this.props.album;
 
-        var enabled = this.enabled();
+    const songs = album.get('songs').toList().map(song => <LibrarySongItem key={song.get('title')} song={song} enabled={enabled}/>);
 
-        var album = this.props.album;
+    //var dragSourceAttributes;
+    //
+    //if (enabled) {
+    //    dragSourceAttributes = this.dragSource();
+    //}
 
-        var songs = (album.songs || []).map(function(song) {
-            return <LibrarySongItem
-                key={song.title}
-                song={song}
-                enabled={enabled} />;
-        });
+    const name = album.get('name');
 
-        //var dragSourceAttributes;
-        //
-        //if (enabled) {
-        //    dragSourceAttributes = this.dragSource();
-        //}
-
-        return (
-            <li className={classes}/* {...dragSourceAttributes}*/>
-                <span className="name" title={album.name} onClick={this.toggleSongs}><img src={album.cover} alt="Cover" className="cover" /> {album.name}</span>
-                <ol className={treeClasses}>
-                    {songs}
-                </ol>
-            </li>
-        );
-    },
-
-    toggleSongs: function(e) {
-        if (!this.state.loaded) {
-
-            var album = this.props.album;
-
-            this.props.controller.libraryListSongs(album.artist, album);
-
-            this.setState({
-                loaded: true,
-                collapsed: false
-            });
-        } else {
-            this.setState({
-                collapsed: !this.state.collapsed
-            });
-        }
-
-        e.preventDefault();
+    return (
+      <li className={classes} /* {...dragSourceAttributes}*/
+> < span className = "name" title = {
+      name
     }
-});
+    onClick = {
+      this.toggleSongs.bind(this)
+    } > <img src={album.get('cover')} alt="Cover" className="cover"/>
+      {name} < /span>
+                <ol className={treeClasses}>
+                  {songs}
+                </ol > </li>);
+  }
+
+  toggleSongs (e) {
+    if (!this.state.loaded) {
+
+      const album = this.props.album;
+
+      actions.fetchLibrarySongs(album.getIn(['artist', 'name']), album.get('name'));
+
+      this.setState({loaded: true, collapsed: false});
+    } else {
+      this.setState({
+        collapsed: !this.state.collapsed
+      });
+    }
+
+    e.preventDefault();
+  }
+}

@@ -1,5 +1,5 @@
-var AbstractParser = require('./abstract_parser.js'),
-    _ = require('lodash');
+import AbstractParser from './abstract_parser.js';
+import _ from 'lodash';
 
 export default class LineParser extends AbstractParser {
   parse(s) {
@@ -12,7 +12,7 @@ export default class LineParser extends AbstractParser {
 
     _.compact(lines)
       .map(this.parseLine)
-      .forEach((o, index) => {
+      .forEach(o => {
         let obj = {};
 
         obj[o.key] = o.value;

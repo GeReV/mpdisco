@@ -1,4 +1,3 @@
-import reactor from './reactor.js';
 import network from './network.js';
 
 export default {
@@ -29,4 +28,74 @@ export default {
   fetchPlaylist() {
     network.command('playlistinfo');
   },
-}
+
+  toggleShuffle(random) {
+      network.command('random', random);
+  },
+  toggleRepeat(repeat, single) {
+      network.command('repeat', repeat);
+      network.command('single', single);
+  },
+  seek(id, seconds) {
+      network.command('seekid', id, seconds);
+  },
+  play(id) {
+      if (id) {
+          network.command('playid', id);
+      }
+      network.command('play');
+  },
+  stop() {
+      network.command('stop');
+  },
+  pause(pause) {
+      if (pause === undefined) {
+          pause = true;
+      }
+      network.command('pause', (pause ? 1 : 0));
+  },
+  next() {
+      network.command('next');
+  },
+  previous() {
+      network.command('previous');
+  },
+
+  playlistRemoveItems(items) {
+      const commands = items.map(function(item) {
+          return {
+              command: 'deleteid',
+              args: [item.id]
+          };
+      });
+
+      network.commands(commands);
+  },
+  playlistAddItem(itemType, item) {
+      switch (itemType) {
+          case 'artist':
+              network.command('findadd', 'artist', item.name);
+              break;
+          case 'album':
+              network.command('findadd', 'artist', item.artist.name, 'album', item.name);
+              break;
+          case 'song':
+              network.command('findadd', 'artist', item.artist.name, 'album', item.album.name, 'title', item.title);
+              break;
+      }
+  },
+  playlistReorderItems(items) {
+      const commands = items.map(function(item, i) {
+          return {
+              command: 'moveid',
+              args: [item.id, i]
+          };
+      });
+
+      network.commands(commands);
+  },
+
+  listenerIdentify(name) {
+      network.send('identify', name);
+  },
+};

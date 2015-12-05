@@ -1,61 +1,59 @@
-import React, { Component } from 'react';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import React, {Component} from 'react';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import stackblur from '../vendor/StackBlur';
 
-import { tree } from '../mpdisco_model.js';
+import withStyles from '../decorators/withStyles';
 
-export default React.createClass({
+import styles from '../../sass/logo.scss';
 
-    mixins: [tree.mixin],
+@withStyles(styles)
+export default class Logo extends Component {
 
-    cursors: {
-        cover: ['cover']
-    },
+  componentWillUpdate (nextProps) {
+    if (nextProps.cover !== this.props.cover) {
+      const url = nextProps.cover;
 
-    componentDidMount: function() {
-        this.cursors.cover.on('update', function() {
-            var url = this.cursors.cover.get();
+      if (!url) {
+        return;
+      }
 
-            if (!url) {
-                return;
-            }
+      const blurCanvas = () => {
+        stackblur(this.state.cover, this.refs.cover, + this.props.blurRadius);
+      };
 
-            var blurCanvas = function() {
-                var canvas = this.refs.cover.getDOMNode();
+      const image = new Image();
 
-                stackblur(this.state.cover, canvas, +this.props.blurRadius);
-            }.bind(this);
+      const onload = () => {
+        this.setState({
+          cover: image,
+          coverKey: url
+        }, blurCanvas);
+      };
 
-            var onload = function() {
-                this.setState({
-                    cover: image,
-                    coverKey: url
-                }, blurCanvas);
-            }.bind(this);
-
-            var image = new Image();
-            image.src = url;
-            image.onload = image.load = onload;
-        }.bind(this));
-    },
-
-    render: function() {
-
-        var image;
-        if (this.cursors.cover.get()) {
-            image = (
-                <canvas ref="cover" key={this.state.coverKey} />
-            );
-        }
-
-        return (
-            <hgroup id="logo">
-                <ReactCSSTransitionGroup component="div" className="logo-cover" transitionName="fade">
-                    {image}
-                </ReactCSSTransitionGroup>
-                <h1>mpdisco</h1>
-            </hgroup>
-        );
+      image.src = url;
+      image.onload = image.load = onload;
     }
-});
+  }
+
+  render () {
+
+    let image;
+    if (this.props.cover) {
+      image = (<canvas ref="cover" key={this.state.coverKey}/>);
+    }
+
+    return (
+      <hgroup id="logo">
+        <ReactCSSTransitionGroup component="div"
+                                 className="logo-cover"
+                                 transitionName="fade"
+                                 transitionEnterTimeout={4000}
+                                 transitionLeaveTimeout={4000}>
+          {image}
+        </ReactCSSTransitionGroup>
+        <h1>mpdisco</h1>
+      </hgroup>
+    );
+  }
+}

@@ -27,10 +27,14 @@ function execute(mpd, command, args, client) {
 
   mpd.sendCommand(cmd, (err, result) => {
 
+    debug('Result:\n%s', result);
+
     // First parse the result.
     const parser = commandParsers.parserForCommand(command, args);
 
     const response = parser.parse(result);
+
+    debug('Parsed response:\n%s', JSON.stringify(response));
 
     // Then emit it to the client.
     const emitter = commandEmitters.emitterForCommand(command);
@@ -44,7 +48,7 @@ var clientsManager = ClientsManager.instance();
 export default class BasicMode {
   static create(mpd) {
     return new BasicMode(mpd);
-  };
+  }
 
   constructor(mpd) {
     this.type = 'freeforall';
@@ -69,15 +73,13 @@ export default class BasicMode {
       args = sanitizeArgs(ensureArray(args));
 
       // Run the command through the processor, which calls back with modified args (e.g. Youtube stream from url).
-      var promise = commandProcessors.processorForCommand(this.mpd, command, args);
+      const promise = commandProcessors.processorForCommand(this.mpd, command, args);
 
       promise
-          .then(function(args) {
-            execute(this.mpd, command, args, client);
-          }.bind(this))
+          .then(args => execute(this.mpd, command, args, client))
           .fail(function(error) {
-            console.log('Failed to run command: %s (%s) for user %s', command, JSON.stringify(args), client.info.userid);
-            console.log('Error: %s', error);
+            debug('Failed to run command: %s (%s) for user %s', command, JSON.stringify(args), client.info.userid);
+            debug('Error: %s', error);
 
             client.emit('error', {
               command: command,

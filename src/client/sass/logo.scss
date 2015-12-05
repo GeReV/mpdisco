@@ -1,0 +1,38 @@
+@import '_variables.scss';
+
+#logo {
+
+  align-items: center;
+  background: url('/images/noise.png') #354052 repeat top left;
+  display: flex;
+  flex: 0 0 $left-column-width;
+  position: relative;
+
+  .logo-cover {
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: $left-column-width;
+      height: $left-column-width;
+    }
+  }
+
+  h1 {
+    color: #fff;
+    flex: 1 0 auto;
+    font-weight: bold;
+    margin: 0;
+    text-align: center;
+    text-shadow: 0 0 15px #000, 0 0 30px #000;
+    text-transform: uppercase;
+    z-index: 0;
+  }
+}

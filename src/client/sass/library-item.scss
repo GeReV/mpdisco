@@ -1,0 +1,69 @@
+@import '_variables.scss';
+
+.library-item {
+  font-size: 15px;
+
+  &.dragging {
+
+    .tree {
+      border: 0;
+    }
+  }
+
+  &.open > .name::before {
+    @extend .icon-caret-down:before;
+  }
+
+  .name {
+    display: block;
+    line-height: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::before {
+      @extend .icon;
+      @extend .icon-caret-right:before;
+
+      margin-right: 2px;
+      text-align: center;
+      width: 18px;
+    }
+
+    img {
+      background: #fff;
+      display: inline-block;
+      margin-right: 4px;
+      vertical-align: middle;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  &.selected .name,
+  .name:hover {
+    color: $secondary-color-highlight;
+    background: darken($library-background, 5%);
+  }
+
+  .albums .name {
+    padding-left: 20px;
+  }
+
+  .songs {
+    counter-reset: album;
+    font-size: 12px;
+
+    .name {
+      padding-left: 40px;
+      line-height: 20px;
+
+      &::before {
+        counter-increment: album;
+        content: counter(album) ". ";
+        display: inline;
+        text-align: left;
+      }
+    }
+  }
+}

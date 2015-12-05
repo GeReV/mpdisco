@@ -1,0 +1,50 @@
+#listeners {
+
+  background: #efefef;
+  flex-direction: column;
+  width: 200px;
+
+  .listener {
+    background: 0;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 5px 11px;
+
+    &::after {
+      border-radius: 2px;
+      color: #fff;
+      display: inline-block;
+      float: right;
+      font-size: 9px;
+      font-weight: bold;
+      line-height: 8px;
+      margin: 8px 0;
+      padding: 2px 3px;
+    }
+
+    &.listener-you {
+
+    }
+
+    &.listener-anonymous {
+      font-weight: normal;
+    }
+
+    &.listener-master::after {
+      background: #75c33c;
+      content: "DJ";
+    }
+
+    &.listener-up-next::after {
+      background: #956dc6;
+      content: "Up Next";
+    }
+
+    img {
+      background: #666;
+      margin-right: 10px;
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
