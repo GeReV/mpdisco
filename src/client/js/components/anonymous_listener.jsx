@@ -20,7 +20,7 @@ export default class AnonymousListener extends Component {
     };
   }
 
-  componentWillReceiveProps (nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.listener.get('logged')) {
       this.setState({logging: false});
     }
@@ -42,11 +42,14 @@ export default class AnonymousListener extends Component {
   }
 
   anonymousView (classes) {
-    var name = this.props.you
-      ? <span>You
-          <a href="#" onClick={this.showLogin}>Login?</a>
-        </span>
-      : <span>Anonymous Listener</span>;
+    const name = this.props.you ?
+    (
+      <span>
+        <span>You</span>
+        <a href="#" onClick={this.showLogin.bind(this)}>Login?</a>
+      </span>
+    ) :
+    (<span>Anonymous Listener</span>);
 
     return (
       <li className={classes}>
@@ -58,8 +61,8 @@ export default class AnonymousListener extends Component {
   loginView (classes) {
     return (
       <li className={classes}>
-        <input type="text" ref="login" onKeyUp={this.handleLoginKeyup} placeholder="E-mail or nickname"/>
-        <a href="#" onClick={this.handleLogin}>Login</a>
+        <input type="text" ref="login" onKeyUp={this.handleLoginKeyup.bind(this)} placeholder="E-mail or nickname"/>
+        <a href="#" onClick={this.handleLogin.bind(this)}>Login</a>
       </li>
     );
   }

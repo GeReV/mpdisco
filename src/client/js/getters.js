@@ -27,3 +27,18 @@ exports.library = [
   ['library'],
   library => library
 ];
+
+exports.listeners = [
+  ['listeners'],
+  listeners => listeners.get('listeners')
+];
+
+exports.me = [
+  ['listeners'],
+  listeners => listeners.get('me')
+];
+
+exports.playlist = [
+  ['playlist'],
+  playlist => playlist.get('playlist')
+];

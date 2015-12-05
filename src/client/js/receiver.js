@@ -26,16 +26,16 @@ class Receiver {
       reactor.dispatch(RECEIVE_PLAYLIST, { playlist });
     });
 
-    this.on('clientslist', (clients, me) => {
-      reactor.dispatch(RECEIVE_LISTENERS, { clients, me });
+    this.on('clientslist', (listeners, me) => {
+      reactor.dispatch(RECEIVE_LISTENERS, { listeners, me });
     });
 
     this.on('status', status => {
       reactor.dispatch(RECEIVE_STATUS, { status });
     });
 
-    this.on('currentsong', status => {
-      reactor.dispatch(RECEIVE_CURRENT_SONG, { status });
+    this.on('currentsong', song => {
+      reactor.dispatch(RECEIVE_CURRENT_SONG, { song });
     });
 
     this.on('coverart', response => {

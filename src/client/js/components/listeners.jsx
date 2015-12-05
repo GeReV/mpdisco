@@ -1,34 +1,45 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import withStyles from '../decorators/withStyles';
 
-import styles from '../../sass/listeners.scss';
+import actions from '../actions';
 
-import ListenersMixin from '../mixins/listeners_mixin.js';
+import styles from '../../sass/listeners.scss';
 
 import Listener from './listener.jsx';
 
-// @withStyles(styles)
-export default React.createClass({
-    mixins: [ListenersMixin],
+@withStyles(styles)
+export default class Listeners extends Component {
+  componentDidMount() {
+    actions.fetchListeners();
+  }
 
-    render: function() {
-        var me = this.cursors.me;
-        var listeners = this.cursors.listeners.get().map(function(listener) {
-            var isMe = (listener.userid === me.userid);
-
-            return (
-                <Listener key={listener.userid} listener={listener} you={isMe} onIdentify={this.handleIdentify} />
-            );
-        }, this);
+  render () {
+    const me = this.props.me;
+    const listeners = this.props.listeners
+      .map(listener => {
+        const isMe = (listener.get('userid') === me.get('userid'));
 
         return (
-            <section id="listeners">
-                <header>Listeners</header>
-                <ul className="content">
-                    {listeners}
-                </ul>
-            </section>
+          <Listener key={listener.get('userid')}
+                    listener={listener}
+                    you={isMe}
+                    onIdentify={this.handleIdentify}
+                    />
         );
-    }
-});
+      });
+
+    return (
+      <section id="listeners">
+        <header>Listeners</header>
+        <ul className="content">
+          {listeners}
+        </ul>
+      </section>
+    );
+  }
+
+  handleIdentify(name) {
+    actions.listenerIdentify(name);
+  }
+}

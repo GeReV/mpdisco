@@ -12,29 +12,29 @@ export default class Listener extends Component {
     }
 
     render() {
-        const listener = this.props.listener;
+      const listener = this.props.listener;
 
-        if (!listener.logged) {
-            return (
-                <AnonymousListener {...this.props} />
-            );
-        }
-
-        const classes = cx('listener', {
-            'listener-you': this.props.you
-        });
-
-        const thumbnailUrl = `${listener.thumbnailUrl || 'http://www.gravatar.com/avatar/00000000000000000000000000000000'}?s=48`;
-        const displayName = listener.displayName || 'Listener';
-        const name = listener.name ?
-                `${listener.name.givenName} ${listener.name.familyName}` :
-                displayName;
-
+      if (!listener.logged) {
         return (
-            <li className={classes}>
-                <img src={thumbnailUrl} alt={displayName} />
-                <span>{name}</span>
-            </li>
+          <AnonymousListener {...this.props} />
         );
+      }
+
+      const classes = cx('listener', {
+        'listener-you': this.props.you
+      });
+
+      const thumbnailUrl = `${listener.get('thumbnailUrl') || 'http://www.gravatar.com/avatar/00000000000000000000000000000000'}?s=48`;
+      const displayName = listener.get('displayName') || 'Listener';
+      const name = listener.has('name') ?
+              `${listener.getIn(['name', 'givenName'])} ${listener.getIn(['name', 'familyName'])}` :
+              displayName;
+
+      return (
+        <li className={classes}>
+          <img src={thumbnailUrl} alt={displayName} />
+          <span>{name}</span>
+        </li>
+      );
     }
 }

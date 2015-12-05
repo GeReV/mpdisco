@@ -23,7 +23,7 @@ class Scrubber extends Component {
     };
 
     return (
-      <div id="scrubber" onClick={this.scrub}>
+      <div id="scrubber" onClick={this.scrub.bind(this)}>
         <div className="progress" style={style}/>
       </div>
     );

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import cx from 'classnames';
 import { nuclearComponent } from 'nuclear-js-react-addons';
+import { DropTarget } from 'react-dnd';
 
 import actions from '../actions';
 import getters from '../getters';
+import { ItemTypes } from '../constants';
 
 import PlaylistControls from './playlist_controls.jsx';
 import PlaylistItem from './playlist_item.jsx';
@@ -14,9 +16,22 @@ import withStyles from '../decorators/withStyles';
 
 import styles from '../../sass/playlist.scss';
 
-// import { PlaylistMixin } from '../mixins/playlist_mixin.js';
+const playlistTarget = {
+  drop(props, monitor, component) {
+    if (monitor.didDrop()) {
+      // If you want, you can check whether some nested
+      // target already handled drop
+      return;
+    }
 
-// import { accepts } from '../mixins/playlist_mixin.js';
+    actions.playlistAddItem(monitor.getItemType(), monitor.getItem());
+
+    // You can also do nothing and return a drop result,
+    // which will be available as monitor.getDropResult()
+    // in the drag source's endDrag() method
+    return { moved: true };
+  }
+};
 
 @nuclearComponent(props => {
   return {
@@ -25,6 +40,16 @@ import styles from '../../sass/playlist.scss';
 })
 @withStyles(styles)
 @withEnabled
+@DropTarget([ItemTypes.ARTIST, ItemTypes.ALBUM, ItemTypes.SONG], playlistTarget, (connect, monitor) => ({
+  // Call this function inside render()
+  // to let React DnD handle the drag events:
+  connectDropTarget: connect.dropTarget(),
+  // You can ask the monitor about the current drag state:
+  isOver: monitor.isOver(),
+  isOverCurrent: monitor.isOver({ shallow: true }),
+  canDrop: monitor.canDrop(),
+  itemType: monitor.getItemType()
+}))
 class Playlist extends Component {
 
     constructor() {
@@ -37,6 +62,8 @@ class Playlist extends Component {
     }
 
     componentDidMount() {
+      actions.fetchPlaylist();
+
       // Turn library update animations on.
       this.setState({
           animations: true
@@ -44,23 +71,19 @@ class Playlist extends Component {
     }
 
     render() {
-        //var dropStates = accepts.map(this.getDropState);
-
-        const enabled = this.props.enabled;
+        const {
+          isOver,
+          canDrop,
+          connectDropTarget,
+          enabled
+        } = this.props;
 
         const playlistClasses = cx({
-            //'playlist-drop': _.any(dropStates, function (state) {
-            //    return state.isDragging || state.isHovering;
-            //}),
+            'playlist-drop': isOver,
             'playlist-disabled': !enabled
         });
 
-        //var dropTargetAttributes;
-        //if (enabled) {
-        //    dropTargetAttributes = this.dropTargetFor.apply(this, accepts);
-        //}
-
-        return (
+        return connectDropTarget(
             <section id="playlist" className={playlistClasses}>
                 <header>
                     <span>Playlist</span>
@@ -73,12 +96,12 @@ class Playlist extends Component {
                 <ListView
                     className="content list"
                     items={this.props.items}
-                    itemCreator={this.itemCreator}
+                    itemCreator={this.itemCreator.bind(this)}
                     enabled={enabled}
-                    onItemActivated={this.itemPlayed}
-                    onItemRemoved={this.itemRemoved}
-                    onItemsSelected={this.itemsSelected}
-                    onItemsReordered={this.itemsReordered} />
+                    onItemActivated={this.itemPlayed.bind(this)}
+                    onItemRemoved={this.itemRemoved.bind(this)}
+                    onItemsSelected={this.itemsSelected.bind(this)}
+                    onItemsReordered={this.itemsReordered.bind(this)} />
                 <div className="lock">
                     <i className="icon-lock" />
                     <span>You are not the current DJ</span>
@@ -93,9 +116,9 @@ class Playlist extends Component {
 
         return (
             <PlaylistItem
-                key={item.id}
+                key={item.get('id')}
                 item={item}
-                enabled={this.enabled()}
+                enabled={this.props.enabled}
                 playing={isPlaying}
             />
         );

@@ -1,5 +1,10 @@
 import React, {Component} from 'react';
-import {provideReactor, nuclearComponent} from 'nuclear-js-react-addons';
+import {
+  provideReactor,
+  nuclearComponent
+} from 'nuclear-js-react-addons';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import getters from '../getters';
 
@@ -7,17 +12,26 @@ import Logo from './logo.jsx';
 import Player from './player.jsx';
 import Playlist from './playlist.jsx';
 import Library from './library.jsx';
-// import Listeners from './master_mode_listeners.jsx';
+import Listeners from './master_mode_listeners.jsx';
 
+import withContext from '../decorators/withContext';
 import withStyles from '../decorators/withStyles';
 
 import styles from '../../sass/mpdisco.scss';
 
 @provideReactor
 @nuclearComponent(props => {
-  return {song: getters.currentSong, library: getters.library};
+  return {
+    me: getters.me,
+    song: getters.currentSong,
+    library: getters.library,
+    playlist: getters.playlist,
+    listeners: getters.listeners,
+  };
 })
+@withContext
 @withStyles(styles)
+@DragDropContext(HTML5Backend)
 class MasterMode extends Component {
   constructor () {
     super();
@@ -48,8 +62,8 @@ class MasterMode extends Component {
         </header>
         <main>
           <Library library={this.props.library} enabled={enabled}/>
-          <Playlist song={this.props.song} enabled={enabled}/>
-          {/*<Listeners controller={this.props.controller} mastermode={this.model} />*/}
+          <Playlist playlist={this.props.playlist} song={this.props.song} enabled={enabled}/>
+          <Listeners listeners={this.props.listeners} me={this.props.me} />
         </main>
       </div>
     );

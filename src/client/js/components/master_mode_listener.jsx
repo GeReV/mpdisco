@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import cx from 'classnames';
 
 import AnonymousListener from './anonymous_listener.jsx';
 
-export default class Listener extends Component {
+export default class MasterModeListener extends Component {
   static propTypes = {
     onIdentify: React.PropTypes.func.isRequired,
     listener: React.PropTypes.object.isRequired,
@@ -13,7 +13,7 @@ export default class Listener extends Component {
     master: React.PropTypes.bool
   };
 
-  render () {
+  render() {
     const listener = this.props.listener;
 
     if (!listener.get('logged')) {
@@ -26,10 +26,10 @@ export default class Listener extends Component {
       'listener-up-next': this.props.next
     });
 
-    const thumbnailUrl = `${listener.thumbnailUrl || 'http://www.gravatar.com/avatar/00000000000000000000000000000000'}?s=48`;
-    const displayName = listener.displayName || 'Listener';
-    const name = listener.name
-      ? `${listener.name.givenName} ${listener.name.familyName}`
+    const thumbnailUrl = `${listener.get('thumbnailUrl') || 'http://www.gravatar.com/avatar/00000000000000000000000000000000'}?s=48`;
+    const displayName = listener.get('displayName') || 'Listener';
+    const name = listener.get('name') ?
+      `${listener.getIn(['name', 'givenName'])} ${listener.getIn(['name', 'familyName'])}`
       : displayName;
 
     return (
@@ -39,4 +39,4 @@ export default class Listener extends Component {
       </li>
     );
   }
-});
+}

@@ -52,7 +52,13 @@ function run() {
   // Make taps on links and buttons work fast on mobiles
   FastClick.attach(document.body);
 
-  render(<MPDisco reactor={reactor} network={network} />)
+  const app = (
+    <MPDisco reactor={reactor}
+             context={context}
+             network={network} />
+  );
+
+  render(app);
 }
 
 // Run the application when both DOM is ready and page content is loaded

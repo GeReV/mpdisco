@@ -1,54 +1,67 @@
 import React from 'react';
 
-import ListenersMixin from '../mixins/listeners_mixin.js';
+import actions from '../actions';
 
-import MasterModeModel from '../models/master_mode_model.js';
+import withStyles from '../decorators/withStyles';
 
+import styles from '../../sass/listeners.scss';
+
+import Listeners from './listeners.jsx';
 import MasterModeListener from './master_mode_listener.jsx';
 
-export default React.createClass({
-    mixins: [ListenersMixin],
+@withStyles(styles)
+export default class MasterModeListeners extends Listeners {
 
-    propTypes: {
-        mastermode: React.PropTypes.instanceOf(MasterModeModel).isRequired
-    },
+  constructor() {
+    super();
 
-    componentDidMount: function() {
-        this.props.mastermode.on('master', this.setMaster);
-    },
+    this.state = {
+      master: null
+    };
+  }
+  componentDidMount() {
+    actions.fetchListeners();
+    // this.props.mastermode.on('master', this.setMaster);
+  }
 
-    render: function() {
-        var me = this.cursors.me.get();
-        var listeners = this.cursors.listeners.get().map(function(listener) {
-            var isMe = (listener.userid === me.userid);
-            var isMaster = this.state.master === listener.userid;
-            var isNextMaster = false;
-
-            return (
-                <MasterModeListener
-                    key={listener.userid}
-                    listener={listener}
-                    you={isMe}
-                    master={isMaster}
-                    next={isNextMaster}
-                    onIdentify={this.handleIdentify}
-                    />
-            );
-        }, this);
+  render() {
+    const me = this.props.me;
+    const listeners = this.props.listeners
+      .map(listener => {
+        const userId = listener.get('userid')
+        const isMe = (userId === me.get('userid'));
+        const isMaster = (this.state.master === userId);
+        const isNextMaster = false;
 
         return (
-            <section id="listeners">
-                <header>Listeners</header>
-                <ul className="content">
-                    {listeners}
-                </ul>
-            </section>
+          <MasterModeListener
+              key={userId}
+              listener={listener}
+              you={isMe}
+              master={isMaster}
+              next={isNextMaster}
+              onIdentify={this.handleIdentify.bind(this)}
+              />
         );
-    },
+      });
 
-    setMaster: function(master) {
-        this.setState({
-            master: master
-        });
-    }
-});
+    return (
+      <section id="listeners">
+        <header>Listeners</header>
+        <ul className="content">
+          {listeners}
+        </ul>
+      </section>
+    );
+  }
+
+  setMaster(master) {
+    this.setState({
+      master: master
+    });
+  }
+
+  handleIdentify(name) {
+    actions.listenerIdentify(name);
+  }
+}

@@ -65,44 +65,47 @@ export default class PlaylistItem extends Component {
 
         let details;
 
-        if (item.title) {
+        if (item.get('title')) {
             details = [];
 
-            if (item.artist) {
+            const artist = item.getIn(['artist', 'name']);
+            if (artist) {
                 details.push(
-                    <span className="artist" key="artist">{item.artist}</span>
+                    <span className="artist" key="artist">{artist}</span>
                 );
 
-                if (item.album) {
+                const album = item.getIn(['album', 'name']);
+                if (album) {
                     details.push(<span className="sep" key="sep-album">,&nbsp;</span>);
                     details.push(
-                        <span className="album" key="album">{item.album}</span>
+                        <span className="album" key="album">{album}</span>
                     );
                 }
 
-                if (item.date) {
+                const date = item.get('date');
+                if (date) {
                     details.push(<span className="sep" key="sep-date">,&nbsp;</span>);
                     details.push(
-                        <span className="year" key="year">{item.date}</span>
+                        <span className="year" key="year">{date}</span>
                     );
                 }
             }
 
-            details =
-                <div className="song">
-                    <p className="title">{item.title}</p>
-                    <p className="details">
-                        {details}
-                    </p>
-                </div>;
+            details = (
+              <div className="song">
+                <p className="title">{item.get('title')}</p>
+                <p className="details">
+                  {details}
+                </p>
+              </div>
+            );
         } else {
-            details = <span className="url">{item.file}</span>
+            details = <span className="url">{item.get('file')}</span>
         }
 
         const time = formatTime(+this.props.item.get('time'));
 
-        const classes = cx({
-            'playlist-item': true,
+        const classes = cx('playlist-item', {
             'playlist-item-selected': this.props.selected,
             'playlist-item-playing': this.props.playing,
             'playlist-item-focus': this.props.focused,
@@ -115,8 +118,8 @@ export default class PlaylistItem extends Component {
 
         if (this.props.enabled) {
             events = {
-                onMouseDown: this.itemClick,
-                onDoubleClick: this.itemDblClick
+                onMouseDown: this.itemClick.bind(this),
+                onDoubleClick: this.itemDblClick.bind(this)
             };
 
             //dragSourceAttributes = this.dragSourceFor(dragType);

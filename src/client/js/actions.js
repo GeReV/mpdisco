@@ -1,5 +1,10 @@
 import network from './network.js';
 
+import {
+  ItemTypes
+}
+from './constants';
+
 export default {
   fetchLibraryArtists() {
     network.command('list', 'artist');
@@ -30,72 +35,81 @@ export default {
   },
 
   toggleShuffle(random) {
-      network.command('random', random);
+    network.command('random', random);
   },
   toggleRepeat(repeat, single) {
-      network.command('repeat', repeat);
-      network.command('single', single);
+    network.command('repeat', repeat);
+    network.command('single', single);
   },
   seek(id, seconds) {
-      network.command('seekid', id, seconds);
+    network.command('seekid', id, seconds);
   },
   play(id) {
-      if (id) {
-          network.command('playid', id);
-      }
-      network.command('play');
+    if (id) {
+      network.command('playid', id);
+    }
+    network.command('play');
   },
   stop() {
-      network.command('stop');
+    network.command('stop');
   },
   pause(pause) {
-      if (pause === undefined) {
-          pause = true;
-      }
-      network.command('pause', (pause ? 1 : 0));
+    if (pause === undefined) {
+      pause = true;
+    }
+    network.command('pause', (pause ? 1 : 0));
   },
   next() {
-      network.command('next');
+    network.command('next');
   },
   previous() {
-      network.command('previous');
+    network.command('previous');
   },
 
   playlistRemoveItems(items) {
-      const commands = items.map(function(item) {
-          return {
-              command: 'deleteid',
-              args: [item.id]
-          };
-      });
+    const commands = items.map(function(item) {
+      return {
+        command: 'deleteid',
+        args: [item.id]
+      };
+    });
 
-      network.commands(commands);
+    network.commands(commands);
   },
   playlistAddItem(itemType, item) {
-      switch (itemType) {
-          case 'artist':
-              network.command('findadd', 'artist', item.name);
-              break;
-          case 'album':
-              network.command('findadd', 'artist', item.artist.name, 'album', item.name);
-              break;
-          case 'song':
-              network.command('findadd', 'artist', item.artist.name, 'album', item.album.name, 'title', item.title);
-              break;
-      }
+    switch (itemType) {
+      case ItemTypes.ARTIST:
+        item = item.artist;
+
+        network.command('findadd', 'artist', item.get('name'));
+
+        break;
+      case ItemTypes.ALBUM:
+        item = item.album;
+
+        network.command('findadd', 'artist', item.getIn(['artist', 'name']), 'album', item.get('name'));
+
+        break;
+      case ItemTypes.SONG:
+        item = item.song;
+
+        network.command('findadd', 'artist', item.getIn(['artist', 'name']), 'album', item.getIn(['album', 'name']), 'title', item.get('title'));
+
+        break;
+    }
   },
   playlistReorderItems(items) {
-      const commands = items.map(function(item, i) {
-          return {
-              command: 'moveid',
-              args: [item.id, i]
-          };
-      });
+    const commands = items.map(function(item, i) {
+      return {
+        command: 'moveid',
+        args: [item.id, i]
+      };
+    });
 
-      network.commands(commands);
+    network.commands(commands);
   },
 
   listenerIdentify(name) {
-      network.send('identify', name);
+    network.send('identify', name);
   },
 };
