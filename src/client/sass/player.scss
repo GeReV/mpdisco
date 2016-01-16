@@ -55,12 +55,12 @@
     flex: 1 0 auto;
 
     h1, h2 {
-      @extend .slide-over;
+      /*@extend .slide-over;*/
 
       @mixin slide 200px;
 
       span {
-        @extend .ellipsis;
+        /*@extend .ellipsis;*/
       }
     }
 

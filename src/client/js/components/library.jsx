@@ -2,9 +2,8 @@ import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import cx from 'classnames';
 import update from 'react-addons-update';
-
-//var DragDropMixin = require('react-dnd').DragDropMixin;
-//var NativeDragItemTypes = require('react-dnd').NativeDragItemTypes;
+import { DropTarget } from 'react-dnd';
+import { NativeTypes } from 'react-dnd-html5-backend';
 
 import actions from '../actions';
 
@@ -16,30 +15,48 @@ import styles from '../../sass/library.scss';
 import LibraryArtistItem from './library_artist_item.jsx';
 import LibraryFileUpload from './library_file_upload.jsx';
 
+const uploadSpec = {
+  drop(props, monitor, component) {
+    if (monitor.didDrop()) {
+      // If you want, you can check whether some nested
+      // target already handled drop
+      return;
+    }
+
+    // Obtain the dragged item
+    const item = monitor.getItem();
+
+    if (!item) {
+      return;
+    }
+
+    if (_.isArray(item.files)) {
+      component.setState({
+        uploads: item.files,    // These will be rendered.
+        uploading: item.files   // These will be used to keep track of progress.
+      });
+    }
+
+    // You can also do nothing and return a drop result,
+    // which will be available as monitor.getDropResult()
+    // in the drag source's endDrag() method
+    return { moved: true };
+  }
+};
+
 @withStyles(styles)
 @withEnabled
+@DropTarget(NativeTypes.FILE, uploadSpec, (connect, monitor) => ({
+  // Call this function inside render()
+  // to let React DnD handle the drag events:
+  connectDropTarget: connect.dropTarget(),
+  // You can ask the monitor about the current drag state:
+  isOver: monitor.isOver(),
+  isOverCurrent: monitor.isOver({ shallow: true }),
+  canDrop: monitor.canDrop(),
+  itemType: monitor.getItemType()
+}))
 export default class Library extends Component {
-
-    //statics: {
-    //    configureDragDrop: function(register) {
-    //        register(NativeDragItemTypes.FILE, {
-    //            dropTarget: {
-    //                acceptDrop: function(component, item) {
-    //                    if (!item) {
-    //                        return;
-    //                    }
-    //
-    //                    if (_.isArray(item.files)) {
-    //                        component.setState({
-    //                            uploads: item.files,    // These will be rendered.
-    //                            uploading: item.files   // These will be used to keep track of progress.
-    //                        });
-    //                    }
-    //                }
-    //            }
-    //        });
-    //    }
-    //},
 
     constructor() {
       super();
@@ -67,79 +84,89 @@ export default class Library extends Component {
 
     render() {
 
-        //var dropState = this.getDropState(NativeDragItemTypes.FILE);
+      const { enabled, isOver, canDrop, connectDropTarget } = this.props;
 
-        const enabled = this.props.enabled;
+      const classes = cx({
+        'library-updating': this.state.updating,
+        'library-drop': canDrop,
+        'library-drop-hover': isOver,
+        'library-disabled': !enabled
+      });
 
-        const classes = cx({
-            'library-updating': this.state.updating,
-            //'library-drop': dropState.isDragging,
-            //'library-drop-hover': dropState.isHovering,
-            'library-disabled': !enabled
+      let uploads;
+      if (this.state.uploads.length) {
+        uploads = (
+          <ul className="library-upload">
+            {this.state.uploads.map(file => {
+              var key = file.name;
+
+              return (
+                <LibraryFileUpload
+                  key={key}
+                  file={file}
+                  onUploadComplete={this.uploadComplete.bind(this)}
+                  onUploadFail={this.uploadFail.bind(this)}
+                />
+              );
+            })}
+          </ul>
+        );
+      }
+
+      //<menu>
+      //    <input type="text" id="search" className="search" placeholder="Search" />
+      //</menu>
+
+      return connectDropTarget(
+        <section id="library" className={classes}/* {...this.dropTargetFor(NativeDragItemTypes.FILE)}*/>
+          <header>Library</header>
+          <div className="content">
+            {this.artistsView()}
+            <ReactCSSTransitionGroup component="div"
+                                     transitionName="upload"
+                                     transitionEnterTimeout={4000}
+                                     transitionLeaveTimeout={4000}
+            >
+              {uploads}
+            </ReactCSSTransitionGroup>
+          </div>
+        </section>
+      );
+    }
+
+    artistsView() {
+
+      const artists = this.props.library
+        .get('artists')
+        .toList()
+        .map(artist => {
+          return (
+              <LibraryArtistItem
+                  key={artist.get('name')}
+                  artist={artist}
+                  enabled={this.props.enabled}
+                  />
+          );
         });
 
-        let uploads;
-        if (this.state.uploads.length) {
-            uploads = (
-                <ul className="library-upload">
-                    {this.state.uploads.map(file => {
-                        var key = file.name;
+      const empty = (
+        <li className="library-item library-empty" key="__empty">
+          <em className="name">Library is empty</em>
+        </li>
+      );
 
-                        return (
-                            <LibraryFileUpload
-                                key={key}
-                                file={file}
-                                onUploadComplete={this.uploadComplete}
-                                onUploadFail={this.uploadFail}
-                            />
-                        );
-                    })}
-                </ul>
-            );
-        }
-
-        //<menu>
-        //    <input type="text" id="search" className="search" placeholder="Search" />
-        //</menu>
-
-        const artists = this.props.library
-          .get('artists')
-          .toList()
-          .map(artist => {
-            return (
-                <LibraryArtistItem
-                    key={artist.get('name')}
-                    artist={artist}
-                    enabled={enabled}
-                    />
-            );
-          });
-
-        return (
-            <section id="library" className={classes}/* {...this.dropTargetFor(NativeDragItemTypes.FILE)}*/>
-                <header>Library</header>
-                <div className="content">
-                    <ReactCSSTransitionGroup component="ul"
-                                             className="artists tree"
-                                             transitionName="slide"
-                                             transitionEnter={this.state.animations}
-                                             transitionLeave={this.state.animations}
-                                             transitionEnterTimeout={4000}
-                                             transitionLeaveTimeout={4000}
-                     >
-                      {artists}
-                    </ReactCSSTransitionGroup>
-                    <ReactCSSTransitionGroup component="div"
-                                             transitionName="upload"
-                                             transitionEnterTimeout={4000}
-                                             transitionLeaveTimeout={4000}
-                    >
-                      {uploads}
-                    </ReactCSSTransitionGroup>
-                </div>
-                <div id="overlay" />
-            </section>
-        );
+      return (
+        <ReactCSSTransitionGroup component="ul"
+                                 className="artists tree"
+                                 transitionName="slide"
+                                 transitionEnter={this.state.animations}
+                                 transitionLeave={this.state.animations}
+                                 transitionEnterTimeout={4000}
+                                 transitionLeaveTimeout={4000}
+         >
+          {artists.size ? artists : empty}
+        </ReactCSSTransitionGroup>
+      );
     }
 
     setUpdatingState() {
@@ -180,7 +207,7 @@ export default class Library extends Component {
             this.setState(update(this.state, stateUpdate));
         }
 
-        if (this.state.uploading.length <= 0) {
+        if (!this.state.uploading.length) {
             this.uploadAllComplete();
         }
     }

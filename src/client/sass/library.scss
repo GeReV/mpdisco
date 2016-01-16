@@ -37,9 +37,9 @@
   }
 
   &.library-updating header::before {
-    @extend .icon;
-    @extend .icon-spin;
-    @extend .icon-refresh:before;
+    /*@extend .icon;*/
+    /*@extend .icon-spin;*/
+    /*@extend .icon-refresh:before;*/
 
     float: right;
   }
@@ -93,7 +93,7 @@
     }
 
     .filename {
-      @extend .ellipsis;
+      /*@extend .ellipsis;*/
 
       flex: 1 1 70%;
     }
@@ -168,8 +168,8 @@
     }
 
     &::after {
-      @extend .icon;
-      @extend .icon-search:before;
+      /*@extend .icon;*/
+      /*@extend .icon-search:before;*/
 
       color: #989898;
       line-height: 24px;
@@ -179,4 +179,10 @@
       right: 12px;
     }
   }
+}
+
+.library-empty {
+  opacity: 0.3;
+  padding: .5rem;
+  text-align: center;
 }

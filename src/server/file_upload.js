@@ -156,7 +156,15 @@ UploadHandler.prototype.post = function () {
 
           mkdirp.sync(uploadPath);
 
-          fs.renameSync(file.path, path.join(uploadPath, fileInfo.name));
+          const dest = path.join(uploadPath, fileInfo.name);
+
+          const readStream = fs.createReadStream(file.path);
+          const writeStream = fs.createWriteStream(dest);
+
+          readStream.pipe(writeStream);
+          readStream.on('end', function () {
+            fs.unlinkSync(file.path);
+          });
         });
     })
     .on('aborted', function () {

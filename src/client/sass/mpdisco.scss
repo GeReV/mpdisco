@@ -129,7 +129,7 @@ input[type="text"] {
   padding: 0;
 
   > * {
-    @extend .playlist-item;
+    /*@extend .playlist-item;*/
   }
 }
 
@@ -140,7 +140,7 @@ input[type="text"] {
   padding: 0;
 
   > * {
-    @extend .library-item;
+    /*@extend .library-item;*/
   }
 
   .tree {
@@ -288,8 +288,8 @@ input[type="text"] {
     }
 
     &:before {
-      @extend .icon;
-      @extend .icon-remove:before;
+      /*@extend .icon;*/
+      /*@extend .icon-remove:before;*/
     }
   }
 }

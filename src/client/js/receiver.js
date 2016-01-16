@@ -47,7 +47,7 @@ class Receiver {
     this.on('update:database', fetchLibraryArtists);
     this.on('list:artist', res => {
       reactor.dispatch(RECEIVE_LIBRARY_ARTISTS, {
-        artists: res.data.map(_ => {
+        artists: (res.data || []).map(_ => {
           return {
             name: _.artist,
             albums: {}

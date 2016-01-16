@@ -1,7 +1,6 @@
 
 import 'babel-core/polyfill';
 
-
 import path from 'path';
 import http from 'http';
 import express from 'express';
@@ -168,7 +167,7 @@ export default class Server {
 
             callback(filename);
           })
-          .fail(function (err) {
+          .error(function (err) {
             console.log(err);
           });
       }

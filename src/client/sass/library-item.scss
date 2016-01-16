@@ -11,7 +11,7 @@
   }
 
   &.open > .name::before {
-    @extend .icon-caret-down:before;
+    /*@extend .icon-caret-down:before;*/
   }
 
   .name {
@@ -22,8 +22,8 @@
     white-space: nowrap;
 
     &::before {
-      @extend .icon;
-      @extend .icon-caret-right:before;
+      /*@extend .icon;*/
+      /*@extend .icon-caret-right:before;*/
 
       margin-right: 2px;
       text-align: center;
