@@ -3,7 +3,6 @@ import cx from 'classnames';
 
 import withEnabled from '../decorators/withEnabled';
 import withStyles from '../decorators/withStyles';
-//var DragDropMixin = require('react-dnd').DragDropMixin;
 
 function formatTime(seconds) {
     function zeroPad(n) {
@@ -26,8 +25,8 @@ export default class PlaylistItem extends Component {
     // mixins: [/*DragDropMixin, */EnabledMixin],
 
     static propTypes = {
-        onReorder: PropTypes.func.isRequired,
-        onDidReorder: PropTypes.func.isRequired
+        //onReorder: PropTypes.func.isRequired,
+        //onDidReorder: PropTypes.func.isRequired
     };
 
     //statics: {
