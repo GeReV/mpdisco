@@ -15,7 +15,8 @@ import {
     RECEIVE_LIBRARY_SONGS,
     RECEIVE_LISTENERS,
     RECEIVE_PLAYLIST,
-    RECEIVE_STATUS
+    RECEIVE_STATUS,
+    RECEIVE_MASTER
   } from './action_types.js';
 
 class Receiver {
@@ -102,6 +103,10 @@ class Receiver {
     this.on('random', update);
 
     this.on('update:playlist', fetchPlaylist);
+
+    this.on('master', master => {
+      reactor.dispatch(RECEIVE_MASTER, { master });
+    });
   }
 
   on(event, handler) {

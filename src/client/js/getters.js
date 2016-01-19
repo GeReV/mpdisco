@@ -18,6 +18,11 @@ exports.currentStatus = [
   player => player.getIn(['status'])
 ];
 
+exports.currentMaster = [
+  exports.player,
+  player => player.get('master')
+];
+
 exports.playlist = [
   ['playlist'],
   playlist => playlist.get('playlist')

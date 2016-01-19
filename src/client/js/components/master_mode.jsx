@@ -23,6 +23,7 @@ import styles from '../../sass/mpdisco.scss';
 @nuclearComponent(props => {
   return {
     me: getters.me,
+    master: getters.currentMaster,
     song: getters.currentSong,
     library: getters.library,
     playlist: getters.playlist,
@@ -38,21 +39,11 @@ class MasterMode extends Component {
 
     this.state = {
       userid: null,
-      master: null
     };
   }
 
-  componentWillMount () {
-    // this.model = new MasterModeModel(this.props.network);
-  }
-
-  componentDidMount () {
-    // this.model.on('connected', this.setUser);
-    // this.model.on('master', this.setMaster);
-  }
-
   render () {
-    const enabled = (this.state.master && this.state.master === this.state.userid);
+    const enabled = (this.props.master && this.props.master === this.props.me.get('userid'));
 
     return (
       <div id="container" role="main">
@@ -71,10 +62,6 @@ class MasterMode extends Component {
 
   setUser (userid) {
     this.setState({userid: userid});
-  }
-
-  setMaster (master) {
-    this.setState({master: master});
   }
 }
 

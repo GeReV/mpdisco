@@ -3,7 +3,8 @@ import { Store, toImmutable } from 'nuclear-js';
 
 import {
   RECEIVE_CURRENT_SONG,
-  RECEIVE_STATUS
+  RECEIVE_STATUS,
+  RECEIVE_MASTER
 } from '../action_types';
 
 export default Store({
@@ -25,6 +26,7 @@ export default Store({
   initialize() {
     this.on(RECEIVE_CURRENT_SONG, updateCurrentSong);
     this.on(RECEIVE_STATUS, updateStatus);
+    this.on(RECEIVE_MASTER, updateMaster);
   }
 });
 
@@ -34,4 +36,8 @@ function updateCurrentSong(state, { song }) {
 
 function updateStatus(state, { status }) {
   return state.set('status', toImmutable(status));
+}
+
+function updateMaster(state, { master }) {
+  return state.set('master', master);
 }
