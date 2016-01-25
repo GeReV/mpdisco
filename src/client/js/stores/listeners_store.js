@@ -1,6 +1,9 @@
 import { Store, toImmutable } from 'nuclear-js';
 
-import { RECEIVE_LISTENERS } from '../action_types';
+import {
+  RECEIVE_LISTENERS,
+  RECEIVE_ME
+} from '../action_types';
 
 export default Store({
   getInitialState() {
@@ -11,6 +14,7 @@ export default Store({
   },
 
   initialize() {
+    this.on(RECEIVE_ME, updateMe);
     this.on(RECEIVE_LISTENERS, updateListeners);
   }
 });
@@ -18,5 +22,10 @@ export default Store({
 function updateListeners(state, { listeners, me }) {
   return state
     .set('listeners', toImmutable(listeners))
+    .set('me', toImmutable(me));
+}
+
+function updateMe(state, { me }) {
+  return state
     .set('me', toImmutable(me));
 }

@@ -23,23 +23,17 @@ export default class PlaylistControls extends Component {
     };
   }
 
-  componentWillReceiveProps (nextProps) {
-    if (nextProps.status) {
-      this.setState({status: nextProps.status});
-    }
-  }
-
   render () {
     const shuffleClasses = cx({
       shuffle: true,
-      active: + this.state.status.random,
+      active: + this.props.status.random,
       disabled: !this.props.enabled
     });
 
     const repeatClasses = cx({
       repeat: true,
-      active: + this.state.status.repeat,
-      single: + this.state.status.single,
+      active: + this.props.status.repeat,
+      single: + this.props.status.single,
       disabled: !this.props.enabled
     });
 
@@ -69,7 +63,7 @@ export default class PlaylistControls extends Component {
       return;
     }
 
-    const random = (~this.state.status.random & 1);
+    const random = (~this.props.status.random & 1);
 
     this.props.onShuffle(random);
 
@@ -81,8 +75,8 @@ export default class PlaylistControls extends Component {
       return;
     }
 
-    const repeat = +this.state.status.repeat,
-      single = +this.state.status.single;
+    const repeat = +this.props.status.repeat,
+          single = +this.props.status.single;
 
     // Note single cannot be on without repeat.
 

@@ -24,10 +24,11 @@ import styles from '../../sass/mpdisco.scss';
   return {
     me: getters.me,
     master: getters.currentMaster,
+    status: getters.currentStatus,
     song: getters.currentSong,
     library: getters.library,
     playlist: getters.playlist,
-    listeners: getters.listeners,
+    listeners: getters.listeners
   };
 })
 @withContext
@@ -43,18 +44,40 @@ class MasterMode extends Component {
   }
 
   render () {
-    const enabled = (this.props.master && this.props.master === this.props.me.get('userid'));
+
+    const {
+      me,
+      song,
+      status,
+      library,
+      listeners,
+      playlist,
+      master
+    } = this.props;
+
+    const enabled = (master && master === me.get('userid'));
 
     return (
       <div id="container" role="main">
         <header id="player-head">
           <Logo blurRadius={10}/>
-          <Player song={this.props.song} enabled={enabled}/>
+          <Player song={song}
+                  enabled={enabled}
+                  />
         </header>
         <main>
-          <Library library={this.props.library} enabled={enabled}/>
-          <Playlist playlist={this.props.playlist} song={this.props.song} enabled={enabled}/>
-          <Listeners listeners={this.props.listeners} me={this.props.me} />
+          <Library  library={library}
+                    enabled={enabled}
+                    />
+          <Playlist playlist={playlist}
+                    song={song}
+                    status={status}
+                    enabled={enabled}
+                    />
+          <Listeners  listeners={listeners}
+                      master={master}
+                      me={me}
+                      />
         </main>
       </div>
     );

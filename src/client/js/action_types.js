@@ -15,5 +15,6 @@ export default keyMirror({
 
   RECEIVE_COVER_ART: null,
 
-  RECEIVE_MASTER: null
+  RECEIVE_MASTER: null,
+  RECEIVE_ME: null
 });

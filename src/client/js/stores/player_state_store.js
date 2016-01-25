@@ -31,6 +31,9 @@ export default Store({
 });
 
 function updateCurrentSong(state, { song }) {
+  if (!song) {
+    return state;
+  }
   return state.set('current_song', toImmutable(song));
 }
 

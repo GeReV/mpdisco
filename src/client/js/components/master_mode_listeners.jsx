@@ -21,16 +21,19 @@ export default class MasterModeListeners extends Listeners {
   }
   componentDidMount() {
     actions.fetchListeners();
-    // this.props.mastermode.on('master', this.setMaster);
   }
 
   render() {
-    const me = this.props.me;
+    const {
+      me,
+      master
+    } = this.props;
+
     const listeners = this.props.listeners
       .map(listener => {
         const userId = listener.get('userid')
         const isMe = (userId === me.get('userid'));
-        const isMaster = (this.state.master === userId);
+        const isMaster = (master === userId);
         const isNextMaster = false;
 
         return (
@@ -53,12 +56,6 @@ export default class MasterModeListeners extends Listeners {
         </ul>
       </section>
     );
-  }
-
-  setMaster(master) {
-    this.setState({
-      master: master
-    });
   }
 
   handleIdentify(name) {

@@ -16,12 +16,23 @@ import {
     RECEIVE_LISTENERS,
     RECEIVE_PLAYLIST,
     RECEIVE_STATUS,
-    RECEIVE_MASTER
+    RECEIVE_MASTER,
+    RECEIVE_ME
   } from './action_types.js';
 
 class Receiver {
   constructor(network) {
     this.network = network;
+
+    this.on('connected', data => {
+      if (data.info) {
+        reactor.dispatch(RECEIVE_ME, { me: data.info });
+      }
+
+      if (data.mode === 'master' && data.master) {
+        reactor.dispatch(RECEIVE_MASTER, { master: data.master });
+      }
+    });
 
     this.on('playlistinfo', playlist => {
       reactor.dispatch(RECEIVE_PLAYLIST, { playlist });

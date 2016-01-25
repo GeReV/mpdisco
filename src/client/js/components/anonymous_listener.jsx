@@ -46,7 +46,7 @@ export default class AnonymousListener extends Component {
     (
       <span>
         <span>You</span>
-        <a href="#" onClick={this.showLogin.bind(this)}>Login?</a>
+        <a href="#" className="listener-login" onClick={this.showLogin.bind(this)}>Login?</a>
       </span>
     ) :
     (<span>Anonymous Listener</span>);

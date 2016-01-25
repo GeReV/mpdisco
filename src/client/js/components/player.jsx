@@ -85,7 +85,7 @@ export default class Player extends Component {
 
     const title = song.get('title') || 'Idle';
 
-    const album = song.get('album') ? ('- ' + song.get('album')) : '';
+    const album = song.get('album') ? `-  ${song.get('album')}` : '';
 
     const indicatorClasses = cx('indicator', {
       'appear': this.state.indicatorAppear,

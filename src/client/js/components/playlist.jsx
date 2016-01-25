@@ -75,7 +75,8 @@ class Playlist extends Component {
           isOver,
           canDrop,
           connectDropTarget,
-          enabled
+          enabled,
+          status
         } = this.props;
 
         const playlistClasses = cx({
@@ -87,7 +88,7 @@ class Playlist extends Component {
             <section id="playlist" className={playlistClasses}>
                 <header>
                     <span>Playlist</span>
-                    <PlaylistControls status={this.props.status}
+                    <PlaylistControls status={status}
                                       enabled={enabled}
                                       onShuffle={this.shuffle}
                                       onRepeat={this.repeat}
