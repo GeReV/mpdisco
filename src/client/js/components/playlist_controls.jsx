@@ -1,39 +1,23 @@
 import React, {Component} from 'react';
 import cx from 'classnames';
 
+import actions from '../actions';
+
 import withEnabled from '../decorators/withEnabled';
 
 @withEnabled
 export default class PlaylistControls extends Component {
-  static propTypes = {
-    onShuffle: React.PropTypes.func.isRequired,
-    onRepeat: React.PropTypes.func.isRequired,
-    onRemove: React.PropTypes.func.isRequired
-  };
-
-  constructor () {
-    super();
-
-    this.state = {
-      status: {
-        random: 0,
-        repeat: 0,
-        single: 0
-      }
-    };
-  }
-
   render () {
     const shuffleClasses = cx({
       shuffle: true,
-      active: + this.props.status.random,
+      active: + this.props.status.get('random'),
       disabled: !this.props.enabled
     });
 
     const repeatClasses = cx({
       repeat: true,
-      active: + this.props.status.repeat,
-      single: + this.props.status.single,
+      active: + this.props.status.get('repeat'),
+      single: + this.props.status.get('single'),
       disabled: !this.props.enabled
     });
 
@@ -63,9 +47,9 @@ export default class PlaylistControls extends Component {
       return;
     }
 
-    const random = (~this.props.status.random & 1);
+    const shuffle = (~this.props.status.get('random') & 1);
 
-    this.props.onShuffle(random);
+    actions.toggleShuffle(shuffle);
 
     e.preventDefault();
   }
@@ -75,12 +59,21 @@ export default class PlaylistControls extends Component {
       return;
     }
 
-    const repeat = +this.props.status.repeat,
-          single = +this.props.status.single;
+    const repeat = +this.props.status.get('repeat'),
+          single = +this.props.status.get('single');
 
     // Note single cannot be on without repeat.
 
-    this.props.onRepeat(repeat, single);
+    if (repeat && single) {
+      // Both on, turn both off.
+      actions.toggleRepeat(0, 0);
+    } else if (repeat) {
+      // Repeat on, turn single on.
+      actions.toggleRepeat(1, 1);
+    } else {
+      // Both off, turn repeat on.
+      actions.toggleRepeat(1, 0);
+    }
 
     e.preventDefault();
   }
@@ -90,7 +83,7 @@ export default class PlaylistControls extends Component {
       return;
     }
 
-    this.props.onRemove();
+    //actions.playlistRemoveItems(items || this.state.selectedItems);
 
     e.preventDefault();
   }

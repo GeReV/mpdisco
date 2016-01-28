@@ -32,6 +32,8 @@ class Receiver {
       if (data.mode === 'master' && data.master) {
         reactor.dispatch(RECEIVE_MASTER, { master: data.master });
       }
+
+      update();
     });
 
     this.on('playlistinfo', playlist => {

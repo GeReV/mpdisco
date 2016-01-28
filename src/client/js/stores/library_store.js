@@ -31,6 +31,7 @@ function mergeArtists(state, { artists }) {
 function mergeAlbums(state, { artist, albums }) {
   const map = Immutable.Map(albums.map(album => {
     album = toImmutable(album)
+      .set('cover', `/covers/${dasherize(artist)}/${dasherize(album.name)}`)
       .set('artist', state.getIn(artistSelector(artist)));
 
     return [album.get('name'), album]
@@ -49,4 +50,17 @@ function mergeSongs(state, { artist, album, songs }) {
   }));
 
   return state.mergeDeepIn(['artists', artist, 'albums', album, 'songs'], map);
+}
+
+function dasherize(s) {
+  if (!s) {
+    return s;
+  }
+
+  return s
+    .replace(/^\s+|\s+$/, '')
+    .replace('&', ' and ')
+    .replace(/[^\w\-,\.\s]+/g, '')
+    .replace(/[,\s\-_]+/g, '-')
+    .toLowerCase();
 }

@@ -9,6 +9,14 @@ import styles from '../../sass/logo.scss';
 
 @withStyles(styles)
 export default class Logo extends Component {
+  constructor() {
+    super();
+
+    this.state = {
+      cover: null,
+      coverKey: null
+    };
+  }
 
   componentWillUpdate (nextProps) {
     if (nextProps.cover !== this.props.cover) {

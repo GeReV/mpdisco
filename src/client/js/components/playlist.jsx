@@ -90,9 +90,7 @@ class Playlist extends Component {
                     <span>Playlist</span>
                     <PlaylistControls status={status}
                                       enabled={enabled}
-                                      onShuffle={this.shuffle}
-                                      onRepeat={this.repeat}
-                                      onRemove={this.itemRemoved} />
+                    />
                 </header>
                 <ListView
                     className="content list"
@@ -112,55 +110,38 @@ class Playlist extends Component {
     }
 
     itemCreator(item) {
-        const song = this.props.song;
-        const isPlaying = (song && song === item);
+      const song = this.props.song;
+      const isPlaying = (song && song.get('id') === item.get('id'));
 
-        return (
-            <PlaylistItem
-                key={item.get('id')}
-                item={item}
-                enabled={this.props.enabled}
-                playing={isPlaying}
-            />
-        );
+      return (
+        <PlaylistItem
+          key={item.get('id')}
+          item={item}
+          enabled={this.props.enabled}
+          playing={isPlaying}
+        />
+      );
     }
 
     itemPlayed(item) {
-        actions.play(item.id);
+      actions.play(item.get('id'));
     }
 
     itemRemoved(items) {
-        actions.playlistRemoveItems(items || this.state.selectedItems);
+      actions.playlistRemoveItems(items || this.state.selectedItems);
     }
 
     itemsSelected(items) {
-        this.setState({
-            selectedItems: items
-        });
+      this.setState({
+        selectedItems: items
+      });
     }
 
     itemsReordered(items) {
-        this.setState({
-            items: items
-        });
-        actions.playlistReorderItems(items);
-    }
-
-    repeat(repeat, single) {
-        if (repeat && single) {
-            // Both on, turn both off.
-            actions.toggleRepeat(0, 0);
-        } else if (repeat) {
-            // Repeat on, turn single on.
-            actions.toggleRepeat(1, 1);
-        } else {
-            // Both off, turn repeat on.
-            actions.toggleRepeat(1, 0);
-        }
-    }
-
-    shuffle(shuffle) {
-        actions.toggleShuffle(shuffle);
+      this.setState({
+        items: items
+      });
+      actions.playlistReorderItems(items);
     }
 }
 

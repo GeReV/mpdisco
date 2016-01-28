@@ -25,6 +25,7 @@ import styles from '../../sass/mpdisco.scss';
     me: getters.me,
     master: getters.currentMaster,
     status: getters.currentStatus,
+    cover: getters.currentCover,
     song: getters.currentSong,
     library: getters.library,
     playlist: getters.playlist,
@@ -35,19 +36,11 @@ import styles from '../../sass/mpdisco.scss';
 @withStyles(styles)
 @DragDropContext(HTML5Backend)
 class MasterMode extends Component {
-  constructor () {
-    super();
-
-    this.state = {
-      userid: null,
-    };
-  }
-
   render () {
-
     const {
       me,
       song,
+      cover,
       status,
       library,
       listeners,
@@ -60,7 +53,9 @@ class MasterMode extends Component {
     return (
       <div id="container" role="main">
         <header id="player-head">
-          <Logo blurRadius={10}/>
+          <Logo cover={cover}
+                blurRadius={10}
+                />
           <Player song={song}
                   enabled={enabled}
                   />
@@ -81,10 +76,6 @@ class MasterMode extends Component {
         </main>
       </div>
     );
-  }
-
-  setUser (userid) {
-    this.setState({userid: userid});
   }
 }
 

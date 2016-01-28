@@ -2,6 +2,7 @@
 import { Store, toImmutable } from 'nuclear-js';
 
 import {
+  RECEIVE_COVER_ART,
   RECEIVE_CURRENT_SONG,
   RECEIVE_STATUS,
   RECEIVE_MASTER
@@ -25,6 +26,7 @@ export default Store({
 
   initialize() {
     this.on(RECEIVE_CURRENT_SONG, updateCurrentSong);
+    this.on(RECEIVE_COVER_ART, updateCoverArt);
     this.on(RECEIVE_STATUS, updateStatus);
     this.on(RECEIVE_MASTER, updateMaster);
   }
@@ -35,6 +37,10 @@ function updateCurrentSong(state, { song }) {
     return state;
   }
   return state.set('current_song', toImmutable(song));
+}
+
+function updateCoverArt(state, { url }) {
+  return state.set('cover', url);
 }
 
 function updateStatus(state, { status }) {

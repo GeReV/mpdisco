@@ -1,5 +1,5 @@
 {
-  "music_directory": "~/Music",
+  "music_directory": "~/music",
   "secret": "secret",
   "session_key": "mpdisco.sid",
   "master_time": 60
