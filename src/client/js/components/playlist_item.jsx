@@ -22,12 +22,6 @@ const itemSource = {
     return {
       index: props.index
     };
-  },
-
-  endDrag(props, monitor) {
-    if (monitor.didDrop()) {
-      props.onDidReorder();
-    }
   }
 };
 

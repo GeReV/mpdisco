@@ -1,19 +1,29 @@
 import React, {Component} from 'react';
 import update from 'react-addons-update';
+import { DropTarget } from 'react-dnd';
 import _ from 'lodash';
 
 //import HotKey from 'react-hotkey';
+
+import { ItemTypes } from '../constants';
 
 import withEnabled from '../decorators/withEnabled';
 
 //HotKey.activate('keydown');
 
-@withEnabled
-export default class ListView extends React.Component {
-  //mixins: [
-  //  SelectableListMixin, SortableMixin, EnabledMixin, HotKey.Mixin('handleKeyboard')
-  //],
+const itemTarget = {
+  drop(props, monitor, component) {
+    if (!monitor.didDrop() && props.enabled) {
+      props.onItemsReordered(component.state.items);
+    }
+  }
+};
 
+@withEnabled
+@DropTarget(ItemTypes.PLAYLIST_ITEM, itemTarget, connect => ({
+  connectDropTarget: connect.dropTarget()
+}))
+export default class ListView extends React.Component {
   constructor() {
     super();
 
@@ -26,7 +36,8 @@ export default class ListView extends React.Component {
 
   static propTypes = {
     itemCreator: React.PropTypes.func.isRequired,
-    onItemsSelected: React.PropTypes.func,
+    onItemsReordered: React.PropTypes.func.isRequired,
+    onItemsSelected: React.PropTypes.func
   };
 
   componentWillReceiveProps(nextProps) {
@@ -38,27 +49,33 @@ export default class ListView extends React.Component {
   render() {
     const items = this.state.items;
 
+    const {
+      enabled,
+      className,
+      itemCreator,
+      connectDropTarget
+    } = this.props;
+
     const children = items.map(function(item, i) {
       // Delegate item creation to the parent element.
-      const child = this.props.itemCreator(item);
+      const child = itemCreator(item);
 
       const selected = (this.state.selectedItems.indexOf(item) >= 0);
       const focused = (this.state.focusedItemIndex === i);
 
       return React.cloneElement(child, {
-        enabled: this.props.enabled,
+        enabled: enabled,
         selected: selected,
         focused: focused,
         index: i,
         onItemClick: this.itemSelected.bind(this),
         onItemDblClick: this.itemActivated.bind(this),
         onReorder: this.reorder.bind(this),
-        onDidReorder: this.reordered.bind(this)
       });
     }, this);
 
-    return (
-      <ul className={this.props.className}>
+    return connectDropTarget(
+      <ul className={className}>
         {children}
       </ul>
     );
@@ -95,12 +112,6 @@ export default class ListView extends React.Component {
     };
 
     this.setState(update(this.state, stateUpdate));
-  }
-
-  reordered() {
-    if (this.props.onItemsReordered && this.props.enabled) {
-      this.props.onItemsReordered(this.state.items);
-    }
   }
 
   handleKeyboard(e) {
