@@ -48,7 +48,7 @@ class MasterMode extends Component {
       master
     } = this.props;
 
-    const enabled = (master && master === me.get('userid'));
+    const enabled = !!(master && master === me.get('userid'));
 
     return (
       <div id="container" role="main">

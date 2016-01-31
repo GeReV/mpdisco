@@ -102,7 +102,7 @@ export default {
     const commands = items.map(function(item, i) {
       return {
         command: 'moveid',
-        args: [item.id, i]
+        args: [item.get('id'), i]
       };
     });
 

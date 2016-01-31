@@ -72,6 +72,7 @@ class Playlist extends Component {
 
     render() {
         const {
+          items,
           isOver,
           canDrop,
           connectDropTarget,
@@ -94,7 +95,8 @@ class Playlist extends Component {
                 </header>
                 <ListView
                     className="content list"
-                    items={this.props.items}
+                    enabled={enabled}
+                    items={items}
                     itemCreator={this.itemCreator.bind(this)}
                     enabled={enabled}
                     onItemActivated={this.itemPlayed.bind(this)}

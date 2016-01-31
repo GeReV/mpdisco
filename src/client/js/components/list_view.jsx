@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import update from 'react-addons-update';
 import _ from 'lodash';
 
 //import HotKey from 'react-hotkey';
@@ -24,14 +25,13 @@ export default class ListView extends React.Component {
   }
 
   static propTypes = {
-    // items: React.PropTypes.object.isRequired,
     itemCreator: React.PropTypes.func.isRequired,
     onItemsSelected: React.PropTypes.func,
   };
 
   componentWillReceiveProps(nextProps) {
     this.setState({
-      items: nextProps.items
+      items: nextProps.items.toArray()
     });
   }
 
@@ -46,12 +46,14 @@ export default class ListView extends React.Component {
       const focused = (this.state.focusedItemIndex === i);
 
       return React.cloneElement(child, {
+        enabled: this.props.enabled,
         selected: selected,
         focused: focused,
+        index: i,
         onItemClick: this.itemSelected.bind(this),
         onItemDblClick: this.itemActivated.bind(this),
-        //onReorder: this.reorder.bind(this),
-        //onDidReorder: this.reordered.bind(this)
+        onReorder: this.reorder.bind(this),
+        onDidReorder: this.reordered.bind(this)
       });
     }, this);
 
@@ -78,15 +80,16 @@ export default class ListView extends React.Component {
     e.preventDefault();
   }
 
-  reorder(item1, item2) {
-    const index1 = this.state.items.indexOf(item1);
-    const index2 = this.state.items.indexOf(item2);
+  reorder(index1, index2) {
+    const { items } = this.state;
+
+    const item = items[index1];
 
     const stateUpdate = {
       items: {
         $splice: [
           [index1, 1],
-          [index2, 0, item1]
+          [index2, 0, item]
         ]
       }
     };
