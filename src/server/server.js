@@ -94,8 +94,8 @@ export default class Server {
             album = mm.safeName(req.params.album),
             file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
 
-      fs.stat(file, (err, stat) => {
-        if (stat.isFile()) {
+      fs.stat(file, (err, stats) => {
+        if (stats && stats.isFile()) {
           res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
         } else {
           res

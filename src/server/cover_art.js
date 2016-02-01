@@ -1,52 +1,45 @@
-var config = require('../../config.json'),
-    mm = require('./meta_data.js'),
-    http = require('http'),
-    httpFollower = require('./helpers/http_follower.js'),
-    path = require('path'),
-    fs = require('fs'),
-    Q = require('q'),
-    _ = require('underscore');
+import config from '../../config.json';
+import mm from './meta_data.js';
+import http from 'http';
+import httpFollower from './helpers/http_follower.js';
+import path from 'path';
+import fs from 'fs';
+import Q from 'q';
+import _ from 'underscore';
+
+const debug = require('debug')('mpdisco:coverart');
 
 class CoverArt {
   getCover(options) {
-    var output = this._outputPath(options);
+    const output = this.outputPath(options);
 
-    var promise = Q.promise(function(resolve, reject) {
+    return Q.promise((resolve, reject) => {
 
-      var urlName = function(s) {
+      const urlName = function (s) {
         return mm.safeName(s).replace(/_/g, '-').toLowerCase();
       };
 
-      var path = '/covers/' + urlName(options.artist) + '/' + urlName(options.release);
+      const path = `/covers/${urlName(options.artist)}/${urlName(options.release)}`;
 
-      if (fs.statSync(output).isFile()) {
-        resolve(path);
-      } else {
-        this._findRelease(options)
-            .then(function(urls) {
-                return this._retrieveCover(urls);
-              }.bind(this), reject)
-            .then(function(url) {
-                return this._downloadCover(url, output);
-              }.bind(this), reject)
-            .done(function() {
-                resolve(path);
-              }, reject);
-      }
-    }.bind(this));
-
-    return promise;
+      fs.stat(output, (err, stats) => {
+        if (stats && stats.isFile()) {
+          resolve(path);
+        } else {
+          this.findRelease(options)
+            .then(this.retrieveCover, reject)
+            .then(url => this.downloadCover(url, output), reject)
+            .done(() => resolve(path), reject);
+        }
+      });
+    });
   }
 
-  _findRelease(options) {
-    return Q.promise(function(resolve, reject) {
+  findRelease(options) {
+    return Q.promise((resolve, reject) => {
 
-      var host = 'musicbrainz.org',
-          path = '/ws/2/release/?fmt=json&query=',
-          query;
-
-      query = _.map(options, function(v, k) { return k + ':"' + v + '"'; })
-          .join(' AND ');
+      const host = 'musicbrainz.org',
+            path = '/ws/2/release/?fmt=json&query=',
+            query = Object.keys(options).map(key => `${key}:"${options[key]}"`).join(' AND ');
 
       if (!query) {
         reject('Could not form query.');
@@ -54,7 +47,7 @@ class CoverArt {
         return;
       }
 
-      var opts = {
+      const opts = {
         host: host,
         path: path + encodeURIComponent(query),
         headers: {
@@ -62,8 +55,10 @@ class CoverArt {
         }
       };
 
-      http.get(opts, function(res) {
-        var body = '';
+      debug(opts);
+
+      http.get(opts, res => {
+        let body = '';
 
         if (res.statusCode != 200) {
           reject('Server responded with status: ' + res.statusCode);
@@ -75,32 +70,32 @@ class CoverArt {
           body += chunk;
         });
 
-        res.on('end', function() {
+        res.on('end', () => {
 
-          var json = JSON.parse(body);
+          const json = JSON.parse(body);
 
-          var results = this._extractBestGuessReleases(json);
+          debug(json);
+
+          const results = this.extractBestGuessReleases(json);
+
+          debug('Best choice:', results);
 
           if (!results) {
             reject('No releases found.');
           }
 
-          var urls = _.map(results, function(result) { return 'http://coverartarchive.org/release/' + result.id + '/front-250'; });
+          const urls = results.map(result => `http://coverartarchive.org/release/${result.id}/front-250`);
 
           resolve(urls);
-
-        }.bind(this));
-
-        res.on('error', function(e) {
-          reject(e);
         });
-      }.bind(this));
 
-    }.bind(this));
+        res.on('error', reject);
+      });
+    });
   }
 
-  _retrieveCover(urls) {
-    return Q.promise(function(resolve, reject) {
+  retrieveCover(urls) {
+    return Q.promise((resolve, reject) => {
       function getCover(url) {
         if (urls.length <= 0) {
           reject('No covers found.');
@@ -108,7 +103,7 @@ class CoverArt {
           return;
         }
 
-        http.get(url, function(res) {
+        http.get(url, res => {
           if (res.statusCode === 307 && res.headers.location) {
             resolve(res.headers.location);
 
@@ -116,52 +111,53 @@ class CoverArt {
           }
 
           getCover(urls.shift());
-        }.bind(this));
+        });
       }
 
       getCover(urls.shift());
     });
   }
 
-  _downloadCover(url, output) {
-    var file = fs.createWriteStream(output);
+  downloadCover(url, output) {
+    const file = fs.createWriteStream(output);
 
-    var promise = Q.promise(function(resolve, reject) {
-      httpFollower.get(url, function followRedirects(res) {
+    return Q.promise((resolve, reject) => {
+      httpFollower.get(url, res => {
         res.pipe(file);
 
-        res.on('end', function() {
-          resolve(file);
+        res.on('end', () => resolve(file));
+
+        file.on('error', err => {
+          debug('Error on file:', err);
+          reject(err);
         });
 
-        file.on('error', reject);
-
-        res.on('error', reject);
+        res.on('error', err => {
+          debug('Error on response:', err);
+          reject(err);
+        });
       });
     });
-
-    return promise;
   }
 
-  _outputPath(options) {
-
-    var output = path.join(config.music_directory.replace(/^~/, process.env.HOME),
-        mm.safeName(options.artist),
-        mm.safeName(options.release),
-        'front.jpg');
-
-    return output;
+  outputPath(options) {
+    return path.join(
+      config.music_directory.replace(/^~/, process.env.HOME),
+      mm.safeName(options.artist),
+      mm.safeName(options.release),
+      'front.jpg'
+    );
   }
 
-  _extractBestGuessReleases(json) {
+  extractBestGuessReleases(json) {
 
-    var results = [];
+    let results = [];
 
     if (json.count <= 0) {
       return;
     }
 
-    results.concat( _.where(json.releases, { country: 'US' }));
+    results.concat(_.where(json.releases, { country: 'US' }));
 
     results.concat(_.where(json.releases, { country: 'XE' }));
 
