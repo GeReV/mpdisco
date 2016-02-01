@@ -118,7 +118,7 @@ export default class Library extends Component {
       //</menu>
 
       return connectDropTarget(
-        <section id="library" className={classes}/* {...this.dropTargetFor(NativeDragItemTypes.FILE)}*/>
+        <section id="library" className={classes}>
           <header>Library</header>
           <div className="content">
             {this.artistsView()}

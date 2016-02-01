@@ -85,7 +85,6 @@ const itemTarget = {
 export default class PlaylistItem extends Component {
   static propTypes = {
     onReorder: PropTypes.func.isRequired,
-    onDidReorder: PropTypes.func.isRequired,
     connectDragSource: PropTypes.func.isRequired,
     connectDropTarget: PropTypes.func.isRequired,
     index: PropTypes.number.isRequired,

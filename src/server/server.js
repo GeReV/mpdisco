@@ -1,6 +1,7 @@
 
 import 'babel-core/polyfill';
 
+import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import express from 'express';
@@ -87,13 +88,21 @@ export default class Server {
       }
     });
 
-    app.get('/covers/:artist/:album', function (req, res) {
-      var mm = require('./meta_data.js'),
-        artist = mm.safeName(req.params.artist),
-        album = mm.safeName(req.params.album),
-        file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
+    app.get('/covers/:artist/:album', (req, res) => {
+      const mm = require('./meta_data.js'),
+            artist = mm.safeName(req.params.artist),
+            album = mm.safeName(req.params.album),
+            file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
 
-      res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
+      fs.stat(file, (err, stat) => {
+        if (stat.isFile()) {
+          res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
+        } else {
+          res
+            .status(404)
+            .end();
+        }
+      });
     });
 
     app.all('/upload', this.uploadHandler);

@@ -19,7 +19,7 @@ class CoverArt {
 
       var path = '/covers/' + urlName(options.artist) + '/' + urlName(options.release);
 
-      if (fs.existsSync(output)) {
+      if (fs.statSync(output).isFile()) {
         resolve(path);
       } else {
         this._findRelease(options)
