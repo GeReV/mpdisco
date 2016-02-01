@@ -62,7 +62,7 @@
   }
 
   .library-upload {
-    background: lighten($library-background, 5%);
+    background: rgba(0, 0, 0, 0.4);
     border-radius: 0 0 5px 5px;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
     color: $secondary-color-highlight;

@@ -77,7 +77,7 @@ export default class LibraryAlbumItem extends Component {
               title={name}
               onClick={this.toggleSongs.bind(this)}
         >
-          <img src={album.get('cover')} alt="Cover" className="cover"/>
+          <i style={{ backgroundImage: `url(${album.get('cover')})`}} className="cover"/>
           {name}
         </span>
         <ol className={treeClasses}>
