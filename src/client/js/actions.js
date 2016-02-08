@@ -1,9 +1,14 @@
-import network from './network.js';
+import reactor from './reactor';
+import network from './network';
 
 import {
   ItemTypes
 }
 from './constants';
+
+import {
+  RECEIVE_PLAYLIST
+} from './action_types';
 
 export default {
   fetchLibraryArtists() {
@@ -99,6 +104,8 @@ export default {
     }
   },
   playlistReorderItems(items) {
+    reactor.dispatch(RECEIVE_PLAYLIST, { playlist: items });
+
     const commands = items.map(function(item, i) {
       return {
         command: 'moveid',
