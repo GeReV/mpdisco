@@ -31,27 +31,26 @@ class ClientsManager extends EventEmitter {
   }
 
   connected(client) {
-    var session = client.handshake.session;
+    const session = client.handshake.session;
 
     if (!session.userid) {
       session.userid = uuid.v4();
       session.save();
     }
 
-    var info = client.info = {
+    const info = client.info = {
       userid: client.handshake.session.userid
     };
 
-    var prevClient = this.clientsHash[info.userid];
+    const prevClient = this.clientsHash[info.userid];
 
-    //Useful to know when someone connects
+    // Useful to know when someone connects
     debug('Client connected: %s', info.userid);
 
     if (prevClient) {
       client.info = prevClient.info;
 
       debug('Client returned: %s', info.userid);
-
     }
 
     this.clientsHash[info.userid] = client;
@@ -60,18 +59,18 @@ class ClientsManager extends EventEmitter {
       clearTimeout(this.disconnectionTimeouts[info.userid]);
     }
 
-    //When this client disconnects
-    client.on('disconnect', function() {
+    // When this client disconnects
+    client.on('disconnect', () => {
       this.disconnected(client);
-    }.bind(this));
+    });
 
-    client.on('identify', function(name) {
+    client.on('identify', name => {
       this.performIdentification(client, name);
-    }.bind(this));
+    });
 
-    client.on('clientslist', function() {
+    client.on('clientslist', () => {
       this.sendClientsList(client);
-    }.bind(this));
+    });
 
     if (client.handshake.name) {
       this.performIdentification(client, client.handshake.name);
@@ -81,53 +80,47 @@ class ClientsManager extends EventEmitter {
   }
 
   disconnected(client) {
-
-    var info = client.info;
+    const info = client.info;
 
     debug('Client disconnected: %s', info.userid);
 
     debug('Client has 5 seconds to return before dropping...');
 
-    this.disconnectionTimeouts[info.userid] = setTimeout(function() {
-
+    this.disconnectionTimeouts[info.userid] = setTimeout(() => {
       this.dropClient(client);
 
-      client.broadcast.emit('clientdisconnected', info/*, this.clientsInfo*/);
+      client.broadcast.emit('clientdisconnected', info/* , this.clientsInfo */);
 
       this.emit('disconnected', client);
-
-    }.bind(this), 5000);
-
+    }, 5000);
   }
 
   dropClient(client) {
-    var info = client.info;
+    const info = client.info;
 
     debug('Dropped client: %s', info.userid);
 
-    this.loggedClients = _.reject(this.loggedClients, function(c) { return c.info.userid === info.userid; });
+    this.loggedClients = _.reject(this.loggedClients, c => c.info.userid === info.userid);
 
     delete this.clientsHash[info.userid];
   }
 
   performIdentification(client, name) {
-     if (!name) {
-       return;
-     }
+    if (!name) {
+      return;
+    }
 
-     if (EMAIL_REGEX.test(name.trim())) {
-       Gravatar.profile(name, false, function(profile) {
-         this.identifyClient(client, profile);
-       }.bind(this));
-     }else{
-       this.identifyClient(client, {
-         displayName: name
-       });
-     }
+    if (EMAIL_REGEX.test(name.trim())) {
+      Gravatar.profile(name, false, profile => this.identifyClient(client, profile));
+    } else {
+      this.identifyClient(client, {
+        displayName: name
+      });
+    }
   }
 
   identifyClient(client, profile) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
-    var index;
+    let index;
 
     if (profile.entry && profile.entry.length) {
       profile = profile.entry[0];
@@ -135,7 +128,7 @@ class ClientsManager extends EventEmitter {
 
     client.info = _.extend({ logged: true }, client.info, profile);
 
-    index = _.findIndex(this.loggedClients, function(c) { return c.info.userid === client.info.userid; });
+    index = _.findIndex(this.loggedClients, c => c.info.userid === client.info.userid);
 
     if (index >= 0) {
       this.loggedClients[index] = client;
@@ -146,7 +139,7 @@ class ClientsManager extends EventEmitter {
     debug('Client %s identified as %s.', client.info.userid, client.info.displayName);
 
     client.emit('identify', client.info);
-    client.broadcast.emit('clientidentified', client.info/*, this.clientsInfo*/);
+    client.broadcast.emit('clientidentified', client.info/* , this.clientsInfo*/);
 
     this.sendClientsList(client.broadcast);
     this.sendClientsList(client);
@@ -177,13 +170,11 @@ class ClientsManager extends EventEmitter {
   }
 
   clientsInfo() {
-    return _.map(this.clientsHash, function(v) {
-      return v.info;
-    }) || [];
+    return _.map(this.clientsHash, v => v.info) || [];
   }
 }
 
-var ClientsManagerSingleton = function() {
+const ClientsManagerSingleton = () => {
   if ( ClientsManagerSingleton.prototype._singletonInstance ) {
     return ClientsManagerSingleton.prototype._singletonInstance;
   }

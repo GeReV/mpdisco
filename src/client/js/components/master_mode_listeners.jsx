@@ -43,7 +43,7 @@ export default class MasterModeListeners extends Listeners {
               you={isMe}
               master={isMaster}
               next={isNextMaster}
-              onIdentify={this.handleIdentify.bind(this)}
+              onIdentify={this.handleIdentify}
               />
         );
       });

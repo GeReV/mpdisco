@@ -20,7 +20,7 @@ import withStyles from '../decorators/withStyles';
 import styles from '../../sass/mpdisco.scss';
 
 @provideReactor
-@nuclearComponent(props => {
+@nuclearComponent(() => {
   return {
     me: getters.me,
     master: getters.currentMaster,
@@ -61,18 +61,18 @@ class MasterMode extends Component {
                   />
         </header>
         <main>
-          <Library  library={library}
-                    enabled={enabled}
-                    />
+          <Library library={library}
+                   enabled={enabled}
+                   />
           <Playlist playlist={playlist}
                     song={song}
                     status={status}
                     enabled={enabled}
                     />
-          <Listeners  listeners={listeners}
-                      master={master}
-                      me={me}
-                      />
+          <Listeners listeners={listeners}
+                     master={master}
+                     me={me}
+                     />
         </main>
       </div>
     );

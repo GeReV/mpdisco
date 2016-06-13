@@ -7,7 +7,7 @@ import withEnabled from '../decorators/withEnabled';
 
 @withEnabled
 export default class PlaylistControls extends Component {
-  render () {
+  render() {
     const shuffleClasses = cx({
       shuffle: true,
       active: + this.props.status.get('random'),
@@ -28,21 +28,21 @@ export default class PlaylistControls extends Component {
 
     return (
       <div className="playlist-controls">
-        <a className={shuffleClasses} href="#" onClick={this.toggleShuffle.bind(this)}>
+        <a className={shuffleClasses} href="#" onClick={this.toggleShuffle}>
           <i className="icon-random" />
         </a>
-        <a className={repeatClasses} href="#" onClick={this.toggleRepeat.bind(this)}>
+        <a className={repeatClasses} href="#" onClick={this.toggleRepeat}>
           <i className="icon-refresh" />
         </a>
         <span className="separator" />
-        <a className={removeClasses} href="#" onClick={this.remove.bind(this)}>
+        <a className={removeClasses} href="#" onClick={this.remove}>
           <i className="icon-trash" />
         </a>
       </div>
     );
   }
 
-  toggleShuffle (e) {
+  toggleShuffle = e => {
     if (!this.props.enabled) {
       return;
     }
@@ -54,13 +54,13 @@ export default class PlaylistControls extends Component {
     e.preventDefault();
   }
 
-  toggleRepeat (e) {
+  toggleRepeat = e => {
     if (!this.props.enabled) {
       return;
     }
 
-    const repeat = +this.props.status.get('repeat'),
-          single = +this.props.status.get('single');
+    const repeat = +this.props.status.get('repeat');
+    const single = +this.props.status.get('single');
 
     // Note single cannot be on without repeat.
 
@@ -78,12 +78,12 @@ export default class PlaylistControls extends Component {
     e.preventDefault();
   }
 
-  remove (e) {
+  remove = e => {
     if (!this.props.enabled) {
       return;
     }
 
-    //actions.playlistRemoveItems(items || this.state.selectedItems);
+    // actions.playlistRemoveItems(items || this.state.selectedItems);
 
     e.preventDefault();
   }

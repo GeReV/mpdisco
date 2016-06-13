@@ -14,7 +14,7 @@ export default class Listeners extends Component {
     actions.fetchListeners();
   }
 
-  render () {
+  render() {
     const me = this.props.me;
     const listeners = this.props.listeners
       .map(listener => {

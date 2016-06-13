@@ -29,11 +29,13 @@ const playlistTarget = {
     // You can also do nothing and return a drop result,
     // which will be available as monitor.getDropResult()
     // in the drag source's endDrag() method
-    return { moved: true };
+    return {
+      moved: true
+    };
   }
 };
 
-@nuclearComponent(props => {
+@nuclearComponent(() => {
   return {
     items: getters.playlist
   };
@@ -50,68 +52,63 @@ const playlistTarget = {
   canDrop: monitor.canDrop(),
   itemType: monitor.getItemType()
 }))
-class Playlist extends Component {
-
-    constructor() {
-      super();
-
-      this.state = {
-          animations: false,
-          selectedItems: []
-      };
-    }
+export default class Playlist extends Component {
+    state = {
+      animations: false,
+      selectedItems: []
+    };
 
     componentDidMount() {
       actions.fetchPlaylist();
 
       // Turn library update animations on.
       this.setState({
-          animations: true
+        animations: true
       });
     }
 
     render() {
-        const {
-          items,
-          isOver,
-          canDrop,
-          connectDropTarget,
-          enabled,
-          status
-        } = this.props;
+      const {
+        items,
+        isOver,
+        canDrop,
+        connectDropTarget,
+        enabled,
+        status
+      } = this.props;
 
-        const playlistClasses = cx({
-            'playlist-drop': isOver,
-            'playlist-disabled': !enabled
-        });
+      const playlistClasses = cx({
+        'playlist-drop': isOver,
+        'playlist-disabled': !enabled
+      });
 
-        return connectDropTarget(
-            <section id="playlist" className={playlistClasses}>
-                <header>
-                    <span>Playlist</span>
-                    <PlaylistControls status={status}
-                                      enabled={enabled}
-                    />
-                </header>
-                <ListView
-                    className="content list"
-                    enabled={enabled}
-                    items={items}
-                    itemCreator={this.itemCreator.bind(this)}
-                    enabled={enabled}
-                    onItemActivated={this.itemPlayed.bind(this)}
-                    onItemRemoved={this.itemRemoved.bind(this)}
-                    onItemsSelected={this.itemsSelected.bind(this)}
-                    onItemsReordered={this.itemsReordered.bind(this)} />
-                <div className="lock">
-                    <i className="icon-lock" />
-                    <span>You are not the current DJ</span>
-                </div>
-            </section>
-        );
+      return connectDropTarget(
+        <section id="playlist" className={playlistClasses}>
+          <header>
+            <span>Playlist</span>
+            <PlaylistControls status={status}
+                              enabled={enabled}
+            />
+          </header>
+          <ListView
+              className="content list"
+              enabled={enabled}
+              items={items}
+              itemCreator={this.itemCreator}
+              enabled={enabled}
+              onItemActivated={this.itemPlayed}
+              onItemRemoved={this.itemRemoved}
+              onItemsSelected={this.itemsSelected}
+              onItemsReordered={this.itemsReordered} />
+          <div className="lock">
+            <i className="icon-lock" />
+            <span>You are not the current DJ</span>
+          </div>
+        </section>
+      );
     }
 
-    itemCreator(item) {
+    itemCreator = item => {
       const song = this.props.song;
       const isPlaying = (song && song.get('id') === item.get('id'));
 
@@ -123,7 +120,7 @@ class Playlist extends Component {
           playing={isPlaying}
         />
       );
-    }
+    };
 
     itemPlayed(item) {
       actions.play(item.get('id'));
@@ -133,18 +130,16 @@ class Playlist extends Component {
       actions.playlistRemoveItems(items || this.state.selectedItems);
     }
 
-    itemsSelected(items) {
+    itemsSelected = items => {
       this.setState({
         selectedItems: items
       });
-    }
+    };
 
-    itemsReordered(items) {
+    itemsReordered = items => {
       this.setState({
         items: items
       });
       actions.playlistReorderItems(items);
-    }
+    };
 }
-
-export default Playlist;

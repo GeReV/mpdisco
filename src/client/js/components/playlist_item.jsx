@@ -11,10 +11,10 @@ import { ItemTypes } from '../constants';
 import styles from '../../sass/playlist-item.scss';
 
 function formatTime(seconds) {
-    function zeroPad(n) {
-        return n < 10 ? '0' + n : n;
-    }
-    return Math.floor(seconds / 60) + ':' + zeroPad(seconds % 60);
+  function zeroPad(n) {
+    return ('0' + n).slice(-2);
+  }
+  return Math.floor(seconds / 60) + ':' + zeroPad(seconds % 60);
 }
 
 const itemSource = {
@@ -102,7 +102,7 @@ export default class PlaylistItem extends Component {
       selected,
       playing,
       focused
-      } = this.props;
+    } = this.props;
 
     let details;
 
@@ -157,8 +157,8 @@ export default class PlaylistItem extends Component {
 
     if (enabled) {
       events = {
-        onMouseDown: this.itemClick.bind(this),
-        onDoubleClick: this.itemDblClick.bind(this)
+        onMouseDown: this.itemClick,
+        onDoubleClick: this.itemDblClick
       };
     }
 
@@ -179,17 +179,17 @@ export default class PlaylistItem extends Component {
     return result;
   }
 
-  itemClick(e) {
+  itemClick = e => {
     if (this.props.onItemClick) {
       this.props.onItemClick(e, this.props.item);
     }
-  }
+  };
 
-  itemDblClick(e) {
+  itemDblClick = e => {
     if (this.props.onItemDblClick) {
       this.props.onItemDblClick(e, this.props.item);
     }
 
     e.preventDefault();
-  }
+  };
 }

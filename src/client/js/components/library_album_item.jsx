@@ -28,24 +28,20 @@ const albumSource = {
 }))
 export default class LibraryAlbumItem extends Component {
 
-  static getDragType () {
+  state = {
+    loaded: false,
+    collapsed: true
+  };
+
+  static getDragType() {
     return 'album';
   }
 
-  constructor () {
-    super();
-
-    this.state = {
-      loaded: false,
-      collapsed: true
-    };
-  }
-
-  getDragItem () {
+  getDragItem() {
     return this.props.album;
   }
 
-  render () {
+  render() {
     const {
       isDragging,
       connectDragSource,
@@ -63,11 +59,7 @@ export default class LibraryAlbumItem extends Component {
 
     const songs = album.get('songs')
       .toList()
-      .map(song => {
-        return <LibrarySongItem key={song.get('title')}
-                                song={song}
-                                enabled={enabled} />
-      });
+      .map(song => <LibrarySongItem key={song.get('title')} song={song} enabled={enabled} />);
 
     const name = album.get('name');
 
@@ -75,7 +67,7 @@ export default class LibraryAlbumItem extends Component {
       <li className={classes}>
         <span className="name"
               title={name}
-              onClick={this.toggleSongs.bind(this)}
+              onClick={this.toggleSongs}
         >
           <i style={{ backgroundImage: `url(${album.get('cover')})`}} className="cover"/>
           {name}
@@ -87,13 +79,16 @@ export default class LibraryAlbumItem extends Component {
     );
   }
 
-  toggleSongs (e) {
+  toggleSongs = e => {
     if (!this.state.loaded) {
       const album = this.props.album;
 
       actions.fetchLibrarySongs(album.getIn(['artist', 'name']), album.get('name'));
 
-      this.setState({loaded: true, collapsed: false});
+      this.setState({
+        loaded: true,
+        collapsed: false
+      });
     } else {
       this.setState({
         collapsed: !this.state.collapsed

@@ -23,19 +23,19 @@ class Scrubber extends Component {
     };
 
     return (
-      <div id="scrubber" onClick={this.scrub.bind(this)}>
+      <div id="scrubber" onClick={this.scrub}>
         <div className="progress" style={style}/>
       </div>
     );
   }
 
-  scrub(e) {
+  scrub = e => {
     const percent = (e.nativeEvent.offsetX / ReactDOM.findDOMNode(this).offsetWidth);
 
     if (this.props.onScrub) {
       this.props.onScrub(percent);
     }
-  }
+  };
 }
 
 export default Scrubber;

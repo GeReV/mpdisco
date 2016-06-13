@@ -11,7 +11,7 @@ export default class PlayerControls extends Component {
     state: React.PropTypes.string.isRequired
   };
 
-  render () {
+  render() {
     const playClasses = cx({
       'icon-2x': true,
       'icon-pause': (this.props.state === 'play'),
@@ -28,8 +28,8 @@ export default class PlayerControls extends Component {
     );
   }
 
-  nullifyEvent (callback) {
-    return function(e) {
+  nullifyEvent(callback) {
+    return e => {
       e.preventDefault();
 
       callback();

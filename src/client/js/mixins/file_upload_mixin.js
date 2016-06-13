@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes } from 'react';
 import Q from 'q';
 import _ from 'lodash';
 
@@ -8,81 +8,81 @@ function xhrSuccess(req) {
 
 export default {
     propTypes: {
-        file: React.PropTypes.instanceOf(File).isRequired,
-        onUploadComplete: React.PropTypes.func.isRequired,
-        onUploadFail: React.PropTypes.func.isRequired
+      file: PropTypes.instanceOf(File).isRequired,
+      onUploadComplete: PropTypes.func.isRequired,
+      onUploadFail: PropTypes.func.isRequired
     },
 
-    uploadFile: function(file, url) {
-        var promise = this.uploadFilePromise(file, url);
+    uploadFile(file, url) {
+      const promise = this.uploadFilePromise(file, url);
 
-        var done = function() {
-            this.setState({
-                done: true
-            });
+      const done = () => {
+          this.setState({
+              done: true
+          });
 
-            this.props.onUploadComplete(file);
-        }.bind(this);
+          this.props.onUploadComplete(file);
+      };
 
-        var fail = function() {
-            this.setState({
-                failed: true
-            });
+      const fail = () => {
+          this.setState({
+              failed: true
+          });
 
-            this.props.onUploadFail(file);
-        }.bind(this);
+          this.props.onUploadFail(file);
+      };
 
-        var progress = function(progress) {
-            this.setState({
-                percentage: progress
-            });
-        }.bind(this);
+      const progress = progress => {
+          this.setState({
+              percentage: progress
+          });
+      };
 
-        promise.then(done, fail, progress);
+      promise.then(done, fail, progress);
 
-        return promise;
+      return promise;
     },
 
-    uploadFilePromise: function(file, url) {
-        var fd = new FormData();
-        var request = new XMLHttpRequest();
+    uploadFilePromise(file, url) {
+      const fd = new FormData();
+      const request = new XMLHttpRequest();
 
-        var defer = Q.defer();
+      const defer = Q.defer();
 
-        function onload() {
-            if (xhrSuccess(request)) {
-                defer.resolve(request.responseText);
-            } else {
-                defer.reject(new Error("Status code was " + request.status));
-            }
+      function onload() {
+        if (xhrSuccess(request)) {
+          defer.resolve(request.responseText);
+        } else {
+          defer.reject(new Error(`Status code was ${request.status}`));
         }
+      }
 
-        function onerror() {
-            defer.reject(new Error("Can't XHR " + JSON.stringify(url)));
-        }
+      function onerror() {
+        defer.reject(new Error("Can't XHR " + JSON.stringify(url)));
+      }
 
-        function onprogress(event) {
-            defer.notify(event.loaded / event.total);
-        }
+      function onprogress(event) {
+        defer.notify(event.loaded / event.total);
+      }
 
-        try {
-            request.open('POST', url, true);
-            request.onreadystatechange = function () {
-                if (request.readyState === 4) {
-                    onload();
-                }
-            };
-            request.onload = request.load = onload;
-            request.onerror = request.error = onerror;
-            request.upload.onprogress = request.upload.progress = onprogress;
+      try {
+        request.open('POST', url, true);
+        request.onreadystatechange = () => {
+          if (request.readyState === 4) {
+            onload();
+          }
+        };
+        request.onload = request.load = onload;
+        request.onerror = request.error = onerror;
+        request.upload.onprogress = request.upload.progress = onprogress;
 
-            fd.append('file', file);
+        fd.append('file', file);
 
-            request.send(fd);
-        } catch (exception) {
-            defer.reject(exception.message, exception);
-        }
+        request.send(fd);
+      } catch (exception) {
+        defer.reject(exception.message, exception);
+      }
 
-        return defer.promise;
+      return defer.promise;
     }
 };

@@ -17,13 +17,13 @@ import Scrubber from './scrubber.jsx';
 import PlayerControls from './player_controls.jsx';
 
 function formatTime(seconds) {
-    function zeroPad(n) {
-        return n < 10 ? '0' + n : n;
-    }
-    return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
+  function zeroPad(n) {
+    return ('0' + n).slice(-2);
+  }
+  return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
 }
 
-@nuclearComponent(props => {
+@nuclearComponent(() => {
   return {
     status: getters.currentStatus
   };
@@ -46,8 +46,8 @@ export default class Player extends Component {
     const status = this.props.status;
 
     if (prevProps.status !== status) {
-
       let time = 0;
+
       if (status.get('time')) {
         time = status.get('time').split(':');
         time = +time[0];
@@ -59,7 +59,7 @@ export default class Player extends Component {
       }
 
       if (status.get('state') === 'play') {
-        this.interval = setInterval(this.timeCounter.bind(this), 1000);
+        this.interval = setInterval(this.timeCounter, 1000);
       }
 
       this.setState({
@@ -79,7 +79,10 @@ export default class Player extends Component {
       'player-disabled': !this.props.enabled
     });
 
-    const { song, status } = this.props;
+    const {
+      song,
+      status
+    } = this.props;
 
     const time = formatTime(this.state.time || 0);
 
@@ -124,25 +127,25 @@ export default class Player extends Component {
 
           <PlayerControls
               state={status.get('state')}
-              onPlay={this.togglePlay.bind(this)}
-              onStop={this.stop.bind(this)}
-              onNext={this.next.bind(this)}
-              onPrevious={this.previous.bind(this)}
+              onPlay={this.togglePlay}
+              onStop={this.stop}
+              onNext={this.next}
+              onPrevious={this.previous}
           />
         </div>
-        <Scrubber progress={this.state.time} total={song.get('time')} onScrub={this.scrub.bind(this)} />
+        <Scrubber progress={this.state.time} total={song.get('time')} onScrub={this.scrub} />
         <div className={indicatorClasses} />
       </section>
     );
   }
 
-  timeCounter() {
+  timeCounter = () => {
     this.setState({
       time: this.state.time + 1
     });
-  }
+  };
 
-  scrub(percent) {
+  scrub = percent => {
     if (!this.props.enabled) {
       return;
     }
@@ -152,9 +155,9 @@ export default class Player extends Component {
     const seconds = Math.floor(+song.get('time') * percent);
 
     this.props.controller.seek(song.get('id'), seconds);
-  }
+  };
 
-  handleKeyboard(e) {
+  handleKeyboard = e => {
     if (!this.props.enabled) {
       return;
     }
@@ -208,9 +211,9 @@ export default class Player extends Component {
 
       return this.next();
     }
-  }
+  };
 
-  togglePlay() {
+  togglePlay = () => {
     const state = this.props.status.get('state');
 
     if (state === 'play') {
@@ -218,7 +221,7 @@ export default class Player extends Component {
     } else if (state === 'pause' || state === 'stop') {
       this.play();
     }
-  }
+  };
 
   play() {
     actions.play();
@@ -240,7 +243,7 @@ export default class Player extends Component {
     actions.previous();
   }
 
-  updateIndicator(state) {
+  updateIndicator = state => {
     // Clear any pending timeout, so it trigger and hide our indicator prematurely.
     if (this.indicatorAppearTimeout) {
       clearTimeout(this.indicatorAppearTimeout);
@@ -253,14 +256,14 @@ export default class Player extends Component {
       indicatorState: state,
       indicatorAppear: true
     });
-  }
+  };
 
-  clearIndicator() {
+  clearIndicator = () => {
     // Clear the indicator from screen.
     this.indicatorAppearTimeout = null;
 
     this.setState({
       indicatorAppear: false
     });
-  }
+  };
 }

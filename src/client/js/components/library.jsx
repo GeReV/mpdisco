@@ -58,168 +58,168 @@ const uploadSpec = {
 }))
 export default class Library extends Component {
 
-    constructor() {
-      super();
+  state = {
+    animations: false,
+    uploads: [],
+    uploading: []
+  };
 
-      this.state = {
-          animations: false,
-          uploads: [],
-          uploading: []
-      };
+  componentDidMount() {
+    // this.props.model.on('updating', this.setUpdatingState);
+    actions.fetchLibraryArtists();
+  }
+
+  componentDidUpdate() {
+    if (this.props.artists && !this.state.animations) {
+      // Turn library update animations on.
+      this.setState({
+        animations: true
+      });
+    }
+  }
+
+  render() {
+
+    const {
+      enabled,
+      isOver,
+      canDrop,
+      connectDropTarget
+    } = this.props;
+
+    const classes = cx({
+      'library-updating': this.state.updating,
+      'library-drop': canDrop,
+      'library-drop-hover': isOver,
+      'library-disabled': !enabled
+    });
+
+    let uploads;
+    if (this.state.uploads.length) {
+      uploads = (
+        <ul className="library-upload">
+          {this.state.uploads.map(file => {
+            const key = file.name;
+
+            return (
+              <LibraryFileUpload
+                key={key}
+                file={file}
+                onUploadComplete={this.uploadComplete}
+                onUploadFail={this.uploadFail}
+              />
+            );
+          })}
+        </ul>
+      );
     }
 
-    componentDidMount() {
-        //this.props.model.on('updating', this.setUpdatingState);
-        actions.fetchLibraryArtists();
-    }
+    // <menu>
+    //    <input type="text" id="search" className="search" placeholder="Search" />
+    // </menu>
 
-    componentDidUpdate() {
-        if (this.props.artists && !this.state.animations) {
-            // Turn library update animations on.
-            this.setState({
-              animations: true
-            });
-        }
-    }
+    return connectDropTarget(
+      <section id="library" className={classes}>
+        <header>Library</header>
+        <div className="content">
+          {this.artistsView()}
+          <ReactCSSTransitionGroup component="div"
+                                   transitionName="upload"
+                                   transitionEnterTimeout={4000}
+                                   transitionLeaveTimeout={4000}
+          >
+            {uploads}
+          </ReactCSSTransitionGroup>
+        </div>
+      </section>
+    );
+  }
 
-    render() {
-
-      const { enabled, isOver, canDrop, connectDropTarget } = this.props;
-
-      const classes = cx({
-        'library-updating': this.state.updating,
-        'library-drop': canDrop,
-        'library-drop-hover': isOver,
-        'library-disabled': !enabled
+  artistsView() {
+    const artists = this.props.library
+      .get('artists')
+      .toList()
+      .map(artist => {
+        return (
+            <LibraryArtistItem
+                key={artist.get('name')}
+                artist={artist}
+                enabled={this.props.enabled}
+                />
+        );
       });
 
-      let uploads;
-      if (this.state.uploads.length) {
-        uploads = (
-          <ul className="library-upload">
-            {this.state.uploads.map(file => {
-              var key = file.name;
+    const empty = (
+      <li className="library-item library-empty" key="__empty">
+        <em className="name">Library is empty</em>
+      </li>
+    );
 
-              return (
-                <LibraryFileUpload
-                  key={key}
-                  file={file}
-                  onUploadComplete={this.uploadComplete.bind(this)}
-                  onUploadFail={this.uploadFail.bind(this)}
-                />
-              );
-            })}
-          </ul>
-        );
-      }
+    return (
+      <ReactCSSTransitionGroup component="ul"
+                               className="artists tree"
+                               transitionName="slide"
+                               transitionEnter={this.state.animations}
+                               transitionLeave={this.state.animations}
+                               transitionEnterTimeout={4000}
+                               transitionLeaveTimeout={4000}
+       >
+        {artists.size ? artists : empty}
+      </ReactCSSTransitionGroup>
+    );
+  }
 
-      //<menu>
-      //    <input type="text" id="search" className="search" placeholder="Search" />
-      //</menu>
+  setUpdatingState = () => {
+      // MPD sends the same event when an update starts and finishes, without any other arguments.
+    const updating = !this.state.updating;
 
-      return connectDropTarget(
-        <section id="library" className={classes}>
-          <header>Library</header>
-          <div className="content">
-            {this.artistsView()}
-            <ReactCSSTransitionGroup component="div"
-                                     transitionName="upload"
-                                     transitionEnterTimeout={4000}
-                                     transitionLeaveTimeout={4000}
-            >
-              {uploads}
-            </ReactCSSTransitionGroup>
-          </div>
-        </section>
-      );
+    if (this.state.updatingTimeout) {
+      clearTimeout(this.state.updatingTimeout);
     }
 
-    artistsView() {
+    // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
+    const updatingTimeout = setTimeout(() => {
+      this.setState({
+        updating: false,
+        updatingTimeout: null
+      });
+    }, 5000);
 
-      const artists = this.props.library
-        .get('artists')
-        .toList()
-        .map(artist => {
-          return (
-              <LibraryArtistItem
-                  key={artist.get('name')}
-                  artist={artist}
-                  enabled={this.props.enabled}
-                  />
-          );
-        });
+    // Set updating state.
+    this.setState({
+      updating: updating,
+      updatingTimeout: updatingTimeout
+    });
+  };
 
-      const empty = (
-        <li className="library-item library-empty" key="__empty">
-          <em className="name">Library is empty</em>
-        </li>
-      );
+  uploadComplete = file => {
+    const index = this.state.uploading.indexOf(file);
 
-      return (
-        <ReactCSSTransitionGroup component="ul"
-                                 className="artists tree"
-                                 transitionName="slide"
-                                 transitionEnter={this.state.animations}
-                                 transitionLeave={this.state.animations}
-                                 transitionEnterTimeout={4000}
-                                 transitionLeaveTimeout={4000}
-         >
-          {artists.size ? artists : empty}
-        </ReactCSSTransitionGroup>
-      );
-    }
-
-    setUpdatingState() {
-        // MPD sends the same event when an update starts and finishes, without any other arguments.
-        var updating = !this.state.updating;
-
-        if (this.state.updatingTimeout) {
-            clearTimeout(this.state.updatingTimeout);
+    if (index >= 0) {
+      const stateUpdate = {
+        uploading: {
+          $splice: [
+            [index, 1]
+          ]
         }
+      };
 
-        // Ensures the updating state will turn off after a while if we don't get the second "updating" event.
-        const updatingTimeout = setTimeout(() => {
-            this.setState({
-                updating: false,
-                updatingTimeout: null
-            });
-        }, 5000);
-
-        // Set updating state.
-        this.setState({
-            updating: updating,
-            updatingTimeout: updatingTimeout
-        });
+      this.setState(update(this.state, stateUpdate));
     }
 
-    uploadComplete(file) {
-        const index = this.state.uploading.indexOf(file);
-
-        if (index >= 0) {
-            const stateUpdate = {
-                uploading: {
-                    $splice: [
-                        [index, 1]
-                    ]
-                }
-            };
-
-            this.setState(update(this.state, stateUpdate));
-        }
-
-        if (!this.state.uploading.length) {
-            this.uploadAllComplete();
-        }
+    if (!this.state.uploading.length) {
+      this.uploadAllComplete();
     }
+  };
 
-    uploadAllComplete() {
-        this.setState({
-            uploads: [],
-            uploading: []
-        });
-    }
+  uploadAllComplete = () => {
+    this.setState({
+      uploads: [],
+      uploading: []
+    });
+  };
 
-    uploadFail(file) {
-        console.log('Failed:', file);
-    }
+  uploadFail = file => {
+    console.log('Failed:', file);
+  };
 }

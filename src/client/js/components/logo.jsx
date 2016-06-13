@@ -18,7 +18,7 @@ export default class Logo extends Component {
     };
   }
 
-  componentWillUpdate (nextProps) {
+  componentWillUpdate(nextProps) {
     if (nextProps.cover !== this.props.cover) {
       const url = nextProps.cover;
 
@@ -44,7 +44,7 @@ export default class Logo extends Component {
     }
   }
 
-  render () {
+  render() {
 
     let image;
     if (this.props.cover) {

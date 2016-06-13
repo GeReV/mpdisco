@@ -1,34 +1,34 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var EventEmitter = require('events').EventEmitter;
-var util = require('util');
+const EventEmitter = require('events').EventEmitter;
+const util = require('util');
 
-var MasterModeModel = function(network) {
-    this.network = network;
+const MasterModeModel = network => {
+  this.network = network;
 
-    this.userid = null;
-    this.master = null;
+  this.userid = null;
+  this.master = null;
 
-    this.network.on('connected', this.connected.bind(this));
-    this.network.on('master', this.setMaster.bind(this));
+  this.network.on('connected', this.connected.bind(this));
+  this.network.on('master', this.setMaster.bind(this));
 };
 
 util.inherits(MasterModeModel, EventEmitter);
 
 _.extend(MasterModeModel.prototype, {
-    connected: function(info) {
-        this.userid = info.userid;
-        this.master = info.master;
+  connected(info) {
+    this.userid = info.userid;
+    this.master = info.master;
 
-        this.emit('connected', this.userid);
-        this.emit('master', this.master);
-    },
+    this.emit('connected', this.userid);
+    this.emit('master', this.master);
+  },
 
-    setMaster: function(master) {
-        this.master = master;
+  setMaster(master) {
+    this.master = master;
 
-        this.emit('master', this.master);
-    }
+    this.emit('master', this.master);
+  }
 });
 
 module.exports = MasterModeModel;

@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
 
-export default React.createClass({
-    render: function() {
-        return
-            <div id="error">
-                {this.props.message}
-            </div>;
-    }
-});
+export default class Error extends Component {
+  static propTypes = {
+    message: PropTypes.any
+  };
+
+  render() {
+    return (
+      <div id="error">
+        {this.props.message}
+      </div>
+    );
+  }
+}

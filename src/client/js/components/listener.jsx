@@ -6,9 +6,9 @@ import AnonymousListener from './anonymous_listener.jsx';
 
 export default class Listener extends Component {
     static propTypes = {
-        onIdentify: React.PropTypes.func.isRequired,
-        listener: React.PropTypes.object.isRequired,
-        you: React.PropTypes.bool
+      onIdentify: React.PropTypes.func.isRequired,
+      listener: React.PropTypes.object.isRequired,
+      you: React.PropTypes.bool
     }
 
     render() {

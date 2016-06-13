@@ -6,11 +6,18 @@ import config from '../../../config.json';
 const debug = dbg('mpdisco:master_mode');
 
 export default class MasterMode extends BasicMode {
-  static commandWhitelist = ['currentsong', 'status', 'playlistinfo', 'list', 'find', 'update'];
+  static commandWhitelist = [
+    'currentsong',
+    'status',
+    'playlistinfo',
+    'list',
+    'find',
+    'update'
+  ];
 
   static create(mpd) {
     return new MasterMode(mpd);
-  };
+  }
 
   constructor(mpd) {
     super(mpd);
@@ -19,16 +26,16 @@ export default class MasterMode extends BasicMode {
 
     this.master = null;
 
-    var clientsManager = this.clientsManager = ClientsManager.instance();
+    const clientsManager = this.clientsManager = ClientsManager.instance();
 
-    clientsManager.on('disconnected', this.disconnected.bind(this));
+    clientsManager.on('disconnected', this.disconnected);
 
-    clientsManager.on('connected', this.connected.bind(this));
+    clientsManager.on('connected', this.connected);
 
-    clientsManager.on('identified', this.identified.bind(this));
+    clientsManager.on('identified', this.identified);
   }
 
-  connected(client) {
+  connected = client => {
     client.emit('connected', {
       userid: client.info.userid,
       info: client.info,
@@ -36,23 +43,23 @@ export default class MasterMode extends BasicMode {
       mode: this.type,
       master: this.master
     });
-  }
+  };
 
-  disconnected(client) {
+  disconnected = client => {
     if (this.clientsManager.isEmpty()) {
       this.clearMaster();
     } else if (!this.isMaster(this.clientsManager.first())) {
       this.setMaster(this.clientsManager.first());
     }
-  }
+  };
 
-  identified(client) {
+  identified = client => {
     if (!this.master && !this.clientsManager.isEmpty()) {
       this.setMaster(this.clientsManager.first());
     }
-  }
+  };
 
-  rotate() {
+  rotate = () => {
     if (this.clientsManager.isEmpty()) {
       return;
     }
@@ -60,17 +67,17 @@ export default class MasterMode extends BasicMode {
     this.clientsManager.rotate();
 
     this.setMaster(this.clientsManager.first());
-  }
+  };
 
-  canExecute(command, client) {
+  canExecute = (command, client) => {
     return this.isMaster(client) || this.isWhitelistCommand(command);
-  }
+  };
 
-  isMaster(client) {
+  isMaster = client => {
     return this.master === client.info.userid;
-  }
+  };
 
-  setMaster(client) {
+  setMaster = client => {
     if (!client) {
       this.master = null;
 
@@ -87,15 +94,14 @@ export default class MasterMode extends BasicMode {
 
     client.emit('master', this.master);
     client.broadcast.emit('master', this.master);
-  }
+  };
 
-  clearMaster() {
+  clearMaster = () => {
     this.setMaster(null);
-  }
+  };
 
-  setMasterTimeout() {
-
-    var masterTime = +config.master_time;
+  setMasterTimeout = () => {
+    const masterTime = +config.master_time;
 
     clearTimeout(this.masterTimeout);
 
@@ -103,15 +109,14 @@ export default class MasterMode extends BasicMode {
 
     this.masterTimestamp = Date.now();
 
-    this.masterTimeout = setTimeout(function() {
+    this.masterTimeout = setTimeout(() => {
       debug('Rotating master');
 
       this.clientsManager.rotate();
 
       this.setMaster(this.clientsManager.first());
-
-    }.bind(this), masterTime * 60 * 1000);
-  }
+    }, masterTime * 60 * 1000);
+  };
 
   isWhitelistCommand(cmd) {
     return (MasterMode.commandWhitelist.indexOf(cmd) !== -1);

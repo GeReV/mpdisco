@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 
 import cx from 'classnames';
 
-const trim = function(s) {
+function trim(s) {
   return s.replace(/^\s+|\s+$/g, '');
-};
+}
 
 export default class AnonymousListener extends Component {
   static propTypes = {
@@ -12,13 +12,9 @@ export default class AnonymousListener extends Component {
     you: React.PropTypes.bool
   };
 
-  constructor () {
-    super();
-
-    this.state = {
-      logging: false
-    };
-  }
+  state = {
+    logging: false
+  };
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.listener.get('logged')) {
@@ -26,7 +22,7 @@ export default class AnonymousListener extends Component {
     }
   }
 
-  render () {
+  render() {
     const listener = this.props.listener;
 
     const classes = cx('listener', {
@@ -41,12 +37,12 @@ export default class AnonymousListener extends Component {
     return this.anonymousView(classes);
   }
 
-  anonymousView (classes) {
+  anonymousView = classes => {
     const name = this.props.you ?
     (
       <span>
         <span>You</span>
-        <a href="#" className="listener-login" onClick={this.showLogin.bind(this)}>Login?</a>
+        <a href="#" className="listener-login" onClick={this.showLogin}>Login?</a>
       </span>
     ) :
     (<span>Anonymous Listener</span>);
@@ -56,30 +52,30 @@ export default class AnonymousListener extends Component {
         {name}
       </li>
     );
-  }
+  };
 
-  loginView (classes) {
+  loginView = classes => {
     return (
       <li className={classes}>
-        <input type="text" ref="login" onKeyUp={this.handleLoginKeyup.bind(this)} placeholder="E-mail or nickname"/>
-        <a href="#" onClick={this.handleLogin.bind(this)}>Login</a>
+        <input type="text" ref="login" onKeyUp={this.handleLoginKeyup} placeholder="E-mail or nickname"/>
+        <a href="#" onClick={this.handleLogin}>Login</a>
       </li>
     );
   }
 
-  showLogin (e) {
+  showLogin = e => {
     this.setState({logging: true});
 
     e.preventDefault();
-  }
+  };
 
-  hideLogin (e) {
+  hideLogin = e => {
     this.setState({logging: false});
 
     e.preventDefault();
   }
 
-  handleLogin (e) {
+  handleLogin = e => {
     const name = trim(this.refs.login.value);
 
     if (!name) {
@@ -90,13 +86,13 @@ export default class AnonymousListener extends Component {
     this.props.onIdentify(name);
 
     e.preventDefault();
-  }
+  };
 
-  handleLoginKeyup (e) {
+  handleLoginKeyup = e => {
     if (e.key === 'Enter') {
       this.handleLogin(e);
     } else if (e.key === 'Escape') {
       this.hideLogin(e);
     }
-  }
+  };
 }

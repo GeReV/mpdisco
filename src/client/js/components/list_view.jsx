@@ -1,15 +1,15 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import update from 'react-addons-update';
 import { DropTarget } from 'react-dnd';
 import _ from 'lodash';
 
-//import HotKey from 'react-hotkey';
+// import HotKey from 'react-hotkey';
 
 import { ItemTypes } from '../constants';
 
 import withEnabled from '../decorators/withEnabled';
 
-//HotKey.activate('keydown');
+// HotKey.activate('keydown');
 
 const itemTarget = {
   drop(props, monitor, component) {
@@ -23,21 +23,17 @@ const itemTarget = {
 @DropTarget(ItemTypes.PLAYLIST_ITEM, itemTarget, connect => ({
   connectDropTarget: connect.dropTarget()
 }))
-export default class ListView extends React.Component {
-  constructor() {
-    super();
-
-    this.state = {
-      items: [],
-      selectedItems: [],
-      focusedItemIndex: 0
-    };
-  }
-
+export default class ListView extends Component {
   static propTypes = {
     itemCreator: React.PropTypes.func.isRequired,
     onItemsReordered: React.PropTypes.func.isRequired,
     onItemsSelected: React.PropTypes.func
+  };
+
+  state = {
+    items: [],
+    selectedItems: [],
+    focusedItemIndex: 0
   };
 
   componentWillReceiveProps(nextProps) {
@@ -56,7 +52,7 @@ export default class ListView extends React.Component {
       connectDropTarget
     } = this.props;
 
-    const children = items.map(function(item, i) {
+    const children = items.map((item, i) => {
       // Delegate item creation to the parent element.
       const child = itemCreator(item);
 
@@ -68,9 +64,9 @@ export default class ListView extends React.Component {
         selected: selected,
         focused: focused,
         index: i,
-        onItemClick: this.itemSelected.bind(this),
-        onItemDblClick: this.itemActivated.bind(this),
-        onReorder: this.reorder.bind(this),
+        onItemClick: this.itemSelected,
+        onItemDblClick: this.itemActivated,
+        onReorder: this.reorder,
       });
     }, this);
 
@@ -81,23 +77,23 @@ export default class ListView extends React.Component {
     );
   }
 
-  itemActivated(e, item) {
+  itemActivated = (e, item) => {
     if (this.props.onItemActivated && this.props.enabled) {
       this.props.onItemActivated(item);
     }
 
     e.preventDefault();
-  }
+  };
 
-  itemsRemoved(e) {
+  itemsRemoved = e => {
     if (this.props.onItemRemoved && this.props.enabled) {
       this.props.onItemRemoved(this.state.selectedItems);
     }
 
     e.preventDefault();
-  }
+  };
 
-  reorder(index1, index2) {
+  reorder = (index1, index2) => {
     const { items } = this.state;
 
     const item = items[index1];
@@ -112,47 +108,47 @@ export default class ListView extends React.Component {
     };
 
     this.setState(update(this.state, stateUpdate));
-  }
+  };
 
-  handleKeyboard(e) {
+  handleKeyboard = e => {
     if (!this.props.enabled) {
       return;
     }
 
     const funcs = {
       'Delete': this.itemsRemoved,
-      'Enter': function(e) {
+      'Enter': ev => {
         const item = _.first(this.state.selectedItems);
 
         if (item) {
-          this.itemActivated(e, item);
+          this.itemActivated(ev, item);
         }
       },
-      'Home': function(e) {
-        this.itemSelectFirst(e);
+      'Home': ev => {
+        this.itemSelectFirst(ev);
 
-        e.preventDefault();
+        ev.preventDefault();
       },
-      'End': function(e) {
-        this.itemSelectLast(e);
+      'End': ev => {
+        this.itemSelectLast(ev);
 
-        e.preventDefault();
+        ev.preventDefault();
       },
       'ArrowUp': this.itemSelectPrev,
       'ArrowDown': this.itemSelectNext,
 
-      65: function(e) { // Ctrl+A
-        if (e.ctrlKey) {
+      65: ev => { // Ctrl+A
+        if (ev.ctrlKey) {
           this.itemSelectAll();
 
-          e.preventDefault();
+          ev.preventDefault();
         }
       },
-      68: function(e) { // Ctrl+D
-        if (e.ctrlKey) {
+      68: ev => { // Ctrl+D
+        if (ev.ctrlKey) {
           this.itemSelectNone();
 
-          e.preventDefault();
+          ev.preventDefault();
         }
       }
     };
@@ -160,14 +156,14 @@ export default class ListView extends React.Component {
     const fn = funcs[e.key] || funcs[e.keyCode];
 
     if (fn) {
-      return fn.call(this, e);
+      fn.call(this, e);
     }
   }
 
-  scrollIntoView(item) {
-    const height = this.ui.playlist.height(),
-          itemTop = item.position().top,
-          itemHeight = item.outerHeight();
+  scrollIntoView = item => {
+    const height = this.ui.playlist.height();
+    const itemTop = item.position().top;
+    const itemHeight = item.outerHeight();
 
     let scrollTop = this.ui.playlist.prop('scrollTop');
 
@@ -180,7 +176,7 @@ export default class ListView extends React.Component {
     this.ui.playlist.prop('scrollTop', scrollTop);
   }
 
-  itemSelected(e, item) {
+  itemSelected = (e, item) => {
     let selected = this.state.selectedItems;
 
     if (e.ctrlKey || e.metaKey) {
@@ -199,9 +195,9 @@ export default class ListView extends React.Component {
     if (this.props.onItemsSelected) {
       this.props.onItemsSelected(selected);
     }
-  }
+  };
 
-  itemSelectAll() {
+  itemSelectAll = () => {
     this.setState({
       selectedItems: this.state.items
     });
@@ -209,9 +205,9 @@ export default class ListView extends React.Component {
     if (this.props.onItemsSelected) {
       this.props.onItemsSelected(this.state.items);
     }
-  }
+  };
 
-  itemSelectNone() {
+  itemSelectNone = () => {
     this.setState({
       selectedItems: []
     });
@@ -219,13 +215,13 @@ export default class ListView extends React.Component {
     if (this.props.onItemsSelected) {
       this.props.onItemsSelected([]);
     }
-  }
+  };
 
   itemSelectOne(item) {
     return [item];
   }
 
-  itemSelectToggle(item) {
+  itemSelectToggle = item => {
     let items = this.state.selectedItems;
 
     // Toggle item on or off from the list.
@@ -236,9 +232,9 @@ export default class ListView extends React.Component {
     }
 
     return items;
-  }
+  };
 
-  itemSelectRangeTo(item) {
+  itemSelectRangeTo = item => {
     const items = this.state.items;
     let selected = this.state.selectedItems;
 
@@ -260,9 +256,9 @@ export default class ListView extends React.Component {
     selected = _.uniq(selected.concat(addition));
 
     return selected;
-  }
+  };
 
-  itemSelectPrev(e) {
+  itemSelectPrev = e => {
     const items = this.state.items;
 
     let item = items[this.state.focusedItemIndex - 1];
@@ -274,8 +270,9 @@ export default class ListView extends React.Component {
     if (item) {
       this.itemSelected(e, item);
     }
-  }
-  itemSelectNext(e) {
+  };
+
+  itemSelectNext = e => {
     const items = this.state.items;
 
     let item = items[this.state.focusedItemIndex + 1];
@@ -287,24 +284,25 @@ export default class ListView extends React.Component {
     if (item) {
       this.itemSelected(e, item);
     }
-  }
-  itemSelectFirst(e) {
+  };
+
+  itemSelectFirst = e => {
     const items = this.state.items;
 
-    let item = _.first(items);
+    const item = _.first(items);
 
     if (item) {
       this.itemSelected(e, item);
     }
-  }
+  };
 
-  itemSelectLast(e) {
+  itemSelectLast = e => {
     const items = this.state.items;
 
-    let item = _.last(items);
+    const item = _.last(items);
 
     if (item) {
       this.itemSelected(e, item);
     }
-  }
+  };
 }

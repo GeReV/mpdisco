@@ -18,9 +18,9 @@ import Html from './components/html';
 
 const debug = require('debug')('mpdisco:server');
 
-var metadata = require('./meta_data.js');
-var upload = require('./file_upload.js');
-var ClientsManager = require('./clients_manager.js');
+const metadata = require('./meta_data.js');
+const upload = require('./file_upload.js');
+const ClientsManager = require('./clients_manager.js');
 
 export default class Server {
   static defaults = {
@@ -35,7 +35,7 @@ export default class Server {
 
     this.uploadHandler = this._initUploadHandler(this.mpd, this.options.config);
 
-    var sessionStore = session({
+    const sessionStore = session({
       name: this.options.config.session_key,
       secret: this.options.config.secret,
       resave: false,
@@ -55,7 +55,7 @@ export default class Server {
 
   _initApp(app, options, session) {
 
-    var config = options.config;
+    const config = options.config;
 
     app.use(compression());
     app.use(cookieParser());
@@ -89,17 +89,16 @@ export default class Server {
     });
 
     app.get('/covers/:artist/:album', (req, res) => {
-      const mm = require('./meta_data.js'),
-            artist = mm.safeName(req.params.artist),
-            album = mm.safeName(req.params.album),
-            file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
+      const mm = require('./meta_data.js');
+      const artist = mm.safeName(req.params.artist);
+      const album = mm.safeName(req.params.album);
+      const file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
 
       fs.stat(file, (err, stats) => {
         if (stats && stats.isFile()) {
           res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
         } else {
-          res
-            .status(404)
+          res.status(404)
             .end();
         }
       });
@@ -109,10 +108,10 @@ export default class Server {
   }
 
   start() {
-    var options = this.options;
-    var port = options.serverPort;
+    const options = this.options;
+    const port = options.serverPort;
 
-    this.server.listen(port, function () {
+    this.server.listen(port, () => {
       if (process.send) {
         process.send('online');
       } else {
@@ -121,48 +120,39 @@ export default class Server {
     });
   }
 
-  _initSocketIO(socket, session, clientsManager) {
-
-    //Socket.io will call this function when a client connects,
-    //So we can send that client a unique ID we use so we can
-    //maintain the list of players.
-    socket.on('connection', function (client) {
-
+  _initSocketIO(socket, iosession, clientsManager) {
+    // Socket.io will call this function when a client connects,
+    // So we can send that client a unique ID we use so we can
+    // maintain the list of players.
+    socket.on('connection', client => {
       // Embed the session in the client's handshake.
-      session(client.handshake, {}, function () {
-
+      session(client.handshake, {}, () => {
         clientsManager.connected(client);
 
-        client.on('command', function (cmd) {
-
+        client.on('command', cmd => {
           this.mode.command(cmd.command, cmd.args, client);
+        });
 
-        }.bind(this));
-
-        client.on('commands', function (cmds) {
-
+        client.on('commands', cmds => {
           this.mode.commands(cmds, client);
+        });
+      });
+    });
 
-        }.bind(this));
-
-      }.bind(this));
-
-    }.bind(this));
-
-    this.mpd.on('system', function (system) {
+    this.mpd.on('system', system => {
       socket.sockets.emit('update', system);
       socket.sockets.emit('update:' + system);
     });
   }
 
   _initUploadHandler(mpd, config) {
-    var handler = upload({
+    const handler = upload({
       acceptFileTypes: /\.(mp3|ogg|flac|mp4)/i,
       tmpDir: '/tmp',
-      uploadPath: function (file, callback) {
+      uploadPath: (file, callback) => {
         metadata.forFile(file)
-          .then(function (data) {
-            var parts = _.compact([
+          .then(data => {
+            const parts = _.compact([
               config.music_directory.replace(/^~/, process.env.HOME),
 
               metadata.safeName(data.artist.length ? data.artist.join('_') : data.artist),
@@ -170,23 +160,21 @@ export default class Server {
               metadata.safeName(data.album)
             ]);
 
-            var filename = path.join.apply(this, parts);
+            const filename = path.join.apply(this, parts);
 
             debug('Saving uploaded file to %s', filename);
 
             callback(filename);
           })
-          .error(function (err) {
-            console.log(err);
-          });
+          .error(console.error);
       }
     });
 
-    handler.on('end', _.debounce(function (result) {
+    handler.on('end', _.debounce(() => {
       debug('Updating database...');
 
       mpd.sendCommand('update');
-    }.bind(this), 5000));
+    }, 5000));
 
     return handler;
   }
