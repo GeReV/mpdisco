@@ -7,6 +7,7 @@ import {
   fetchLibraryArtists,
   fetchPlaylist
 } from './actions.js';
+
 import {
     RECEIVE_COVER_ART,
     RECEIVE_CURRENT_SONG,
