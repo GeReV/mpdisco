@@ -1,4 +1,4 @@
 
-var MPDiscoApp = require('./app.js');
+import MPDiscoApp from './app.js';
 
-var mpdisco = new MPDiscoApp(MPDiscoApp.Modes.Master);
+export default new MPDiscoApp(MPDiscoApp.Modes.Master);

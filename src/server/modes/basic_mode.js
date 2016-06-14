@@ -1,12 +1,16 @@
-var debug = require('debug')('mpdisco:mode'),
-    mpd = require('mpd'),
-    mpdcmd = mpd.cmd,
-    _ = require('underscore'),
-    ClientsManager = require('../clients_manager.js'),
+import dbg from 'debug';
+import mpd from 'mpd';
 
-    commandProcessors = require('../command_processors.js'),
-    commandParsers = require('../command_parsers.js'),
-    commandEmitters = require('../command_emitters.js');
+import _ from 'underscore';
+import ClientsManager from '../clients_manager.js';
+
+import commandProcessors from '../command_processors.js';
+import commandParsers from '../command_parsers.js';
+import commandEmitters from '../command_emitters.js';
+
+const debug = dbg('mpdisco:mode');
+
+const mpdcmd = mpd.cmd;
 
 function sanitizeArgs(args) {
   return args.map(String);
@@ -17,20 +21,19 @@ function ensureArray(args) {
 }
 
 function execute(mpd, command, args, client) {
-  var cmd;
+  let cmd;
 
-  args = sanitizeArgs(ensureArray(args));
+  const sanitizedArgs = sanitizeArgs(ensureArray(args));
 
-  cmd = mpdcmd(command, args);
+  cmd = mpdcmd(command, sanitizedArgs);
 
-  debug('Received: %s %s', command, JSON.stringify(args));
+  debug('Received: %s %s', command, JSON.stringify(sanitizedArgs));
 
   mpd.sendCommand(cmd, (err, result) => {
-
     debug('Result:\n%s', result);
 
     // First parse the result.
-    const parser = commandParsers.parserForCommand(command, args);
+    const parser = commandParsers.parserForCommand(command, sanitizedArgs);
 
     const response = parser.parse(result);
 
@@ -43,7 +46,7 @@ function execute(mpd, command, args, client) {
   });
 }
 
-var clientsManager = ClientsManager.instance();
+const clientsManager = ClientsManager.instance();
 
 export default class BasicMode {
   static create(mpd) {
@@ -65,66 +68,62 @@ export default class BasicMode {
   }
 
   command(command, args, client) {
+    const cmd = command.toLowerCase();
 
-    command = command.toLowerCase();
+    if (this.canExecute(cmd, client)) {
+      const sanitizedArgs = sanitizeArgs(ensureArray(args));
 
-    if (this.canExecute(command, client)) {
-
-      args = sanitizeArgs(ensureArray(args));
-
-      // Run the command through the processor, which calls back with modified args (e.g. Youtube stream from url).
-      const promise = commandProcessors.processorForCommand(this.mpd, command, args);
+      // Run the command through the processor, which calls back with modified
+      // args (e.g. Youtube stream from url).
+      const promise = commandProcessors
+        .processorForCommand(this.mpd, cmd, sanitizedArgs);
 
       promise
-          .then(args => execute(this.mpd, command, args, client))
-          .fail(function(error) {
-            debug('Failed to run command: %s (%s) for user %s', command, JSON.stringify(args), client.info.userid);
+          .then(arg => execute(this.mpd, cmd, arg, client))
+          .fail(error => {
+            debug('Failed to run command: %s (%s) for user %s',
+              cmd,
+              JSON.stringify(args),
+              client.info.userid);
+
             debug('Error: %s', error);
 
             client.emit('error', {
-              command: command,
+              command: cmd,
               args: args
             });
           });
-
     } else {
-      console.log('nopermission', command);
+      console.log('nopermission', cmd);
 
-      client.emit(command, {
+      client.emit(cmd, {
         type: 'nopermission'
       });
     }
   }
   // TODO: Review this.
-  commands(cmds, client) {
+  commands(commands, client) {
+    let cmds = commands || [];
 
-    cmds = cmds || [];
-
-    cmds = cmds.map(function(cmd) {
+    cmds = cmds.map(cmd => {
       cmd.args = sanitizeArgs(ensureArray(cmd.args));
 
       return cmd;
     });
 
-    if (_.all(cmds, function(cmd) { return this.canExecute(cmd, client); }, this)) {
-
+    if (_.all(cmds, cmd => this.canExecute(cmd, client))) {
       // TODO: Processing each command asynchronously is a bit of a problem. Skipping for now.
 
-      cmds = cmds.map(function(cmd) {
-        return mpdcmd(cmd.command, cmd.args);
-      });
+      cmds = cmds.map(cmd => mpdcmd(cmd.command, cmd.args));
 
       debug(cmds);
 
-      this.mpd.sendCommands(cmds, function(err, result) {
-
+      this.mpd.sendCommands(cmds, (err, result) => {
         debug('Result for command list');
         debug(cmds);
         debug('===');
         debug(result);
-
       });
-
     }
   }
 

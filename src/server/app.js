@@ -4,7 +4,7 @@ import mpd from 'mpd';
 
 import Server from './server.js';
 
-export default class MPDisco {
+class MPDisco {
   constructor(mode, options) {
     this.options = _.defaults({
       mpdPort: 6600,
@@ -30,6 +30,8 @@ export default class MPDisco {
 }
 
 MPDisco.Modes = {
-  Basic: require('./modes/basic_mode.js'),
-  Master: require('./modes/master_mode.js')
+  Basic: require('./modes/basic_mode.js').default,
+  Master: require('./modes/master_mode.js').default
 };
+
+export default MPDisco;

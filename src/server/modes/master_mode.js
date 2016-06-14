@@ -15,7 +15,7 @@ export default class MasterMode extends BasicMode {
     'update'
   ];
 
-  static create(mpd) {
+  static create = mpd => {
     return new MasterMode(mpd);
   }
 

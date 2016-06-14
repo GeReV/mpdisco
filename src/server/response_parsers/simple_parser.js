@@ -7,16 +7,17 @@ export default class SimpleParser extends AbstractParser {
       return s;
     }
 
-    const lines = s.split('\n'),
-          obj = {},
-          json = [],
-          overwrites = 0;
+    const lines = s.split('\n');
+    const obj = {};
+    const json = [];
+    const overwrites = 0;
 
     _.compact(lines)
       .map(this.parseLine)
       .forEach(o => {
         if (obj.hasOwnProperty(o.key) && overwrites >= 2) {
-          console.warn('Key overwrite when parsing response (key=' + o.key + '), SimpleParser could be wrong for response. Response:');
+          console.warn(`Key overwrite when parsing response (key=${o.key}),` +
+           'SimpleParser could be wrong for response. Response:');
           console.warn(s);
         }
 

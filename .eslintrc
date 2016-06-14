@@ -8,6 +8,7 @@
   },
 
   "globals": {
+    "__DEV__": true
   },
 
   "plugins": ["react"],
@@ -229,8 +230,7 @@
     //
     "react/display-name": 0, // Prevent missing displayName in a React component definition
     "jsx-quotes": [2, "prefer-double"], // Enforce quote style for JSX attributes
-    // TODO: Change jsx-no-undef back to 2.
-    "react/jsx-no-undef": 1, // Disallow undeclared variables in JSX
+    "react/jsx-no-undef": 2, // Disallow undeclared variables in JSX
     "react/jsx-sort-props": 0, // Enforce props alphabetical sorting
     "react/jsx-uses-react": 2, // Prevent React to be incorrectly marked as unused
     "react/jsx-uses-vars": 2, // Prevent variables used in JSX to be incorrectly marked as unused

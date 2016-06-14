@@ -7,8 +7,8 @@ export default class LineParser extends AbstractParser {
       return s;
     }
 
-    const lines = s.split('\n'),
-          json = [];
+    const lines = s.split('\n');
+    const json = [];
 
     _.compact(lines)
       .map(this.parseLine)

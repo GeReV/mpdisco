@@ -1,44 +1,34 @@
 /**
- * React Starter Kit (http://www.reactstarterkit.com/)
+ * React Starter Kit (https://www.reactstarterkit.com/)
  *
- * Copyright © 2014-2015 Kriasoft, LLC. All rights reserved.
+ * Copyright © 2014-2016 Kriasoft, LLC. All rights reserved.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE.txt file in the root directory of this source tree.
  */
 
-import path from 'path';
-import replace from 'replace';
 import Promise from 'bluebird';
-import watch from './lib/watch';
-
+import fs from './lib/fs';
+import pkg from '../package.json';
 /**
  * Copies static files such as robots.txt, favicon.ico to the
  * output (build) folder.
  */
-async function copy() {
+async function copy({ watch } = {}) {
   const ncp = Promise.promisify(require('ncp'));
 
   await Promise.all([
-    ncp('src/client/public', 'build/public'),
-    ncp('package.json', 'build/package.json'),
+    ncp('src/client/public', 'build/public')
   ]);
 
-  replace({
-    regex: '"start".*',
-    replacement: '"start": "node server.js"',
-    paths: ['build/package.json'],
-    recursive: false,
-    silent: false
-  });
-
-  if (global.WATCH) {
-    const watcher = await watch('src/content/**/*.*');
-    watcher.on('changed', async (file) => {
-      const relPath = file.substr(path.join(__dirname, '../src/content/').length);
-      await ncp(`src/content/${relPath}`, `build/content/${relPath}`);
-    });
-  }
+  await fs.writeFile('./build/package.json', JSON.stringify({
+    private: true,
+    engines: pkg.engines,
+    dependencies: pkg.dependencies,
+    scripts: {
+      start: 'node server.js'
+    }
+  }, null, 2));
 }
 
 export default copy;

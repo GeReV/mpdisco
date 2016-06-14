@@ -1,10 +1,10 @@
 
-import 'babel-core/polyfill';
+import 'babel-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import FastClick from 'fastclick';
 
-import BasicMode from './components/basic_mode.jsx';
+// import BasicMode from './components/basic_mode.jsx';
 import MasterMode from './components/master_mode.jsx';
 
 import reactor from './reactor.js';

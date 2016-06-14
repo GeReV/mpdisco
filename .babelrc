@@ -1,4 +1,4 @@
 {
   "presets": ["react", "node5", "stage-0"],
-  "plugins": ["syntax-async-functions"]
+  "plugins": ["syntax-async-functions", "transform-decorators-legacy"]
 }

@@ -8,19 +8,19 @@ export default class ObjectListParser extends AbstractParser {
   }
 
   parse(s) {
-    var obj = {},
-        json = [];
+    let obj = {};
+    const json = [];
 
     if (!s) {
       return json;
     }
 
-    s.split('\n').forEach(function(l, index) {
+    s.split('\n').forEach((l, index) => {
       if (!l) {
         return;
       }
 
-      var o = this.parseLine(l);
+      const o = this.parseLine(l);
 
       // If we ran into an existing key, it means it's a new record.
       if (o.key === this.separatorKey && index > 0) {
