@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import cx from 'classnames';
-import { nuclearComponent } from 'nuclear-js-react-addons';
 
 import isTextInputElement from 'react/lib/isTextInputElement';
 
 import actions from '../actions';
-import getters from '../getters';
 
 import withEnabled from '../decorators/withEnabled';
 import withStyles from '../decorators/withStyles';
@@ -23,24 +21,15 @@ function formatTime(seconds) {
   return zeroPad(Math.floor(seconds / 60)) + ':' + zeroPad(seconds % 60);
 }
 
-@nuclearComponent(() => {
-  return {
-    status: getters.currentStatus
-  };
-})
 @withStyles(styles)
 @withEnabled
 export default class Player extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      time: 0,
-      animations: false,
-      indicatorAppear: false,
-      indicatorState: null
-    };
-  }
+  state = {
+    time: 0,
+    animations: false,
+    indicatorAppear: false,
+    indicatorState: null
+  };
 
   componentDidUpdate(prevProps) {
     const status = this.props.status;

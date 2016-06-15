@@ -1,12 +1,14 @@
 import React, {Component} from 'react';
 import {
-  provideReactor,
-  nuclearComponent
+  Provider,
+  connect
 } from 'nuclear-js-react-addons';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
 
 import getters from '../getters';
+
+import reactor from '../reactor';
 
 import Logo from './logo.jsx';
 import Player from './player.jsx';
@@ -19,8 +21,7 @@ import withStyles from '../decorators/withStyles';
 
 import styles from '../../sass/mpdisco.scss';
 
-@provideReactor
-@nuclearComponent(() => {
+@connect(() => {
   return {
     me: getters.me,
     master: getters.currentMaster,
@@ -36,7 +37,7 @@ import styles from '../../sass/mpdisco.scss';
 @withStyles(styles)
 @DragDropContext(HTML5Backend)
 class MasterMode extends Component {
-  render () {
+  render() {
     const {
       me,
       song,
@@ -51,30 +52,33 @@ class MasterMode extends Component {
     const enabled = !!(master && master === me.get('userid'));
 
     return (
-      <div id="container" role="main">
-        <header id="player-head">
-          <Logo cover={cover}
-                blurRadius={10}
-                />
-          <Player song={song}
-                  enabled={enabled}
+      <Provider reactor={reactor}>
+        <div id="container" role="main">
+          <header id="player-head">
+            <Logo cover={cover}
+                  blurRadius={10}
                   />
-        </header>
-        <main>
-          <Library library={library}
-                   enabled={enabled}
-                   />
-          <Playlist playlist={playlist}
+            <Player status={status}
                     song={song}
-                    status={status}
                     enabled={enabled}
                     />
-          <Listeners listeners={listeners}
-                     master={master}
-                     me={me}
+          </header>
+          <main>
+            <Library library={library}
+                     enabled={enabled}
                      />
-        </main>
-      </div>
+            <Playlist playlist={playlist}
+                      song={song}
+                      status={status}
+                      enabled={enabled}
+                      />
+            <Listeners listeners={listeners}
+                       master={master}
+                       me={me}
+                       />
+          </main>
+        </div>
+      </Provider>
     );
   }
 }

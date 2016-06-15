@@ -1,5 +1,4 @@
 import io from 'socket.io-client';
-import _ from 'lodash';
 
 class Network {
   constructor(host = window.location.hostname, port = 3000) {
@@ -12,32 +11,21 @@ class Network {
     this.socket.emit(name, data);
   }
 
-  command(command) {
-    let args = [];
-
-    if (arguments.length === 2 && _.isArray(arguments[1])) {
-      args = arguments[1];
-    } else if (arguments.length > 1) {
-      args = _.rest(arguments);
-    }
-
-    args = args.map(String);
-
+  command(command, ...args) {
     this.send('command', {
       command: command,
-      args: args
+      args: args.map(String)
     });
   }
 
   commands(commands) {
-    commands = commands.map(function (command) {
-
+    const cmds = commands.map(command => {
       command.args = command.args.map(String);
 
       return command;
     });
 
-    this.send('commands', commands);
+    this.send('commands', cmds);
   }
 
   once(name, callback) {

@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import cx from 'classnames';
-import { nuclearComponent } from 'nuclear-js-react-addons';
 import { DropTarget } from 'react-dnd';
 
 import actions from '../actions';
-import getters from '../getters';
 import { ItemTypes } from '../constants';
 
 import PlaylistControls from './playlist_controls.jsx';
@@ -21,7 +19,7 @@ const playlistTarget = {
     if (monitor.didDrop()) {
       // If you want, you can check whether some nested
       // target already handled drop
-      return;
+      return null;
     }
 
     actions.playlistAddItem(monitor.getItemType(), monitor.getItem());
@@ -35,11 +33,6 @@ const playlistTarget = {
   }
 };
 
-@nuclearComponent(() => {
-  return {
-    items: getters.playlist
-  };
-})
 @withStyles(styles)
 @withEnabled
 @DropTarget([ItemTypes.ARTIST, ItemTypes.ALBUM, ItemTypes.SONG], playlistTarget, (connect, monitor) => ({
@@ -53,93 +46,93 @@ const playlistTarget = {
   itemType: monitor.getItemType()
 }))
 export default class Playlist extends Component {
-    state = {
-      animations: false,
-      selectedItems: []
-    };
+  state = {
+    animations: false,
+    selectedItems: []
+  };
 
-    componentDidMount() {
-      actions.fetchPlaylist();
+  componentDidMount() {
+    actions.fetchPlaylist();
 
-      // Turn library update animations on.
-      this.setState({
-        animations: true
-      });
-    }
+    // Turn library update animations on.
+    this.setState({
+      animations: true
+    });
+  }
 
-    render() {
-      const {
-        items,
-        isOver,
-        canDrop,
-        connectDropTarget,
-        enabled,
-        status
-      } = this.props;
+  render() {
+    const {
+      playlist,
+      isOver,
+      canDrop,
+      connectDropTarget,
+      enabled,
+      status
+    } = this.props;
 
-      const playlistClasses = cx({
-        'playlist-drop': isOver,
-        'playlist-disabled': !enabled
-      });
+    const playlistClasses = cx({
+      'playlist-drop': isOver,
+      'playlist-disabled': !enabled
+    });
 
-      return connectDropTarget(
-        <section id="playlist" className={playlistClasses}>
-          <header>
-            <span>Playlist</span>
-            <PlaylistControls status={status}
-                              enabled={enabled}
-            />
-          </header>
-          <ListView
-              className="content list"
-              enabled={enabled}
-              items={items}
-              itemCreator={this.itemCreator}
-              enabled={enabled}
-              onItemActivated={this.itemPlayed}
-              onItemRemoved={this.itemRemoved}
-              onItemsSelected={this.itemsSelected}
-              onItemsReordered={this.itemsReordered} />
-          <div className="lock">
-            <i className="icon-lock" />
-            <span>You are not the current DJ</span>
-          </div>
-        </section>
-      );
-    }
+    return connectDropTarget(
+      <section id="playlist" className={playlistClasses}>
+        <header>
+          <span>Playlist</span>
+          <PlaylistControls status={status}
+                            enabled={enabled}
+          />
+        </header>
+        <ListView
+            className="content list"
+            enabled={enabled}
+            items={playlist}
+            itemCreator={this.itemCreator}
+            enabled={enabled}
+            onItemActivated={this.itemPlayed}
+            onItemRemoved={this.itemRemoved}
+            onItemsSelected={this.itemsSelected}
+            onItemsReordered={this.itemsReordered} />
+        <div className="lock">
+          <i className="icon-lock" />
+          <span>You are not the current DJ</span>
+        </div>
+      </section>
+    );
+  }
 
-    itemCreator = item => {
-      const song = this.props.song;
-      const isPlaying = (song && song.get('id') === item.get('id'));
+  itemCreator = item => {
+    const song = this.props.song;
+    const isPlaying = (song && song.get('id') === item.get('id'));
 
-      return (
-        <PlaylistItem
-          key={item.get('id')}
-          item={item}
-          enabled={this.props.enabled}
-          playing={isPlaying}
-        />
-      );
-    };
+    return (
+      <PlaylistItem
+        key={item.get('id')}
+        item={item}
+        enabled={this.props.enabled}
+        playing={isPlaying}
+      />
+    );
+  };
 
-    itemPlayed(item) {
-      actions.play(item.get('id'));
-    }
+  itemPlayed(item) {
+    actions.play(item.get('id'));
+  }
 
-    itemRemoved(items) {
-      actions.playlistRemoveItems(items || this.state.selectedItems);
-    }
+  itemRemoved = items => {
+    actions.playlistRemoveItems(items || this.state.selectedItems);
+  };
 
-    itemsSelected = items => {
-      this.setState({
-        selectedItems: items
-      });
-    };
+  itemsSelected = items => {
+    this.setState({
+      selectedItems: items
+    });
+  };
 
-    itemsReordered = items => {
-      this.setState({
-        items: items
-      });
-      actions.playlistReorderItems(items);
-    };
+  itemsReordered = items => {
+    this.setState({
+      items: items
+    });
+    actions.playlistReorderItems(items);
+  };
 }
