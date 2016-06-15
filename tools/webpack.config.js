@@ -14,7 +14,6 @@ import AssetsPlugin from 'assets-webpack-plugin';
 
 const DEBUG = !process.argv.includes('--release');
 const VERBOSE = process.argv.includes('--verbose');
-const WATCH = global.WATCH === undefined ? false : global.WATCH;
 const AUTOPREFIXER_BROWSERS = [
   'Android 2.3',
   'Android >= 4',
@@ -201,11 +200,8 @@ const config = {
 // Configuration for the client-side bundle (app.js)
 // -----------------------------------------------------------------------------
 
-const appConfig = extend(true, {}, config, {
-  entry: [
-    ...(WATCH ? ['webpack-hot-middleware/client'] : []),
-    './client/js/mpdisco.js'
-  ],
+const clientConfig = extend(true, {}, config, {
+  entry: './client/js/mpdisco.js',
 
   output: {
     filename: DEBUG ? '[name].js?[chunkhash]' : '[name].[chunkhash].js',
@@ -213,10 +209,6 @@ const appConfig = extend(true, {}, config, {
   },
 
   target: 'web',
-
-  // Choose a developer tool to enhance debugging
-  // http://webpack.github.io/docs/configuration.html#devtool
-  devtool: DEBUG ? 'cheap-module-source-map' : false,
 
   plugins: [
     // Define free variables
@@ -258,7 +250,11 @@ const appConfig = extend(true, {}, config, {
       // https://webpack.github.io/docs/list-of-plugins.html#aggressivemergingplugin
       new webpack.optimize.AggressiveMergingPlugin()
     ]
-  ]
+  ],
+
+  // Choose a developer tool to enhance debugging
+  // http://webpack.github.io/docs/configuration.html#devtool
+  devtool: DEBUG ? 'cheap-module-eval-source-map' : false
 });
 
 //
@@ -315,4 +311,4 @@ const serverConfig = extend(true, {}, config, {
   devtool: 'source-map'
 });
 
-export default [appConfig, serverConfig];
+export default [clientConfig, serverConfig];

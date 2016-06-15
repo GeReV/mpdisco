@@ -19,7 +19,7 @@ class MPDisco {
     });
 
     this.mpd.on('ready', function () {
-      console.log('MPDisco Server :: MPD :: connection established');
+      // console.log('MPDisco Server :: MPD :: connection established');
     });
 
     this.mode = mode.create(this.mpd);

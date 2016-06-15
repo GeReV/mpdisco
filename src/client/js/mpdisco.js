@@ -14,7 +14,6 @@ import receiver from './receiver.js';
 
 const MPDisco = MasterMode;
 
-
 let cssContainer = document.getElementById('css');
 
 const appContainer = document.getElementById('mpdisco');

@@ -5,8 +5,8 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import express from 'express';
-import compression from 'compression';
 import cookieParser from 'cookie-parser';
+import bodyParser from 'body-parser';
 import session from 'express-session';
 import io from 'socket.io/lib/index.js';
 import React from 'react';
@@ -15,6 +15,8 @@ import _ from 'lodash';
 
 import Router from './routes';
 import Html from './components/html';
+
+import assets from './assets'; // eslint-disable-line import/no-unresolved
 
 const debug = require('debug')('mpdisco:server');
 
@@ -53,36 +55,36 @@ export default class Server {
     this._initSocketIO(this.socket, sessionStore, this.clientsManager);
   }
 
-  _initApp(app, options, session) {
-
+  _initApp(app, options, sessionStore) {
     const config = options.config;
 
-    app.use(compression());
-    app.use(cookieParser());
-
-    app.use(session);
-
     app.use(express.static(path.join(__dirname, 'public')));
+    app.use(cookieParser());
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
+    app.use(sessionStore);
 
-    app.get('/', async (req, res) => {
+    app.get('/', async (req, res, next) => {
       try {
         let statusCode = 200;
-        const data = {title: '', description: '', css: '', body: ''};
+        const data = { title: '', description: '', css: '', body: '', entry: assets.main.js };
         const css = [];
         const context = {
           onInsertCss: value => css.push(value),
-          onSetTitle: value => data.title = value,
-          onSetMeta: (key, value) => data[key] = value,
-          onPageNotFound: () => statusCode = 404
+          onSetTitle: value => (data.title = value),
+          onSetMeta: (key, value) => (data[key] = value),
+          onPageNotFound: () => (statusCode = 404)
         };
 
-        await Router.dispatch({path: req.path, context}, (state, component) => {
+        await Router.dispatch({ path: req.path, context }, (state, component) => {
           data.body = ReactDOM.renderToString(component);
           data.css = css.join('');
         });
 
         const html = ReactDOM.renderToStaticMarkup(<Html {...data} />);
-        res.status(statusCode).send('<!doctype html>\n' + html);
+
+        res.status(statusCode);
+        res.send('<!doctype html>\n' + html);
       } catch (err) {
         next(err);
       }
@@ -92,11 +94,16 @@ export default class Server {
       const mm = require('./meta_data.js');
       const artist = mm.safeName(req.params.artist);
       const album = mm.safeName(req.params.album);
-      const file = path.join(config.music_directory.replace(/^~/, process.env.HOME), artist, album, 'front.jpg');
+      const file = path.join(
+        config.music_directory.replace(/^~/, process.env.HOME),
+        artist,
+        album,
+        'front.jpg'
+      );
 
       fs.stat(file, (err, stats) => {
         if (stats && stats.isFile()) {
-          res.sendFile(file, {maxAge: 7 * 24 * 60 * 60 * 1000});
+          res.sendFile(file, { maxAge: 7 * 24 * 60 * 60 * 1000 });
         } else {
           res.status(404)
             .end();
@@ -115,7 +122,7 @@ export default class Server {
       if (process.send) {
         process.send('online');
       } else {
-        console.log('MPDisco Server :: Listening on port ' + port);
+        console.log(`The server is running at http://localhost:${port}/`);
       }
     });
   }

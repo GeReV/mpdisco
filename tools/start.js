@@ -23,11 +23,9 @@ const DEBUG = !process.argv.includes('--release');
  * Launches a development web server with "live reload" functionality -
  * synchronizing URLs, interactions and code changes across multiple devices.
  */
-let undef;
-
 async function start() {
   await run(clean);
-  await run(copy.bind(undef, { watch: true }));
+  await run(copy.bind(undefined, { watch: true }));
   await new Promise(resolve => {
     // Patch the client-side bundle configurations
     // to enable Hot Module Replacement (HMR) and React Transform
