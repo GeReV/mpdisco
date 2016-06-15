@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import cx from 'classnames';
 import update from 'react-addons-update';
+import _ from 'lodash';
 import { DropTarget } from 'react-dnd';
 import { NativeTypes } from 'react-dnd-html5-backend';
 
-import actions from '../actions';
+import { fetchLibraryArtists } from '../actions';
 
 import withEnabled from '../decorators/withEnabled';
 import withStyles from '../decorators/withStyles';
@@ -66,7 +67,7 @@ export default class Library extends Component {
 
   componentDidMount() {
     // this.props.model.on('updating', this.setUpdatingState);
-    actions.fetchLibraryArtists();
+    fetchLibraryArtists();
   }
 
   componentDidUpdate() {

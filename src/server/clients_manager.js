@@ -1,23 +1,12 @@
-var EventEmitter = require('events').EventEmitter,
-    debug = require('debug')('mpdisco:clients_manager'),
-    uuid = require('node-uuid'),
-    util = require('util'),
-    _ = require('lodash');
+import { EventEmitter } from 'events';
+import uuid from 'node-uuid';
+import _ from 'lodash';
 
-var Gravatar = require('./gravatar.js');
+const debug = require('debug')('mpdisco:clients_manager');
 
-var EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+import Gravatar from './gravatar.js';
 
-_.findIndex = function(obj, iterator, context) {
-  var result = -1;
-  _.any(obj, function(value, index, list) {
-      if(iterator.call(context, value, index, list)) {
-          result = index;
-          return true;
-      }
-  });
-  return result;
-};
+const EMAIL_REGEX = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
 class ClientsManager extends EventEmitter {
   constructor() {
@@ -119,7 +108,9 @@ class ClientsManager extends EventEmitter {
     }
   }
 
-  identifyClient(client, profile) { // TODO: Changing logic so that the client queue contains only identified clients might have broken something. Requires testing.
+// TODO: Changing logic so that the client queue contains only
+// identified clients might have broken something. Requires testing.
+  identifyClient(client, profile) {
     let index;
 
     if (profile.entry && profile.entry.length) {
@@ -159,6 +150,8 @@ class ClientsManager extends EventEmitter {
     if (this.loggedClients.length) {
       return this.loggedClients[0];
     }
+
+    return null;
   }
 
   rotate() {
@@ -175,7 +168,7 @@ class ClientsManager extends EventEmitter {
 }
 
 const ClientsManagerSingleton = () => {
-  if ( ClientsManagerSingleton.prototype._singletonInstance ) {
+  if (ClientsManagerSingleton.prototype._singletonInstance ) {
     return ClientsManagerSingleton.prototype._singletonInstance;
   }
 

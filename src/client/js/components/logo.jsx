@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import stackblur from '../vendor/StackBlur';
@@ -9,14 +9,10 @@ import styles from '../../sass/logo.scss';
 
 @withStyles(styles)
 export default class Logo extends Component {
-  constructor() {
-    super();
-
-    this.state = {
-      cover: null,
-      coverKey: null
-    };
-  }
+  state = {
+    cover: null,
+    coverKey: null
+  };
 
   componentWillUpdate(nextProps) {
     if (nextProps.cover !== this.props.cover) {
@@ -27,7 +23,7 @@ export default class Logo extends Component {
       }
 
       const blurCanvas = () => {
-        stackblur(this.state.cover, this.refs.cover, + this.props.blurRadius);
+        stackblur(this.state.cover, this.refs.cover, this.props.blurRadius);
       };
 
       const image = new Image();
@@ -45,10 +41,9 @@ export default class Logo extends Component {
   }
 
   render() {
-
     let image;
     if (this.props.cover) {
-      image = (<canvas ref="cover" key={this.state.coverKey}/>);
+      image = <canvas ref="cover" key={this.state.coverKey} />;
     }
 
     return (

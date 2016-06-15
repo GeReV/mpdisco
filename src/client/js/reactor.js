@@ -5,7 +5,7 @@ import LibraryStore from './stores/library_store.js';
 import PlaylistStore from './stores/playlist_store.js';
 import ListenersStore from './stores/listeners_store.js';
 
-const reactor = new Reactor({ debug: __DEV__ });
+const reactor = new Reactor({ debug: true });
 
 reactor.registerStores({
   library: LibraryStore,

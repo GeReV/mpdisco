@@ -1,6 +1,6 @@
 import { Store, toImmutable } from 'nuclear-js';
 
-import { RECEIVE_PLAYLIST } from '../action_types';
+import actions from '../action_types';
 
 export default Store({
   getInitialState() {
@@ -10,7 +10,7 @@ export default Store({
   },
 
   initialize() {
-    this.on(RECEIVE_PLAYLIST, updatePlaylist);
+    this.on(actions.RECEIVE_PLAYLIST, updatePlaylist);
   }
 });
 

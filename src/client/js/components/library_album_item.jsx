@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { DragSource } from 'react-dnd';
 import cx from 'classnames';
 
-import actions from '../actions';
+import { fetchLibrarySongs } from '../actions';
 import { ItemTypes } from '../constants';
 
 import withEnabled from '../decorators/withEnabled';
@@ -50,11 +50,11 @@ export default class LibraryAlbumItem extends Component {
     } = this.props;
 
     const classes = cx('library-item', 'album', {
-      'open': !this.state.collapsed
+      open: !this.state.collapsed
     });
 
     const treeClasses = cx('tree', 'songs', {
-      'collapsed': this.state.collapsed
+      collapsed: this.state.collapsed
     });
 
     const songs = album.get('songs')
@@ -83,7 +83,7 @@ export default class LibraryAlbumItem extends Component {
     if (!this.state.loaded) {
       const album = this.props.album;
 
-      actions.fetchLibrarySongs(album.getIn(['artist', 'name']), album.get('name'));
+      fetchLibrarySongs(album.getIn(['artist', 'name']), album.get('name'));
 
       this.setState({
         loaded: true,

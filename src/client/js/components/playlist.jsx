@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import cx from 'classnames';
 import { DropTarget } from 'react-dnd';
 
-import actions from '../actions';
+import {
+  play,
+  fetchPlaylist,
+  playlistAddItem,
+  playlistRemoveItems,
+  playlistReorderItems
+} from '../actions';
+
 import { ItemTypes } from '../constants';
 
 import PlaylistControls from './playlist_controls.jsx';
@@ -22,7 +29,7 @@ const playlistTarget = {
       return null;
     }
 
-    actions.playlistAddItem(monitor.getItemType(), monitor.getItem());
+    playlistAddItem(monitor.getItemType(), monitor.getItem());
 
     // You can also do nothing and return a drop result,
     // which will be available as monitor.getDropResult()
@@ -52,7 +59,7 @@ export default class Playlist extends Component {
   };
 
   componentDidMount() {
-    actions.fetchPlaylist();
+    fetchPlaylist();
 
     // Turn library update animations on.
     this.setState({
@@ -116,11 +123,11 @@ export default class Playlist extends Component {
   };
 
   itemPlayed(item) {
-    actions.play(item.get('id'));
+    play(item.get('id'));
   }
 
   itemRemoved = items => {
-    actions.playlistRemoveItems(items || this.state.selectedItems);
+    playlistRemoveItems(items || this.state.selectedItems);
   };
 
   itemsSelected = items => {
@@ -133,6 +140,6 @@ export default class Playlist extends Component {
     this.setState({
       items: items
     });
-    actions.playlistReorderItems(items);
+    playlistReorderItems(items);
   };
 }

@@ -1,9 +1,5 @@
 import { Store, toImmutable, Immutable } from 'nuclear-js';
-import {
-    RECEIVE_LIBRARY_ARTISTS,
-    RECEIVE_LIBRARY_ALBUMS,
-    RECEIVE_LIBRARY_SONGS,
-  } from '../action_types.js';
+import actions from '../action_types.js';
 
 export default Store({
   getInitialState() {
@@ -13,9 +9,9 @@ export default Store({
   },
 
   initialize() {
-    this.on(RECEIVE_LIBRARY_ARTISTS, mergeArtists)
-    this.on(RECEIVE_LIBRARY_ALBUMS, mergeAlbums)
-    this.on(RECEIVE_LIBRARY_SONGS, mergeSongs)
+    this.on(actions.RECEIVE_LIBRARY_ARTISTS, mergeArtists);
+    this.on(actions.RECEIVE_LIBRARY_ALBUMS, mergeAlbums);
+    this.on(actions.RECEIVE_LIBRARY_SONGS, mergeSongs);
   }
 });
 

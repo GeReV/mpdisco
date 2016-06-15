@@ -4,7 +4,13 @@ import cx from 'classnames';
 
 import isTextInputElement from 'react/lib/isTextInputElement';
 
-import actions from '../actions';
+import {
+  play,
+  stop,
+  pause,
+  next,
+  previous
+} from '../actions';
 
 import withEnabled from '../decorators/withEnabled';
 import withStyles from '../decorators/withStyles';
@@ -117,9 +123,9 @@ export default class Player extends Component {
           <PlayerControls
               state={status.get('state')}
               onPlay={this.togglePlay}
-              onStop={this.stop}
-              onNext={this.next}
-              onPrevious={this.previous}
+              onStop={stop}
+              onNext={next}
+              onPrevious={previous}
           />
         </div>
         <Scrubber progress={this.state.time} total={song.get('time')} onScrub={this.scrub} />
@@ -148,12 +154,12 @@ export default class Player extends Component {
 
   handleKeyboard = e => {
     if (!this.props.enabled) {
-      return;
+      return null;
     }
 
     // Disable hotkeys for text boxes.
     if (isTextInputElement(e.target)) {
-      return;
+      return null;
     }
 
     let key = e.key;
@@ -165,7 +171,7 @@ export default class Player extends Component {
     if (key === 90) { // KeyZ
       this.updateIndicator('previous');
 
-      return this.previous();
+      return previous();
     }
 
     if (key === 67 || key === ' ') { // KeyC, Space
@@ -186,19 +192,19 @@ export default class Player extends Component {
     if (key === 86) { // KeyV
       this.updateIndicator('stop');
 
-      return this.stop();
+      return stop();
     }
 
     if (key === 88) { // KeyX
       this.updateIndicator('play');
 
-      return this.play();
+      return play();
     }
 
     if (key === 66) { // KeyB
       this.updateIndicator('next');
 
-      return this.next();
+      return next();
     }
   };
 
@@ -206,30 +212,14 @@ export default class Player extends Component {
     const state = this.props.status.get('state');
 
     if (state === 'play') {
-      this.pause();
+      pause();
     } else if (state === 'pause' || state === 'stop') {
-      this.play();
+      play();
     }
   };
 
-  play() {
-    actions.play();
-  }
-
-  stop() {
-    actions.stop();
-  }
-
   pause() {
-    actions.pause(true);
-  }
-
-  next() {
-    actions.next();
-  }
-
-  previous() {
-    actions.previous();
+    pause(true);
   }
 
   updateIndicator = state => {

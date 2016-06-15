@@ -4,7 +4,7 @@ class Network {
   constructor(host = window.location.hostname, port = 3000) {
     this.url = `ws://${host}:${port}/`;
 
-    this.socket = io.connect(this.url);
+    this.socket = io(this.url);
   }
 
   send(name, data) {

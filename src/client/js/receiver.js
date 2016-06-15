@@ -8,60 +8,54 @@ import {
   fetchPlaylist
 } from './actions.js';
 
-import {
-    RECEIVE_COVER_ART,
-    RECEIVE_CURRENT_SONG,
-    RECEIVE_LIBRARY_ALBUMS,
-    RECEIVE_LIBRARY_ARTISTS,
-    RECEIVE_LIBRARY_SONGS,
-    RECEIVE_LISTENERS,
-    RECEIVE_PLAYLIST,
-    RECEIVE_STATUS,
-    RECEIVE_MASTER,
-    RECEIVE_ME
-  } from './action_types.js';
+import actionTypes from './action_types.js';
 
 class Receiver {
-  constructor(network) {
-    this.network = network;
+  constructor(net) {
+    this.network = net;
+
+    const update = () => {
+      fetchStatus();
+      fetchCurrentSong();
+    };
 
     this.on('connected', data => {
       if (data.info) {
-        reactor.dispatch(RECEIVE_ME, { me: data.info });
+        reactor.dispatch(actionTypes.RECEIVE_ME, { me: data.info });
       }
 
       if (data.mode === 'master' && data.master) {
-        reactor.dispatch(RECEIVE_MASTER, { master: data.master });
+        reactor.dispatch(actionTypes.RECEIVE_MASTER, { master: data.master });
       }
 
       update();
     });
 
     this.on('playlistinfo', playlist => {
-      reactor.dispatch(RECEIVE_PLAYLIST, { playlist });
+      reactor.dispatch(actionTypes.RECEIVE_PLAYLIST, { playlist });
     });
 
     this.on('clientslist', (listeners, me) => {
-      reactor.dispatch(RECEIVE_LISTENERS, { listeners, me });
+      reactor.dispatch(actionTypes.RECEIVE_LISTENERS, { listeners, me });
     });
 
     this.on('status', status => {
-      reactor.dispatch(RECEIVE_STATUS, { status });
+      reactor.dispatch(actionTypes.RECEIVE_STATUS, { status });
     });
 
     this.on('currentsong', song => {
-      reactor.dispatch(RECEIVE_CURRENT_SONG, { song });
+      reactor.dispatch(actionTypes.RECEIVE_CURRENT_SONG, { song });
     });
 
     this.on('coverart', response => {
-      reactor.dispatch(RECEIVE_COVER_ART, { url: response.url });
+      reactor.dispatch(actionTypes.RECEIVE_COVER_ART, { url: response.url });
     });
 
     this.on('clientdisconnected', fetchListeners);
 
     this.on('update:database', fetchLibraryArtists);
     this.on('list:artist', res => {
-      reactor.dispatch(RECEIVE_LIBRARY_ARTISTS, {
+      reactor.dispatch(actionTypes.RECEIVE_LIBRARY_ARTISTS, {
         artists: (res.data || []).map(_ => {
           return {
             name: _.artist,
@@ -71,7 +65,7 @@ class Receiver {
       });
     });
     this.on('list:album', res => {
-      reactor.dispatch(RECEIVE_LIBRARY_ALBUMS, {
+      reactor.dispatch(actionTypes.RECEIVE_LIBRARY_ALBUMS, {
         artist: res.args[0],
         albums: res.data.map(_ => {
           return {
@@ -85,7 +79,7 @@ class Receiver {
     this.on('find', res => {
       const [artist, album] = res.args;
 
-      reactor.dispatch(RECEIVE_LIBRARY_SONGS, {
+      reactor.dispatch(actionTypes.RECEIVE_LIBRARY_SONGS, {
         artist,
         album,
         songs: res.data.map(item => {
@@ -106,11 +100,6 @@ class Receiver {
       });
     });
 
-    const update = () => {
-      fetchStatus();
-      fetchCurrentSong();
-    };
-
     this.on('update:player', update);
     this.on('playid', update);
     this.on('repeat', update);
@@ -119,7 +108,7 @@ class Receiver {
     this.on('update:playlist', fetchPlaylist);
 
     this.on('master', master => {
-      reactor.dispatch(RECEIVE_MASTER, { master });
+      reactor.dispatch(actionTypes.RECEIVE_MASTER, { master });
     });
   }
 

@@ -133,7 +133,7 @@ export default class Server {
     // maintain the list of players.
     socket.on('connection', client => {
       // Embed the session in the client's handshake.
-      session(client.handshake, {}, () => {
+      iosession(client.handshake, {}, () => {
         clientsManager.connected(client);
 
         client.on('command', cmd => {

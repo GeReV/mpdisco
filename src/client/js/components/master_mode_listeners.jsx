@@ -1,6 +1,9 @@
 import React from 'react';
 
-import actions from '../actions';
+import {
+  fetchListeners,
+  listenerIdentify
+} from '../actions';
 
 import withStyles from '../decorators/withStyles';
 
@@ -20,7 +23,7 @@ export default class MasterModeListeners extends Listeners {
     };
   }
   componentDidMount() {
-    actions.fetchListeners();
+    fetchListeners();
   }
 
   render() {
@@ -59,6 +62,6 @@ export default class MasterModeListeners extends Listeners {
   }
 
   handleIdentify(name) {
-    actions.listenerIdentify(name);
+    listenerIdentify(name);
   }
 }

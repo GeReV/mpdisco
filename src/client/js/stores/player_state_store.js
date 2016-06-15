@@ -1,12 +1,7 @@
 
 import { Store, toImmutable } from 'nuclear-js';
 
-import {
-  RECEIVE_COVER_ART,
-  RECEIVE_CURRENT_SONG,
-  RECEIVE_STATUS,
-  RECEIVE_MASTER
-} from '../action_types';
+import actions from '../action_types';
 
 export default Store({
   getInitialState() {
@@ -25,10 +20,10 @@ export default Store({
   },
 
   initialize() {
-    this.on(RECEIVE_CURRENT_SONG, updateCurrentSong);
-    this.on(RECEIVE_COVER_ART, updateCoverArt);
-    this.on(RECEIVE_STATUS, updateStatus);
-    this.on(RECEIVE_MASTER, updateMaster);
+    this.on(actions.RECEIVE_CURRENT_SONG, updateCurrentSong);
+    this.on(actions.RECEIVE_COVER_ART, updateCoverArt);
+    this.on(actions.RECEIVE_STATUS, updateStatus);
+    this.on(actions.RECEIVE_MASTER, updateMaster);
   }
 });
 

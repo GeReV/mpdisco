@@ -2,10 +2,10 @@ import config from '../../config.json';
 import mm from './meta_data.js';
 import http from 'http';
 import httpFollower from './helpers/http_follower.js';
-import path from 'path';
+import { join } from 'path';
 import fs from 'fs';
 import Q from 'q';
-import _ from 'underscore';
+import _ from 'lodash';
 
 const debug = require('debug')('mpdisco:coverart');
 
@@ -14,7 +14,6 @@ class CoverArt {
     const output = this.outputPath(options);
 
     return Q.promise((resolve, reject) => {
-
       const urlName = function (s) {
         return mm.safeName(s).replace(/_/g, '-').toLowerCase();
       };
@@ -36,10 +35,11 @@ class CoverArt {
 
   findRelease(options) {
     return Q.promise((resolve, reject) => {
-
-      const host = 'musicbrainz.org',
-            path = '/ws/2/release/?fmt=json&query=',
-            query = Object.keys(options).map(key => `${key}:"${options[key]}"`).join(' AND ');
+      const host = 'musicbrainz.org';
+      const path = '/ws/2/release/?fmt=json&query=';
+      const query = Object.keys(options)
+        .map(key => `${key}:"${options[key]}"`)
+        .join(' AND ');
 
       if (!query) {
         reject('Could not form query.');
@@ -60,18 +60,17 @@ class CoverArt {
       http.get(opts, res => {
         let body = '';
 
-        if (res.statusCode != 200) {
+        if (res.statusCode !== 200) {
           reject('Server responded with status: ' + res.statusCode);
 
           return;
         }
 
-        res.on('data', function(chunk) {
-          body += chunk;
+        res.on('data', chunk => {
+          body = body + chunk;
         });
 
         res.on('end', () => {
-
           const json = JSON.parse(body);
 
           debug(json);
@@ -84,7 +83,8 @@ class CoverArt {
             reject('No releases found.');
           }
 
-          const urls = results.map(result => `http://coverartarchive.org/release/${result.id}/front-250`);
+          const urls = results.map(result =>
+            `http://coverartarchive.org/release/${result.id}/front-250`);
 
           resolve(urls);
         });
@@ -141,7 +141,7 @@ class CoverArt {
   }
 
   outputPath(options) {
-    return path.join(
+    return join(
       config.music_directory.replace(/^~/, process.env.HOME),
       mm.safeName(options.artist),
       mm.safeName(options.release),
@@ -150,22 +150,23 @@ class CoverArt {
   }
 
   extractBestGuessReleases(json) {
-
     let results = [];
 
     if (json.count <= 0) {
-      return;
+      return null;
     }
 
-    results.concat(_.where(json.releases, { country: 'US' }));
+    results.concat(_.find(json.releases, { country: 'US' }));
 
-    results.concat(_.where(json.releases, { country: 'XE' }));
+    results.concat(_.find(json.releases, { country: 'XE' }));
 
-    results.concat(_.where(json.releases, { country: 'GB' }));
+    results.concat(_.find(json.releases, { country: 'GB' }));
 
-    return results.concat(_.without(json.releases, results)); // Append the rest and return.
-
+    // Append the rest and return.
+    return results.concat(_.without(json.releases, results));
   }
 }
 
-export default new CoverArt();
+const instance = new CoverArt();
+
+export default instance;
