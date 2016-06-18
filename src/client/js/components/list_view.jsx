@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import update from 'react-addons-update';
 import { DropTarget } from 'react-dnd';
 import _ from 'lodash';
@@ -25,9 +25,14 @@ const itemTarget = {
 }))
 export default class ListView extends Component {
   static propTypes = {
-    itemCreator: React.PropTypes.func.isRequired,
-    onItemsReordered: React.PropTypes.func.isRequired,
-    onItemsSelected: React.PropTypes.func
+    enabled: PropTypes.bool,
+    className: PropTypes.string,
+    itemCreator: PropTypes.func.isRequired,
+    onItemsReordered: PropTypes.func.isRequired,
+    onItemsSelected: PropTypes.func,
+    onItemRemoved: PropTypes.func,
+    onItemActivated: PropTypes.func,
+    connectDropTarget: PropTypes.func.isRequired
   };
 
   state = {
@@ -66,7 +71,7 @@ export default class ListView extends Component {
         index: i,
         onItemClick: this.itemSelected,
         onItemDblClick: this.itemActivated,
-        onReorder: this.reorder,
+        onReorder: this.reorder
       });
     }, this);
 
@@ -240,7 +245,7 @@ export default class ListView extends Component {
 
     if (!selected.length) {
       this.itemSelectOne(item);
-      return;
+      return null;
     }
 
     const lastIndex = items.indexOf(_.last(selected));

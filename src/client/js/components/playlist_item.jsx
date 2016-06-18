@@ -84,15 +84,21 @@ const itemTarget = {
 }))
 export default class PlaylistItem extends Component {
   static propTypes = {
+    enabled: PropTypes.bool,
+    item: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+    selected: PropTypes.bool,
+    playing: PropTypes.bool,
+    focused: PropTypes.bool,
+    isDragging: PropTypes.bool.isRequired,
+    onItemClick: PropTypes.func,
+    onItemDblClick: PropTypes.func,
     onReorder: PropTypes.func.isRequired,
     connectDragSource: PropTypes.func.isRequired,
-    connectDropTarget: PropTypes.func.isRequired,
-    index: PropTypes.number.isRequired,
-    isDragging: PropTypes.bool.isRequired
+    connectDropTarget: PropTypes.func.isRequired
   };
 
   render() {
-
     const {
       item,
       enabled,
@@ -141,7 +147,7 @@ export default class PlaylistItem extends Component {
         </div>
       );
     } else {
-      details = <span className="url">{item.get('file')}</span>
+      details = <span className="url">{item.get('file')}</span>;
     }
 
     const time = formatTime(+item.get('time'));

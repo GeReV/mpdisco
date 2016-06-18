@@ -77,7 +77,7 @@ export function previous() {
   network.command('previous');
 }
 
-export function playlistRemoveItems(items) {
+export function playlistRemoveSelectedItems(items) {
   const commands = items.map(item => ({
     command: 'deleteid',
     args: [item.id]
