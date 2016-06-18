@@ -80,13 +80,14 @@ export default class LibraryAlbumItem extends Component {
   }
 
   toggleSongs = e => {
-    if (!this.state.loaded) {
-      const album = this.props.album;
+    const {
+      album
+    } = this.props;
 
+    if (!album.get('loaded')) {
       fetchLibrarySongs(album.getIn(['artist', 'name']), album.get('name'));
 
       this.setState({
-        loaded: true,
         collapsed: false
       });
     } else {

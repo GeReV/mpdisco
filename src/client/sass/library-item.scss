@@ -2,6 +2,12 @@
 
 .library-item {
   font-size: 15px;
+  overflow: hidden;
+  width: 280px;
+
+  .tree {
+    overflow: hidden;
+  }
 
   &.dragging {
 
@@ -18,6 +24,7 @@
     display: block;
     line-height: 32px;
     overflow: hidden;
+    padding: 0 15px;
     text-overflow: ellipsis;
     white-space: nowrap;
 
@@ -38,7 +45,7 @@
   }
 
   .albums .name {
-    padding-left: 20px;
+    padding-left: 30px;
   }
 
   .songs {
@@ -46,8 +53,12 @@
     font-size: 12px;
 
     .name {
-      padding-left: 40px;
+      padding-left: 45px;
       line-height: 20px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: $left-column-width;
 
       &::before {
         counter-increment: album;

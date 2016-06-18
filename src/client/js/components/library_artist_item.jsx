@@ -28,7 +28,6 @@ const artistSource = {
 }))
 export default class LibraryArtistItem extends Component {
   state = {
-    loaded: false,
     collapsed: true
   };
 
@@ -64,7 +63,7 @@ export default class LibraryArtistItem extends Component {
       <li className={classes}>
           <span className="name"
                 title={name}
-                onClick={this.toggleAlbums.bind(this)}>
+                onClick={this.toggleAlbums}>
             {name}
           </span>
           <ul className={treeClasses}>
@@ -75,11 +74,14 @@ export default class LibraryArtistItem extends Component {
   }
 
   toggleAlbums = e => {
-    if (!this.state.loaded) {
-      fetchLibraryAlbums(this.props.artist.get('name'));
+    const {
+      artist
+    } = this.props;
+
+    if (!artist.get('loaded')) {
+      fetchLibraryAlbums(artist.get('name'));
 
       this.setState({
-        loaded: true,
         collapsed: false
       });
     } else {

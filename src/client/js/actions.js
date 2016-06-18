@@ -14,11 +14,11 @@ export function fetchLibraryArtists() {
 }
 
 export function fetchLibraryAlbums(artist) {
-  network.command('list', ['album', artist]);
+  network.command('list', 'album', artist);
 }
 
 export function fetchLibrarySongs(artist, album) {
-  network.command('find', ['artist', artist, 'album', album]);
+  network.command('find', 'artist', artist, 'album', album);
 }
 
 export function fetchStatus() {

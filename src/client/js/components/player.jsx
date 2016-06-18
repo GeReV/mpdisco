@@ -76,7 +76,8 @@ export default class Player extends Component {
 
     const {
       song,
-      status
+      status,
+      enabled
     } = this.props;
 
     const time = formatTime(this.state.time || 0);
@@ -128,7 +129,11 @@ export default class Player extends Component {
               onPrevious={previous}
           />
         </div>
-        <Scrubber progress={this.state.time} total={song.get('time')} onScrub={this.scrub} />
+        <Scrubber song={song}
+                  total={+song.get('time')}
+                  progress={this.state.time}
+                  enabled={enabled}
+        />
         <div className={indicatorClasses} />
       </section>
     );
@@ -138,18 +143,6 @@ export default class Player extends Component {
     this.setState({
       time: this.state.time + 1
     });
-  };
-
-  scrub = percent => {
-    if (!this.props.enabled) {
-      return;
-    }
-
-    const song = this.props.song;
-
-    const seconds = Math.floor(+song.get('time') * percent);
-
-    this.props.controller.seek(song.get('id'), seconds);
   };
 
   handleKeyboard = e => {
@@ -206,6 +199,8 @@ export default class Player extends Component {
 
       return next();
     }
+
+    return null;
   };
 
   togglePlay = () => {

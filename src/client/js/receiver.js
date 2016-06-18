@@ -65,6 +65,7 @@ class Receiver {
       });
     });
     this.on('list:album', res => {
+      console.log(res);
       reactor.dispatch(actionTypes.RECEIVE_LIBRARY_ALBUMS, {
         artist: res.args[0],
         albums: res.data.map(_ => {

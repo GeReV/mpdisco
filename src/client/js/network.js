@@ -12,10 +12,12 @@ class Network {
   }
 
   command(command, ...args) {
-    this.send('command', {
+    const data = {
       command: command,
       args: args.map(String)
-    });
+    };
+
+    this.send('command', data);
   }
 
   commands(commands) {
@@ -33,7 +35,9 @@ class Network {
   }
 
   on(name, callback) {
-    this.socket.on(name, callback);
+    this.socket.on(name, (...args) => {
+      callback.call(this, ...args);
+    });
   }
 
   off(name, callback) {

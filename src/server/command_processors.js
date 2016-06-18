@@ -20,7 +20,7 @@ var processors = {
           return;
         }
 
-        var streamUrl = stdout.trim();
+        const streamUrl = stdout.trim();
 
         debug('Retrieved stream url for YouTube link %s: %s', url, streamUrl);
 
