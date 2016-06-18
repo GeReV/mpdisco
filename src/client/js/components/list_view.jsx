@@ -1,15 +1,25 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import update from 'react-addons-update';
 import { DropTarget } from 'react-dnd';
+import { HotKeys } from 'react-hotkeys';
 import _ from 'lodash';
-
-// import HotKey from 'react-hotkey';
 
 import { ItemTypes } from '../constants';
 
 import withEnabled from '../decorators/withEnabled';
 
-// HotKey.activate('keydown');
+function clamp(value, min, max) {
+  if (value < min) {
+    return min;
+  }
+
+  if (value > max) {
+    return max;
+  }
+
+  return value;
+}
 
 const itemTarget = {
   drop(props, monitor, component) {
@@ -75,10 +85,33 @@ export default class ListView extends Component {
       });
     }, this);
 
-    return connectDropTarget(
-      <ul className={className}>
+    const handlers = {
+      up: this.itemSelectPrev,
+      down: this.itemSelectNext,
+      delete: this.itemsRemoved,
+      activate: ev => {
+        const item = _.first(this.state.selectedItems);
+
+        if (item) {
+          this.itemActivated(ev, item);
+        }
+      },
+      selectAll: this.itemSelectAll,
+      selectNone: this.itemSelectNone,
+      selectLast: this.itemSelectLast,
+      selectFirst: this.itemSelectFirst,
+    };
+
+    const content = connectDropTarget(
+      <ul>
         {children}
       </ul>
+    );
+
+    return (
+      <HotKeys handlers={handlers} className={className}>
+        {content}
+      </HotKeys>
     );
   }
 
@@ -115,70 +148,23 @@ export default class ListView extends Component {
     this.setState(update(this.state, stateUpdate));
   };
 
-  handleKeyboard = e => {
-    if (!this.props.enabled) {
-      return;
-    }
+  scrollIntoView = index => {
+    const el = ReactDOM.findDOMNode(this);
+    const rect = el.getBoundingClientRect();
+    const itemRect = el.querySelectorAll('ul li')[index].getBoundingClientRect();
 
-    const funcs = {
-      'Delete': this.itemsRemoved,
-      'Enter': ev => {
-        const item = _.first(this.state.selectedItems);
+    const height = el.scrollHeight;
+    const itemTop = itemRect.top - rect.top;
 
-        if (item) {
-          this.itemActivated(ev, item);
-        }
-      },
-      'Home': ev => {
-        this.itemSelectFirst(ev);
-
-        ev.preventDefault();
-      },
-      'End': ev => {
-        this.itemSelectLast(ev);
-
-        ev.preventDefault();
-      },
-      'ArrowUp': this.itemSelectPrev,
-      'ArrowDown': this.itemSelectNext,
-
-      65: ev => { // Ctrl+A
-        if (ev.ctrlKey) {
-          this.itemSelectAll();
-
-          ev.preventDefault();
-        }
-      },
-      68: ev => { // Ctrl+D
-        if (ev.ctrlKey) {
-          this.itemSelectNone();
-
-          ev.preventDefault();
-        }
-      }
-    };
-
-    const fn = funcs[e.key] || funcs[e.keyCode];
-
-    if (fn) {
-      fn.call(this, e);
-    }
-  }
-
-  scrollIntoView = item => {
-    const height = this.ui.playlist.height();
-    const itemTop = item.position().top;
-    const itemHeight = item.outerHeight();
-
-    let scrollTop = this.ui.playlist.prop('scrollTop');
+    let scrollTop = el.scrollTop;
 
     if (itemTop < 0) {
       scrollTop += itemTop;
-    } else if (itemTop + itemHeight > height) {
-      scrollTop -= height - itemTop - itemHeight;
+    } else if (itemRect.bottom > rect.bottom) {
+      scrollTop += itemRect.bottom - rect.bottom;
     }
 
-    this.ui.playlist.prop('scrollTop', scrollTop);
+    el.scrollTop = scrollTop;
   }
 
   itemSelected = (e, item) => {
@@ -273,8 +259,12 @@ export default class ListView extends Component {
     }
 
     if (item) {
+      this.scrollIntoView(clamp(this.state.focusedItemIndex - 1, 0, items.length - 1));
+
       this.itemSelected(e, item);
     }
+
+    e.preventDefault();
   };
 
   itemSelectNext = e => {
@@ -287,8 +277,12 @@ export default class ListView extends Component {
     }
 
     if (item) {
+      this.scrollIntoView(clamp(this.state.focusedItemIndex + 1, 0, items.length - 1));
+
       this.itemSelected(e, item);
     }
+
+    e.preventDefault();
   };
 
   itemSelectFirst = e => {

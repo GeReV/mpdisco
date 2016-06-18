@@ -13,7 +13,7 @@ import withEnabled from '../decorators/withEnabled';
 export default class PlaylistControls extends Component {
   static propTypes = {
     enabled: PropTypes.bool,
-    status: PropTypes.func
+    status: PropTypes.object
   };
 
   render() {

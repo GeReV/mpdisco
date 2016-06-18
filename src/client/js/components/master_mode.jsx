@@ -5,6 +5,7 @@ import {
 } from 'nuclear-js-react-addons';
 import { DragDropContext } from 'react-dnd';
 import HTML5Backend from 'react-dnd-html5-backend';
+import { HotKeys } from 'react-hotkeys';
 
 import getters from '../getters';
 
@@ -20,6 +21,20 @@ import withContext from '../decorators/withContext';
 import withStyles from '../decorators/withStyles';
 
 import styles from '../../sass/mpdisco.scss';
+
+const keyMap = {
+  play: ['space', 'control+shift+c'],
+  playNext: 'control+shift+b',
+  playPrevious: 'control+shift+z',
+  up: 'up',
+  down: 'down',
+  delete: ['del', 'backspace'],
+  activate: 'enter',
+  selectAll: 'control+a',
+  selectNone: 'control+d',
+  selectLast: 'end',
+  selectFirst: 'home'
+};
 
 @connect(() => {
   return {
@@ -53,31 +68,33 @@ class MasterMode extends Component {
 
     return (
       <Provider reactor={reactor}>
-        <div id="container" role="main">
-          <header id="player-head">
-            <Logo cover={cover}
-                  blurRadius={10}
-                  />
-            <Player status={status}
-                    song={song}
-                    enabled={enabled}
+        <HotKeys keyMap={keyMap}>
+          <div id="container" role="main">
+            <header id="player-head">
+              <Logo cover={cover}
+                    blurRadius={10}
                     />
-          </header>
-          <main>
-            <Library library={library}
-                     enabled={enabled}
-                     />
-            <Playlist playlist={playlist}
+              <Player status={status}
                       song={song}
-                      status={status}
                       enabled={enabled}
                       />
-            <Listeners listeners={listeners}
-                       master={master}
-                       me={me}
+            </header>
+            <main>
+              <Library library={library}
+                       enabled={enabled}
                        />
-          </main>
-        </div>
+              <Playlist playlist={playlist}
+                        song={song}
+                        status={status}
+                        enabled={enabled}
+                        />
+              <Listeners listeners={listeners}
+                         master={master}
+                         me={me}
+                         />
+            </main>
+          </div>
+        </HotKeys>
       </Provider>
     );
   }
