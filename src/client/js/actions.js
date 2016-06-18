@@ -5,9 +5,7 @@ import {
   ItemTypes
 } from './constants';
 
-import {
-  RECEIVE_PLAYLIST
-} from './action_types';
+import actionTypes from './action_types';
 
 export function fetchLibraryArtists() {
   network.command('list', 'artist');
@@ -127,7 +125,7 @@ export function playlistAddItem(itemType, item) {
 }
 
 export function playlistReorderItems(items) {
-  reactor.dispatch(RECEIVE_PLAYLIST, { playlist: items });
+  reactor.dispatch(actionTypes.RECEIVE_PLAYLIST, { playlist: items });
 
   const commands = items.map((item, i) => ({
     command: 'moveid',
