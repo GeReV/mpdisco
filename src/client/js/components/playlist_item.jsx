@@ -85,7 +85,7 @@ const itemTarget = {
 export default class PlaylistItem extends Component {
   static propTypes = {
     enabled: PropTypes.bool,
-    item: PropTypes.func.isRequired,
+    item: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired,
     selected: PropTypes.bool,
     playing: PropTypes.bool,
